@@ -5,7 +5,7 @@ const api = axios.create({
   baseURL: `${API_BASE_URL}/verification`,
   timeout: 40000, // 10 seconds timeout
   headers: {
-    'Content-Type': 'application/json'
+    // 'Content-Type': 'application/json'
   }
 });
 

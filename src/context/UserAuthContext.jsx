@@ -1,211 +1,290 @@
-import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo
+} from 'react';
 import axios from 'axios';
 import { API_BASE_URL } from '../api/config';
 
 const UserAuthContext = createContext();
 
+// Secure storage abstraction
+const secureStorage = {
+  get: (key) => {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      console.error('Storage get failed:', e);
+      return null;
+    }
+  },
+  set: (key, value) => {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.error('Storage set failed:', e);
+    }
+  },
+  remove: (key) => {
+    try {
+      localStorage.removeItem(key);
+    } catch (e) {
+      console.error('Storage remove failed:', e);
+    }
+  }
+};
+
 export function UserAuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
+    const stored = secureStorage.get('user');
+    return stored && stored !== 'undefined' ? JSON.parse(stored) : null;
   });
-  
-  const [token, setToken] = useState(() => localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);
+
+  const [token, setToken] = useState(() => secureStorage.get('token'));
+  const [loading, setLoading] = useState({ global: true, login: false, refresh: false });
+  const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState(null);
+
   const isMounted = useRef(true);
+  const hasInitialized = useRef(false);
+  const refreshInProgress = useRef(null);
 
-  const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  });
-
-  api.interceptors.request.use(config => {
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  }, error => Promise.reject(error));
-
-  const fetchWithAuth = async (endpoint, options = {}) => {
+  const isTokenExpired = useCallback((token) => {
+    if (!token) return true;
     try {
-      const fullEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+      const { exp } = JSON.parse(atob(token.split('.')[1]));
+      return Date.now() >= exp * 1000;
+    } catch {
+      return true;
+    }
+  }, []);
+
+  const logout = async () => {
+    try {
+      setLoggingOut(true);  // <- Trigger logout state
+      localStorage.removeItem('token');
+      setUser(null);
+      setToken(null);
+  
+      const res = await fetch(`${API_BASE_URL}/public/settings`);
+      const data = await res.json();
+      const logoutUrl = data?.settings?.logoutUrl;
+  
+      setTimeout(() => {
+        window.location.href = logoutUrl || '/auth';
+      }, 500); // Optional delay to let spinner appear smoothly
+    } catch (err) {
+      console.error('Logout error:', err);
+      window.location.href = '/auth';
+    }
+  };
+  
+  const refreshToken = useCallback(async () => {
+    if (!token || refreshInProgress.current) return refreshInProgress.current;
+
+    refreshInProgress.current = (async () => {
+      try {
+        setLoading(prev => ({ ...prev, refresh: true }));
+        const response = await axios.post(`${API_BASE_URL}/users/refresh`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const newToken = response.data.token;
+        secureStorage.set('token', newToken);
+        if (newToken !== token) {
+          setToken(newToken);
+        }        
+        return newToken;
+      } catch (error) {
+        console.error('Token refresh failed:', error);
+        await logout(true);
+        return null;
+      } finally {
+        setLoading(prev => ({ ...prev, refresh: false }));
+        refreshInProgress.current = null;
+      }
+    })();
+
+    return refreshInProgress.current;
+  }, [token, logout]);
+
+  const api = useMemo(() => {
+    const instance = axios.create({
+      baseURL: API_BASE_URL,
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    instance.interceptors.request.use((config) => {
+      if (token && !isTokenExpired(token)) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+
+    instance.interceptors.response.use(
+      res => res,
+      async error => {
+        const original = error.config;
+        if (error.response?.status === 401 && !original._retry) {
+          original._retry = true;
+          const newToken = await refreshToken();
+          if (newToken) {
+            original.headers.Authorization = `Bearer ${newToken}`;
+            return instance(original);
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return instance;
+  }, [token, isTokenExpired, refreshToken]);
+
+  const fetchWithAuth = async (endpoint, options = {}, retries = 1) => {
+    try {
       const response = await api({
         ...options,
-        url: fullEndpoint
+        url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`
       });
       return response;
     } catch (error) {
-      console.error('API Error:', {
-        url: error.config?.url,
-        status: error.response?.status,
-        message: error.message
-      });
-
-      if (error.response?.status === 401) {
-        try {
-          const newToken = await refreshToken();
-          if (newToken) {
-            const retryResponse = await api({
-              ...options,
-              url: error.config.url,
-              headers: {
-                ...(error.config?.headers || {}),
-                Authorization: `Bearer ${newToken}`
-              }
-            });
-            return retryResponse;
-          }
-        } catch (refreshError) {
-          logout();
-          throw refreshError;
-        }
+      if (error.response?.status === 401 && retries > 0) {
+        return fetchWithAuth(endpoint, options, retries - 1);
       }
-
       throw error;
     }
   };
 
-  const refreshToken = useCallback(async () => {
-    try {
-      const response = await api.post('/users/refresh', {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const newToken = response.data.token;
-      localStorage.setItem('token', newToken);
-      setToken(newToken);
-      return newToken;
-    } catch (error) {
-      logout();
-      return null;
-    }
-  });
-
   const verifyAdminAccess = async (adminAccessToken) => {
     try {
-      setLoading(true);
-      setError(null);
-      const response = await axios.post(
-        `${API_BASE_URL}/auth/admin-access`,
-        { token: adminAccessToken },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      setLoading(prev => ({ ...prev, global: true }));
+      const response = await axios.post(`${API_BASE_URL}/auth/admin-access`, {
+        token: adminAccessToken
+      });
+
       if (response.data.success) {
-        const { user: userData, token: sessionToken } = response.data;
-        localStorage.setItem('user', JSON.stringify(userData));
-        localStorage.setItem('token', sessionToken);
-        setUser(userData);
-        setToken(sessionToken);
+        const { user: u, token: newToken } = response.data;
+        secureStorage.set('user', JSON.stringify(u));
+        secureStorage.set('token', newToken);
+        setUser(u);
+        setToken(newToken);
         return true;
       } else {
-        setError(response.data.message || 'Admin access verification failed');
+        setError('Admin access verification failed');
         return false;
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'Admin access verification failed');
+      setError(error.response?.data?.message || 'Admin access failed');
       return false;
     } finally {
-      setLoading(false);
+      setLoading(prev => ({ ...prev, global: false }));
     }
   };
 
-  const initializeAuth = async () => {
-    // Check for adminAccessToken in URL
+  const initializeAuth = useCallback(async () => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+  
     const params = new URLSearchParams(window.location.search);
     const adminAccessToken = params.get('adminAccessToken');
-    
-    if (adminAccessToken && isMounted.current) {
-      const success = await verifyAdminAccess(adminAccessToken);
-      if (success && isMounted.current) {
-        // Clear query parameter from URL
+  
+    if (adminAccessToken) {
+      const ok = await verifyAdminAccess(adminAccessToken);
+      if (ok) {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
       return;
     }
-
-    if (!token) {
-      setLoading(false);
+  
+    if (!token || isTokenExpired(token)) {
+      setLoading(prev => ({ ...prev, global: false }));
       return;
     }
-
+  
     try {
-      // Skip fetching from /users/me — no request here
+      const res = await api.get('/users/me');
       if (isMounted.current) {
-        setLoading(false);
+        const user = res.data.user || res.data; // ✅ Safe fallback
+        console.log("Fetched user from /me:", user);
+        setUser(user);
+        secureStorage.set('user', JSON.stringify(user));
       }
+
     } catch (error) {
-      if (isMounted.current) {
-        console.error('Initialization error:', error);
-        setError(error.response?.data?.message || error.message);
-        if (error.response?.status === 401 || error.response?.status === 404) {
-          logout();
-        }
-      }
+      console.warn("Invalid token or expired, not logging out yet...");
+      secureStorage.remove('token');
+      secureStorage.remove('user');
+      setToken(null);
+      setUser(null);
     } finally {
       if (isMounted.current) {
-        setLoading(false);
+        setLoading(prev => ({ ...prev, global: false }));
       }
     }
-  };
+  }, [token, isTokenExpired, api]);
+  
 
   useEffect(() => {
     initializeAuth();
-    return () => {
-      isMounted.current = false;
+    return () => { isMounted.current = false; };
+  }, []); 
+  
+
+  useEffect(() => {
+    const syncStorage = (e) => {
+      if (e.key === 'token') setToken(e.newValue);
+      if (e.key === 'user') setUser(e.newValue ? JSON.parse(e.newValue) : null);
     };
-  }, [token]);
+    window.addEventListener('storage', syncStorage);
+    return () => window.removeEventListener('storage', syncStorage);
+  }, []);
 
   const login = async (email, password) => {
     try {
-      setLoading(true);
-      setError(null);
-
-      const response = await api.post('/users/login', { email, password });
-      localStorage.setItem('token', response.data.token);
-      setToken(response.data.token);
-
-      // Optional: Store dummy user if you want user state during login
-      const dummyUser = {
-        email,
-        accountId: 'dummy-id',
-      };
-      setUser(dummyUser);
-      localStorage.setItem('user', JSON.stringify(dummyUser));
-
+      setLoading(prev => ({ ...prev, login: true }));
+  
+      const res = await axios.post(`${API_BASE_URL}/users/login`, { email, password });
+      const receivedToken = res.data.token;
+  
+      // Save token immediately and update headers
+      secureStorage.set('token', receivedToken);
+      setToken(receivedToken);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${receivedToken}`;
+  
+      // Use raw axios or inject token directly into `api` call
+      const userRes = await axios.get(`${API_BASE_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${receivedToken}` }
+      });
+  
+      const fullUser = userRes.data.user || userRes.data;
+      console.log("Fetched user from login():", fullUser);
+      secureStorage.set('user', JSON.stringify(fullUser));
+      setUser(fullUser);
+  
       return true;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 
-                         error.message || 
-                         'Login failed. Please try again.';
-      setError(errorMessage);
+      setError(error.response?.data?.message || 'Login failed');
       throw error;
     } finally {
-      setLoading(false);
+      setLoading(prev => ({ ...prev, login: false }));
     }
   };
-
-  const updateUserProfile = useCallback((profileData) => {
-    setUser(prevUser => {
-      if (!prevUser) return prevUser; // Handle null user case
-      const updatedUser = { ...prevUser, ...profileData };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      return updatedUser;
-    });
-  }, []); // Empty dependency array = stable reference
   
-  const logout = useCallback(() => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
-    setUser(null);
-    setError(null);
-  }, []); // Stable reference
+
+  const updateUserProfile = useCallback((data) => {
+    setUser((prev) => {
+      const updated = { ...prev, ...data };
+      secureStorage.set('user', JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
 
   return (
-    <UserAuthContext.Provider value={{ 
-      user, 
+    <UserAuthContext.Provider value={{
+      user,
       token,
       loading,
       error,
@@ -214,7 +293,9 @@ export function UserAuthProvider({ children }) {
       fetchWithAuth,
       refreshToken,
       updateUserProfile,
-      verifyAdminAccess // Expose for potential reuse
+      verifyAdminAccess,
+      isTokenExpired,
+      loggingOut
     }}>
       {children}
     </UserAuthContext.Provider>
@@ -223,8 +304,6 @@ export function UserAuthProvider({ children }) {
 
 export function useUserAuth() {
   const context = useContext(UserAuthContext);
-  if (!context) {
-    throw new Error('useUserAuth must be used within a UserAuthProvider');
-  }
+  if (!context) throw new Error("useUserAuth must be used inside UserAuthProvider");
   return context;
 }

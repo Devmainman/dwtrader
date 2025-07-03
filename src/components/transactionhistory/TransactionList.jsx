@@ -95,7 +95,7 @@ const fetchTransactions = async () => {
               day: 'numeric'
             })}
             bank={transaction.bankName}
-            amount={`${transaction.amount} ${transaction.currency || 'NGN'}`}
+            amount={`${transaction.amount} ${transaction.currency}`}
             details={{
               bankName: transaction.bankName,
               accountName: transaction.accountName,

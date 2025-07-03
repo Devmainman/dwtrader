@@ -15,12 +15,12 @@ const ReferralLinkSection = () => {
   useEffect(() => {
     const fetchReferral = async () => {
       try {
-        const response = await fetchWithAuth("/verification/users");
+        const response = await fetchWithAuth("/referrals");
         const data = response.data;
 
         const code = data.referral?.code || data.referralCode;
         if (code) {
-          const link = `${window.location.origin}/register?ref=${code}`;
+          const link = `${window.location.origin}/signup?ref=${code}`;
           setReferralLink(link);
         } else {
           setReferralLink("Error: No referral code");

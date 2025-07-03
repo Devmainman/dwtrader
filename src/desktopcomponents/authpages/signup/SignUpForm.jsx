@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import LanguageSelector from "../loginpage/LanguageSelector";
@@ -21,6 +21,9 @@ const SignUpForm = () => {
   const [loading, setLoading] = useState(false);
   const [captchaAnswer, setCaptchaAnswer] = useState("");
   const correctCaptcha = "27";
+  const [searchParams] = useSearchParams();
+  const referralCode = searchParams.get("ref");
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -53,6 +56,7 @@ const SignUpForm = () => {
       await axios.post(`${API_BASE_URL}/users/signup`, {
         email: formData.email,
         password: formData.password,
+        referralCode: referralCode || undefined
       });
 
       // Log in separately

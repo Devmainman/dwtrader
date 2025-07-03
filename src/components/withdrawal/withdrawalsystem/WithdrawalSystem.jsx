@@ -166,15 +166,33 @@ const WithdrawalForm = ({ method, onBack }) => {
             required
           />
         </div>
-        <button 
-          type="button"
-          className="text-blue-500 text-[10px] mt-1"
-          onClick={() => {
-            alert('Token request functionality to be implemented');
-          }}
-        >
-          Request Withdrawal Token
-        </button>
+          <div className="flex justify-between">
+          <button 
+            type="button"
+            className="text-blue-500 text-[10px] mt-1"
+            onClick={() => {
+              setModal({
+                isOpen: true,
+                title: 'Oops!',
+                message: 'Please contact support to acquire your withdrawal token.',
+                type: 'warning'
+              });
+            }}
+          >
+            Request Withdrawal Token
+          </button>
+          <p className="text-yellow-500 text-[10px] mt-1">
+            min {new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: method.currency,
+            }).format(method.minAmount)} – max {new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: method.currency,
+            }).format(method.maxAmount)}
+          </p>
+
+                </div>
+        
       </div>
 
 
@@ -269,8 +287,12 @@ const WithdrawalInterface = () => {
   useEffect(() => {
     const fetchMethods = async () => {
       try {
-        const methodsResponse = await publicAxios.get('/withdrawal-methods');
-        const activeMethods = methodsResponse.data.filter(method => method.isActive) || [];
+        const methodsResponse = await axios.get(`${API_BASE_URL}/withdrawal-methods`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const activeMethods = methodsResponse.data.data?.filter(method => method.isActive) || [];
         setMethods(activeMethods);
         setLoading(false);
       } catch (err) {
@@ -279,9 +301,10 @@ const WithdrawalInterface = () => {
         setLoading(false);
       }
     };
-
+  
     if (token) fetchMethods();
   }, [token]);
+  
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-screen">

@@ -24,7 +24,13 @@ export default function IDVerificationStep2({ onBack, onContinue }) {
       const formData = new FormData();
       formData.append('frontImage', frontImage);
       if (backImage) formData.append('backImage', backImage);
-      formData.append('documentType', 'national_id'); // Match your enum
+      
+      // Append documentType as a string (not nested)
+      formData.append('documentType', 'national_id');
+
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
 
       const response = await uploadIdDocument(formData);
       console.log('Upload response:', response);

@@ -1,0 +1,50 @@
+import React from "react";
+import { AlertTriangle } from "lucide-react";
+
+function BlockedNoticeModal({ reason = "Your account has been suspended due to a violation of our terms." }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+      <div className="bg-[#1D1D1F] border border-neutral-700 rounded-3xl p-6 max-w-md w-full text-center shadow-xl text-white relative">
+        {/* Alert Icon */}
+        <div className="flex justify-center mb-4">
+          <div className="bg-yellow-500/10 p-4 rounded-full">
+            <AlertTriangle className="text-yellow-400 w-8 h-8" />
+          </div>
+        </div>
+
+        {/* Title */}
+        <h2 className="text-xl font-semibold text-zinc-100 mb-2">Your Account Has Been Restricted</h2>
+
+        {/* Reason */}
+        <p className="text-sm text-neutral-400 mb-4">
+          {reason}
+        </p>
+
+        {/* Facebook-like Guidance */}
+        <div className="text-xs text-neutral-500 space-y-3 mb-5 text-left">
+          <p>
+            We noticed activity on your account that violates our community guidelines. As a result,
+            access to certain features has been temporarily restricted.
+          </p>
+          <p>
+            Our team is reviewing your case. If you believe this was a mistake or you'd like more
+            information, you can contact support for assistance.
+          </p>
+          <p>
+            We aim to maintain a safe and trustworthy platform for all users.
+          </p>
+        </div>
+
+        {/* Contact Support */}
+        <button
+          onClick={() => window.location.href = "/support"}
+          className="bg-yellow-500 text-black font-semibold py-2 px-5 rounded-full hover:bg-yellow-400 transition-all"
+        >
+          Contact Support
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default BlockedNoticeModal;

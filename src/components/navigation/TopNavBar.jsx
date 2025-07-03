@@ -35,13 +35,7 @@ const TopNavBar = () => {
       
       <div className="flex gap-3.5 items-center">
         <div className="relative flex rounded-3xl border bg-zinc-900 border-neutral-800 cursor-pointer">
-          <img 
-            src={NotificationIcon} 
-            alt="notifications" 
-            className="cursor-pointer"
-            onClick={() => navigate("/notification")}
-          />
-          <NotificationDropdown 
+          <NotificationDropdown
             notifications={notifications}
             notificationCount={unreadCount}
             markAsRead={markAsRead}

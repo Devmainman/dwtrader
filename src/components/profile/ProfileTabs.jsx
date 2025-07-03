@@ -11,7 +11,7 @@ const ProfileTabs = () => {
   const tabs = ["Profile", "Edit Profile", "Update Photo", "Change Password"];
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-30">
       {/* Tabs Navigation */}
       <nav className="flex overflow-x-auto gap-1.5 items-center w-full text-[10px] text-stone-300 hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
         {tabs.map((tab, index) => (

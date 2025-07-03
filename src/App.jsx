@@ -37,6 +37,9 @@ import { UserAuthProvider } from './context/UserAuthContext';
 import { BalanceProvider } from './context/BalanceContext';
 import UserPopupHandler from './components/UserPopupHandler';
 import Navbar from "./Navbar";
+import VerificationStatusModal from './components/VerificationStatusModal';
+import BlockedNoticeModal from './components/BlockedNoticeModal';
+
 
 // Auth Pages
 import LoginPage from "./desktopcomponents/authpages/loginpage/LoginScreen";
@@ -44,58 +47,78 @@ import SignupPage from "./desktopcomponents/authpages/signup/SignUpForm";
 import WelcomePage from "./desktopcomponents/authpages/welcome/InputDesign";
 
 function AppContent() {
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState({
+    emailRequested: false,
+    phoneRequested: false
+  });
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
   const location = useLocation();
-  const { user, loading, error, token } = useUserAuth(); // Added token to destructuring
+  const { user, loading, error, token, loggingOut } = useUserAuth();
+  
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
-  // Define auth routes
+    if (user?.verification) {
+      const { emailVerified, phoneVerified, emailVerificationToken, phoneVerificationCode } = user.verification;
+      const emailReq = emailVerificationToken && !emailVerified;
+      const phoneReq = phoneVerificationCode && !phoneVerified;
+      if (emailReq || phoneReq) {
+        setVerificationStatus({ emailRequested: emailReq, phoneRequested: phoneReq });
+        setShowVerificationModal(true);
+      }
+    }
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [user]);
+
   const isAuthRoute = ['/auth', '/signup', '/welcome'].includes(location.pathname);
   const isSignupRoute = location.pathname === '/signup';
   const isWelcomeRoute = location.pathname === '/welcome';
 
-  if (loading) {
-    return <div className="flex items-center justify-center min-h-screen bg-neutral-900">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>;
+  // 1. Global loading first
+  if (loading.global) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-neutral-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
+  // 3. Show error
   if (error) {
-    return <div className="flex items-center justify-center min-h-screen bg-neutral-900 text-red-500">
-      Error: {error}
-    </div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-neutral-900 text-red-500">
+        Error: {error}
+      </div>
+    );
   }
 
-  // Handle authentication state
-  if (!token && !isAuthRoute) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
+  if (loggingOut) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#1D1D1F] text-white">
+        <div className="text-center space-y-3">
+          <div className="animate-spin h-10 w-10 border-t-2 border-b-2 border-pink-500 rounded-full mx-auto"></div>
+          <p className="text-lg font-semibold">Logging you out...</p>
+        </div>
+      </div>
+    );
   }
+  
+
+  if (!token && !isAuthRoute && !loggingOut) {
+    return <Navigate to="/auth" replace />;
+  }
+  
+  
 
   if (token && isAuthRoute && !isSignupRoute && !isWelcomeRoute) {
     return <Navigate to="/" replace />;
   }
 
-  // Handle signup flow
-  if (user) {
-    // If user exists but hasn't completed verification and isn't on signup/welcome page
-    if (!user.isVerified && !isSignupRoute && !isWelcomeRoute) {
-      // return <Navigate to="/" replace />;
-    }
-    
-    // If user is verified but tries to access signup/welcome
-    if (user.isVerified && (isSignupRoute || isWelcomeRoute)) {
-      // return <Navigate to="/" replace />;
-    }
-  }
-
-  // Render auth routes if needed
   if (isAuthRoute) {
     return (
       <Routes>
@@ -108,8 +131,17 @@ function AppContent() {
 
   return (
     <SidebarProvider>
+      {user?.status === 'Inactive' && (
+    <BlockedNoticeModal reason={user?.blockReason || 'Your account has been restricted temporarily.'} />
+  )}
       {isMobile ? (
         <>
+          <VerificationStatusModal
+            show={showVerificationModal}
+            onClose={() => setShowVerificationModal(false)}
+            emailRequested={verificationStatus.emailRequested}
+            phoneRequested={verificationStatus.phoneRequested}
+          />
           <UserPopupHandler />
           <Navbar />
           <SideBarMobile />

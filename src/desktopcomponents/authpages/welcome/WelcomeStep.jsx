@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../../context/UserAuthContext';
 import { completeProfile } from '../../../api/verification';
 import { toast } from 'react-toastify';
+import { API_BASE_URL } from '../../../api/config';
 
 export default function WelcomeStep({ onContinue, initialData = {} }) {
   const navigate = useNavigate();
@@ -21,6 +22,38 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [currencies, setCurrencies] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [selectedDialCode, setSelectedDialCode] = useState('+');
+
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+  
+        const res = await fetch(`${API_BASE_URL}/users/currencies`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+  
+        const json = await res.json();
+        if (json?.data && Array.isArray(json.data)) {
+          setCurrencies(json.data);
+        } else {
+          setCurrencies([]);
+        }
+      } catch (err) {
+        console.error('Currency fetch error:', err);
+        setCurrencies([]);
+      }
+    };
+  
+    fetchCurrencies();
+  }, []);
+
 
   useEffect(() => {
     const isValid = (
@@ -35,6 +68,41 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
     setIsFormValid(isValid);
   }, [formData]);
 
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,idd');
+        
+        if (!res.ok) {
+          throw new Error(`API request failed with status ${res.status}`);
+        }
+        
+        const data = await res.json();
+        
+        if (!Array.isArray(data)) {
+          throw new Error('Unexpected response format - expected array');
+        }
+        
+        const countryList = data
+          .map((c) => ({
+            name: c.name?.common || 'Unknown',
+            code: c.cca2 || '',
+            dialCode: c.idd?.root && c.idd?.suffixes?.length
+              ? c.idd.root + c.idd.suffixes[0]
+              : null,
+          }))
+          .filter((c) => c.code && c.dialCode && c.name);
+        
+        setCountries(countryList);
+      } catch (err) {
+        console.error('Error fetching countries:', err);
+      }
+    };
+    
+    fetchCountries();
+  }, []);
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ 
@@ -48,8 +116,8 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Client-side validation
+  
+    // Validate required fields
     const newErrors = {};
     if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
     if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
@@ -58,64 +126,57 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
     if (!formData.country) newErrors.country = 'Country is required';
     if (!formData.gender) newErrors.gender = 'Gender is required';
     if (!formData.currency) newErrors.currency = 'Currency is required';
-
+  
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
-
+  
+    // Prepare payload with correct field names
+    const payload = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phoneNumber: formData.phoneNumber, // Map to backend's expected field name
+      country: formData.country,
+      gender: formData.gender.toLowerCase(),
+      currency: formData.currency
+    };
+  
+    // Debug: Log the payload before sending
+    console.log('Submitting payload:', payload);
+  
     setLoading(true);
-    setErrors({});
-
+  
     try {
-      // Verify we have a valid token
-      let currentToken = token;
-      if (!currentToken) {
-        const refreshed = await refreshToken();
-        if (!refreshed) throw new Error('Authentication required');
-        currentToken = localStorage.getItem('token');
-      }
-
-      // Complete profile with the token
-      const response = await completeProfile(formData, currentToken);
-
+      const response = await completeProfile(payload, token);
+      
       if (response?.success) {
-        // Update user context with new profile data
         updateUserProfile({
           ...formData,
+          mobile: formData.phoneNumber // Update local state
         });
-
         toast.success('Profile completed successfully!');
-        
-        // Check if onContinue exists before calling it
-        if (onContinue) {
-          onContinue(formData);
-        } else {
-          console.warn('onContinue not provided, redirecting to dashboard');
-          navigate('/'); // Fallback to dashboard if onContinue is not provided
-        }
+        onContinue?.();
       } else {
-        setErrors(response?.errors || { 
-          general: response?.message || 'Profile update failed' 
-        });
+        // Handle backend validation errors
+        const backendErrors = response?.errors || {};
+        setErrors(backendErrors);
+        toast.error(response?.message || 'Profile update failed');
       }
     } catch (error) {
       console.error('Profile submission error:', error);
-
-      let errorMessage;
-      if (error.message.includes('timeout')) {
-        errorMessage = 'Request timed out. Please check your connection and try again.';
-      } else {
-        errorMessage = error.message || 'Failed to save profile. Please try again.';
-      }
-
-      setErrors({
-        general: errorMessage,
-      });
+      // Enhanced error handling
+      const errorMessage = error.response?.data?.message || 
+                          error.message || 
+                          'Failed to save profile. Please try again.';
+      setErrors({ general: errorMessage });
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="space-y-4">
@@ -172,39 +233,61 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </div>
 
-        {/* Country */}
-        <div>
-          <div className="w-full bg-transparent border border-[#505050] rounded-md p-4 text-gray-400 flex justify-between">
-            <select
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="bg-transparent rounded-[8px] text-[#505050] text-[12px] w-full focus:outline-none focus:border-white"
-            >
-              <option value="">Select Country</option>
-              <option value="US">United States</option>
-              <option value="UK">United Kingdom</option>
-              <option value="NG">Nigeria</option>
-            </select>
-          </div>
-          {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
-        </div>
+       {/* Country */}
+<div>
+<select
+  name="country"
+  value={formData.country}
+  onChange={(e) => {
+    const selected = countries.find(c => c.code === e.target.value);
+    setSelectedDialCode(selected?.dialCode || '+1');
+    handleChange(e);
+  }}
+  className="w-full bg-transparent border border-[#505050] rounded-md p-4 text-[#505050] text-[12px]"
+>
+  <option value="">Select Country</option>
+  {countries.map((c) => (
+    <option key={c.code} value={c.code}>
+      {c.name} ({c.dialCode})
+    </option>
+  ))}
+</select>
+  {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
+</div>
 
-        {/* Phone Number */}
-        <div>
-          <div className="w-full bg-transparent border border-[#505050] rounded-md p-4 text-gray-400 flex">
-            <span className="mr-2 text-[12px]">+234</span>
-            <input
-              type="tel"
-              name="phoneNumber"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              placeholder="Enter your Phone Number"
-              className="bg-transparent rounded-[8px] text-[#505050] text-[12px] flex-1 focus:outline-none focus:border-white"
-            />
-          </div>
-          {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
-        </div>
+{/* Phone Number */}
+<div>
+  <div className="w-full bg-transparent border border-[#505050] rounded-md p-4 text-gray-400 flex items-center">
+    <select
+      value={selectedDialCode}
+      onChange={(e) => setSelectedDialCode(e.target.value)}
+      className="bg-transparent text-[12px] mr-2"
+    >
+      {countries.map((c) => (
+        <option key={c.code} value={c.dialCode}>
+          {c.dialCode}
+        </option>
+      ))}
+    </select>
+    <input
+      type="tel"
+      name="phoneNumber"
+      value={formData.phoneNumber.replace(selectedDialCode, '')}
+      onChange={(e) => {
+        // Combine selected dial code with input
+        const fullNumber = selectedDialCode + e.target.value.replace(/\D/g, '');
+        setFormData(prev => ({
+          ...prev,
+          phoneNumber: fullNumber
+        }));
+      }}
+      placeholder="1234567890"
+      className="bg-transparent flex-1 text-[12px] focus:outline-none"
+    />
+  </div>
+  {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>}
+</div>
+
 
         {/* Gender */}
         <div>
@@ -225,6 +308,7 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
         </div>
 
         {/* Currency */}
+       {/* Currency (Dynamic List) */}
         <div>
           <div className="w-full bg-transparent border border-[#505050] rounded-md p-4 text-gray-400 flex justify-between">
             <select
@@ -234,9 +318,11 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
               className="bg-transparent text-[12px] text-[#505050] w-full"
             >
               <option value="">Select Currency</option>
-              <option value="USD">USD</option>
-              <option value="GBP">GBP</option>
-              <option value="NGN">NGN</option>
+              {currencies.map((cur) => (
+                <option key={cur.code} value={cur.code}>
+                  {cur.code} - {cur.title}
+                </option>
+              ))}
             </select>
           </div>
           {errors.currency && <p className="text-red-500 text-sm mt-1">{errors.currency}</p>}

@@ -18,6 +18,8 @@ function ProfileForm() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,18 +46,26 @@ function ProfileForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null); // Clear previous success
+  
     try {
       const response = await fetchWithAuth("/verification/profile", {
         method: "POST",
         data: formData
       });
-
+  
       console.log("Profile updated successfully", response.data);
+      setSuccessMessage("Profile updated successfully");
+  
+      // Optional: auto-dismiss message after 4 seconds
+      setTimeout(() => setSuccessMessage(null), 4000);
+  
     } catch (err) {
       console.error("Update error:", err);
       setError(err.message);
     }
   };
+  
 
   if (loading) {
     return (
@@ -74,7 +84,7 @@ function ProfileForm() {
   }
 
   return (
-    <article className="relative p-7 w-full rounded-xl bg-[#1D1D1F] h-[488px]">
+    <article className="relative p-7 pb-12 w-full rounded-xl bg-[#1D1D1F] h-auto min-h-[488px]">
       <header className="mb-5 text-sm font-medium text-neutral-400">Edit Profile Information</header>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 mx-auto w-[245px]">
@@ -85,7 +95,8 @@ function ProfileForm() {
           <SelectField label="Country" value={formData.country} options={["Nigeria", "United States", "United Kingdom"]} onChange={value => setFormData({...formData, country: value})} />
         </div>
         {error && <p className="mt-4 text-center text-xs text-red-500">{error}</p>}
-        <div className="absolute bottom-[26px] left-[52px]">
+        {successMessage && <p className="mt-2 text-center text-xs text-green-500">{successMessage}</p>}
+        <div className="flex justify-start mt-6 text-center">
           <Button type="submit">Save Changes</Button>
         </div>
       </form>

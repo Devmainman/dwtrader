@@ -70,8 +70,8 @@ const LoginScreen = () => {
       <div className="md:flex md:items-center md:justify-center md:flex-1">
         <div className="w-full md:max-w-md md:bg-zinc-900 md:border md:border-zinc-800 md:rounded-2xl md:p-8">
           <section className="mb-6">
-            <h1 className="text-5xl font-medium mb-1">Welcome</h1>
-            <p className="text-sm text-gray-400">We're so excited to have you again</p>
+            <h1 className="text-4xl font-medium mb-1">Welcome</h1>
+            <p className="text-sm text-neutral-400">We're so excited to have you again</p>
           </section>
 
           {/* Login Form */}
@@ -84,7 +84,7 @@ const LoginScreen = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email address"
-                className={`w-full bg-transparent border ${errors.email ? "border-red-500" : "border-zinc-700"} rounded-lg py-4 px-5 text-base`}
+                className={`w-full bg-transparent border ${errors.email ? "border-red-500" : "border-zinc-700"} rounded-lg py-4 px-5 text-[12px]`}
               />
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
@@ -98,7 +98,7 @@ const LoginScreen = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter your password"
-                  className="bg-transparent outline-none w-full text-base"
+                  className="bg-transparent outline-none w-full text-[12px]"
                 />
                 <button
                   type="button"
