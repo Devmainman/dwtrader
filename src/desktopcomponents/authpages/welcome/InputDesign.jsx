@@ -37,7 +37,7 @@ export default function InputDesign() {
   };
 
   const renderStepIndicator = (currentStep, totalSteps) => (
-    <div className="w-full flex justify-between items-center mb-8">
+    <div className="md:hidden w-full flex justify-between items-center mb-8">
       {Array.from({ length: totalSteps }).map((_, index) => (
         <div 
           key={index} 
@@ -128,9 +128,9 @@ export default function InputDesign() {
   
 
   return (
-    <div className="bg-[#161617] text-white min-h-screen w-full max-w-md mx-auto p-6">
-      {/* Header and step indicator */}
-      <header className="flex justify-between items-center mb-8">
+    <>
+     <div className="flex flex-col min-h-screen bg-neutral-900">   
+      <header className="hidden md:flex justify-between items-center ">
         <div className="flex items-center">
           <img src={Logo} alt="Logo" />
           <span className="text-2xl font-bold tracking-wide hidden md:inline">SKOTE</span>
@@ -139,8 +139,17 @@ export default function InputDesign() {
           <LanguageSelector />
         </div>
       </header>
-
-      <div className="flex justify-between items-center mb-2">
+    <div className="text-white lg:rounded-[20px]  min-h-[calc(100vh-120px)] md:min-h-[500px] w-full mx-auto px-4 md:px-8 py-6 max-w-none">
+      <header className="md:hidden justify-between items-center">
+        <div className="flex items-center">
+          <img src={Logo} alt="Logo" />
+          <span className="text-2xl font-bold tracking-wide hidden md:inline">SKOTE</span>
+        </div>
+        <div className="flex">
+          <LanguageSelector />
+        </div>
+      </header>
+      <div className="md:hidden flex justify-between items-center mb-2">
         {step > 1 && (
           <ChevronLeft className="text-white cursor-pointer" onClick={() => setStep(prev => prev - 1)} />
         )}
@@ -151,5 +160,7 @@ export default function InputDesign() {
       {renderStepIndicator(step, 8)}
       {renderStep()}
     </div>
+     </div>
+    </>
   );
 }

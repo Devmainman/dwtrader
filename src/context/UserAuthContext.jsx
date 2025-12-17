@@ -12,6 +12,8 @@ import { API_BASE_URL } from '../api/config';
 
 const UserAuthContext = createContext();
 
+
+
 // Secure storage abstraction
 const secureStorage = {
   get: (key) => {
@@ -38,6 +40,7 @@ const secureStorage = {
   }
 };
 
+
 export function UserAuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     const stored = secureStorage.get('user');
@@ -49,9 +52,38 @@ export function UserAuthProvider({ children }) {
   const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState(null);
 
+  const websocketRef = useRef(null);
   const isMounted = useRef(true);
   const hasInitialized = useRef(false);
   const refreshInProgress = useRef(null);
+
+  const connectWebSocket = useCallback(() => {
+    if (!token) return;
+  
+    const ws = new WebSocket(`${API_BASE_URL.replace(/^http/, 'ws')}/notifications/ws?token=${token}`);
+  
+    ws.onopen = () => {
+      console.log('[WS] Connected to server');
+    };
+  
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log('[WS] Message received:', message);
+    };
+  
+    ws.onerror = (error) => {
+      console.error('[WS] Error:', error);
+    };
+  
+    ws.onclose = (e) => {
+      console.warn('[WS] Disconnected:', e.reason);
+      websocketRef.current = null;
+      // Optionally try reconnect after delay
+      setTimeout(connectWebSocket, 5000); 
+    };
+  
+    websocketRef.current = ws;
+  }, [token]);
 
   const isTokenExpired = useCallback((token) => {
     if (!token) return true;
@@ -225,12 +257,34 @@ export function UserAuthProvider({ children }) {
       }
     }
   }, [token, isTokenExpired, api]);
+
+  const refreshUser = useCallback(async () => {
+  if (!token || isTokenExpired(token)) return;
+
+  try {
+    const res = await api.get('/users/me');
+    const refreshedUser = res.data.user || res.data;
+    setUser(refreshedUser);
+    secureStorage.set('user', JSON.stringify(refreshedUser));
+    console.log('✅ User refreshed:', refreshedUser);
+  } catch (err) {
+    console.error('❌ Failed to refresh user:', err);
+  }
+}, [token, isTokenExpired, api]);
+
   
 
   useEffect(() => {
     initializeAuth();
     return () => { isMounted.current = false; };
   }, []); 
+
+  useEffect(() => {
+    if (token && user && !websocketRef.current) {
+      connectWebSocket();
+    }
+  }, [token, user, connectWebSocket]);
+  
   
 
   useEffect(() => {
@@ -295,7 +349,8 @@ export function UserAuthProvider({ children }) {
       updateUserProfile,
       verifyAdminAccess,
       isTokenExpired,
-      loggingOut
+      loggingOut,
+      refreshUser
     }}>
       {children}
     </UserAuthContext.Provider>

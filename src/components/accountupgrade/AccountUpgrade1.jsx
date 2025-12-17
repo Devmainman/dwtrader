@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import PackageCard from "./PackageCard";
 import checkSVG from "../../assets/lets-icons_check-fill.svg";
 import { useUserAuth } from "../../context/UserAuthContext";
@@ -12,28 +13,35 @@ function AccountUpgrade1() {
   const [error, setError] = useState(null);
   const { user, token } = useUserAuth();
   const scrollRef = useRef(null);
+  const navigate = useNavigate();
+  const { fetchWithAuth } = useUserAuth();
 
-  useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/public/packages`);
-        
-        // Filter only active packages and sort by amount
-        const activePackages = response.data.packages
-          .filter(pkg => pkg.status === 'Active')
-          .sort((a, b) => a.amount - b.amount);
-          
-        setPackages(activePackages);
-      } catch (err) {
-        console.error('Error fetching packages:', err);
-        setError('Failed to load packages. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleProceed = () => {
+  const queryAmount = encodeURIComponent(packages[activeIndex].amount);
+  navigate(`/payment?amount=${queryAmount}`);
+};
 
-    fetchPackages();
-  }, []);
+useEffect(() => {
+  const fetchPackages = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/public/packages/user-packages`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = response.data;
+      setPackages(data.packages || data);
+    } catch (err) {
+      console.error('Error loading packages:', err);
+      setError("Failed to load packages. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (token) fetchPackages();
+}, [token]);
+
+
+
 
   const scrollToCard = (index) => {
     const cardWidth = scrollRef.current?.children[0]?.offsetWidth || 0;
@@ -158,6 +166,8 @@ function AccountUpgrade1() {
             isActive={activeIndex === index}
             onSubscribe={() => handleSubscribe(pkg._id)}
             icon={pkg.icon}
+            packageId={pkg._id}
+            amount={pkg.amount}
           />
         ))}
       </div>
@@ -181,7 +191,7 @@ function AccountUpgrade1() {
       {/* Proceed Button */}
       {packages.length > 0 && (
         <button 
-          onClick={() => handleSubscribe(packages[activeIndex]._id)}
+          onClick={() => handleProceed()}
           className="flex overflow-hidden text-white justify-center items-center self-center px-2.5 py-1 mt-5 w-full bg-blue-600 rounded-3xl"
         >
           <div className="flex text-[15px] flex-col justify-center items-center self-stretch my-auto">

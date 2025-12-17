@@ -2,9 +2,9 @@
 import React from "react";
 import SearchBar from "./SearchBar";
 import SummaryCard from "./SummaryCard";
-import SignalStrengthIndicator from "./SignalStrengthIndicator";
+import SignalStrengthBar from "../trade/SignalStrengthBar";
 import DateSelector from "./DateSelector";
-import TransactionList from "./TransactionList";
+import TransactionList from "../../components/transactionhistory/TransactionList";
 import StatisticsCards from "../home/StatisticsCards";
 
 function TransactionHistory() {
@@ -17,12 +17,12 @@ function TransactionHistory() {
         <SearchBar />
       </header>
     
-      <div className="mt-3 w-full max-w-[1129px] max-md:max-w-auto">
+      <div className="mt-3 w-full max-w-[1229px] max-md:max-w-auto">
         <div className="mb-6">
        <StatisticsCards />
        </div>
 
-        <SignalStrengthIndicator percentage="60%" />
+        <SignalStrengthBar />
       
 
       <div className="flex overflow-hidden w-full gap-2.5 justify-center items-center p-4 mt-5 rounded-xl border border-solid bg-[#1D1D1F] border-neutral-600">

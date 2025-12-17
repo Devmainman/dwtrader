@@ -5,6 +5,7 @@ import ActionButtons from "./ActionButtons";
 import TradeStats from "./TradeStats";
 import TradeActivities from "./TradeActivities";
 import MarketSection from "./MarketSection";
+import MainMarket from "./MarketSection/MarketSection";
 
 function TradeUI() {
   return (
@@ -29,6 +30,11 @@ function TradeUI() {
         <TradeActivities />
       </div>
       
+      {/* Market Section
+      <div className="w-full">
+        <MainMarket />
+      </div> */}
+
       {/* Market Section */}
       <div className="w-full">
         <MarketSection />

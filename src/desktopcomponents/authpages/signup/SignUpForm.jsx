@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -9,9 +9,24 @@ import PasswordInput from "./PasswordInput";
 import { API_BASE_URL } from '../../../api/config';
 import { useUserAuth } from '../../../context/UserAuthContext';
 
+
+const getRandomNumber = () => Math.floor(Math.random() * 10) + 1;
+
+const generateCaptcha = () => {
+  const a = getRandomNumber();
+  const b = getRandomNumber();
+  const shouldFlip = Math.random() > 0.5;
+  return {
+    question: shouldFlip ? `${b} + ${a}` : `${a} + ${b}`,
+    answer: a + b
+  };
+};
+
+
 const SignUpForm = () => {
   const navigate = useNavigate();
   const { login } = useUserAuth();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -20,10 +35,17 @@ const SignUpForm = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [captchaAnswer, setCaptchaAnswer] = useState("");
-  const correctCaptcha = "27";
+
+  // ✅ This now works because generateCaptcha is defined earlier
+  const [captcha, setCaptcha] = useState(generateCaptcha());
+
   const [searchParams] = useSearchParams();
   const referralCode = searchParams.get("ref");
 
+  useEffect(() => {
+    // Regenerate captcha when component mounts
+    setCaptcha(generateCaptcha());
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -38,9 +60,10 @@ const SignUpForm = () => {
       newErrors.confirmPassword = "Passwords don't match";
     }
     
-    if (captchaAnswer !== correctCaptcha) {
+    if (parseInt(captchaAnswer) !== captcha.answer) {
       newErrors.captcha = "Incorrect answer";
     }
+    
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -48,7 +71,11 @@ const SignUpForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      setCaptcha(generateCaptcha()); // Refresh CAPTCHA
+      return;
+    }
+    
   
     setLoading(true);
     try {
@@ -140,7 +167,7 @@ const SignUpForm = () => {
                 <p className="text-[12px] text-amber-500 text-center">Confirm you are not a robot</p>
                 <div className="flex w-full gap-3">
                   <div className="flex items-center justify-center px-4 py-3 rounded-lg border border-blue-700 bg-transparent w-1/2">
-                    <span className="text-neutral-300 text-[12px]">18 +9</span>
+                  <span className="text-neutral-300 text-[12px]">{captcha.question}</span>
                   </div>
                   <input
                     type="text"

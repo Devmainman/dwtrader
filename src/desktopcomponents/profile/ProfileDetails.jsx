@@ -18,10 +18,7 @@ function ProfileDetails() {
       <div className="mt-6 flex ">
         {/* Left Side - Constant */}
         <div className=" max-md:ml-0 max-md:w-full">
-          <UserPhoto
-            imageUrl="https://cdn.builder.io/api/v1/image/assets/TEMP/dbd24adb1dd83e9ecc4df3303b735d935bad46b11312fbc6e15e6e5d1436b2c7?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-            name="Showole Benson"
-          />
+          <UserPhoto />
         </div>
 
         {/* Right Side - Dynamic Content */}

@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import MetricCard from "./MetricCard";
-import SignalStrengthIndicator from "./SignalStrengthIndicator";
-import ReferralLinkSection from "./ReferralLinkSection";
+import SignalStrengthBar from "../trade/SignalStrengthBar";
+import ReferralLinkSection from "../../components/referrals/ReferralLinkSection";
 import CommissionsTable from "./CommissionsTable";
 import ReferralInfoPanel from "./ReferralInfoPanel";
 import StatisticsCards from "../home/StatisticsCards";
@@ -31,16 +31,16 @@ function Referrals() {
       <section className="mt-3 w-full max-w-auto max-md:mr-1 max-md:max-w-full">
         <StatisticsCards />
         <div className="mt-5">
-        <SignalStrengthIndicator label="Signal Strength" percentage="60%" />
+        <SignalStrengthBar />
         </div>
       </section>
 
       <ReferralLinkSection referralLink={referralLink} />
 
-      <section className="flex flex-wrap gap-2.5 items-start mt-5 w-[1080px] max-w-auto max-md:max-w-full">
-        <CommissionsTable />
-        <ReferralInfoPanel referralLink={referralLink} />
-      </section>
+    <section className="flex gap-4 mt-3 w-full max-w-auto max-md:mr-1 max-md:max-w-full">
+      <CommissionsTable />
+      <ReferralInfoPanel referralLink={referralLink} />
+    </section>
     </main>
   );
 }

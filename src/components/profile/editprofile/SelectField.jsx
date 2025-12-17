@@ -3,7 +3,6 @@ import React, { useState } from "react";
 function SelectField({ label, value, options = [], onChange }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // DownArrowIcon remains exactly the same
   const DownArrowIcon = () => (
     <svg
       width="16"
@@ -23,6 +22,14 @@ function SelectField({ label, value, options = [], onChange }) {
     </svg>
   );
 
+  // Find label to show from value
+  const getSelectedLabel = () => {
+    const found = options.find(opt =>
+      typeof opt === "string" ? opt === value : opt.value === value
+    );
+    return typeof found === "string" ? found : found?.label || "Choose";
+  };
+
   return (
     <div className="flex flex-col gap-2.5 relative">
       <label className="text-xs text-neutral-500">{label}</label>
@@ -31,25 +38,30 @@ function SelectField({ label, value, options = [], onChange }) {
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="text-xs text-stone-300">
-          {value || "Choose"}
+          {getSelectedLabel()}
         </span>
         <DownArrowIcon />
       </div>
       
       {isOpen && (
         <div className="absolute top-full mt-1 w-full z-10 rounded-lg border bg-neutral-900 border-neutral-600 max-h-40 overflow-y-auto">
-          {options.map((option) => (
-            <div
-              key={option}
-              className="p-2.5 text-xs text-stone-300 hover:bg-neutral-800 cursor-pointer"
-              onClick={() => {
-                onChange(option);
-                setIsOpen(false);
-              }}
-            >
-              {option}
-            </div>
-          ))}
+          {options.map((option, index) => {
+            const displayLabel = typeof option === "string" ? option : option.label;
+            const optionValue = typeof option === "string" ? option : option.value;
+
+            return (
+              <div
+                key={index}
+                className="p-2.5 text-xs text-stone-300 hover:bg-neutral-800 cursor-pointer"
+                onClick={() => {
+                  onChange(optionValue);
+                  setIsOpen(false);
+                }}
+              >
+                {displayLabel}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

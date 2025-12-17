@@ -4,6 +4,7 @@ import SearchBar from "./SearchBar";
 import StatsSection from "./StatsSection";
 import NotificationList from "./NotificationList";
 import StatisticsCards from "../home/StatisticsCards";
+import NotificationPanel from "../../components/notification/NotificationPanel";
 
 function Notification() {
   return (
@@ -21,7 +22,7 @@ function Notification() {
     <StatisticsCards />
       
 
-      <NotificationList />
+      <NotificationPanel />
     </main>
   );
 }

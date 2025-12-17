@@ -16,24 +16,9 @@ function BlockedNoticeModal({ reason = "Your account has been suspended due to a
         <h2 className="text-xl font-semibold text-zinc-100 mb-2">Your Account Has Been Restricted</h2>
 
         {/* Reason */}
-        <p className="text-sm text-neutral-400 mb-4">
+        <p className="text-xs text-neutral-500 space-y-3 mb-5 text-left">
           {reason}
         </p>
-
-        {/* Facebook-like Guidance */}
-        <div className="text-xs text-neutral-500 space-y-3 mb-5 text-left">
-          <p>
-            We noticed activity on your account that violates our community guidelines. As a result,
-            access to certain features has been temporarily restricted.
-          </p>
-          <p>
-            Our team is reviewing your case. If you believe this was a mistake or you'd like more
-            information, you can contact support for assistance.
-          </p>
-          <p>
-            We aim to maintain a safe and trustworthy platform for all users.
-          </p>
-        </div>
 
         {/* Contact Support */}
         <button

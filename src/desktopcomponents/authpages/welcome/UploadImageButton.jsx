@@ -44,7 +44,7 @@ function UploadImageButton({ label, onChange, preview, onRemove }) {
           </button>
         </div>
       ) : (
-        <div className="bg-[#1D1D1F] rounded-[10px] h-[172px] p-4 text-center">
+        <div className="bg-[#1D1D1F]  lg:bg-neutral-900  rounded-[10px] h-[172px] p-4 text-center">
           <div className="bg-[#242426] rounded-[10px] h-[138px] p-4 text-center">
           <div className="rounded-full flex justify-center mb-2">
               <img

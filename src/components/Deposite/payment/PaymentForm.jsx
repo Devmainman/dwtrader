@@ -4,7 +4,7 @@ import { useUserAuth } from '../../../context/UserAuthContext';
 import { API_BASE_URL, STATIC_BASE_URL } from '../../../api/config';
 import { useBalance } from '../../../context/BalanceContext';
 
-const PaymentForm = ({ method, onBack, onDepositResult }) => {
+const PaymentForm = ({ method, onBack, onDepositResult, forceAmount }) => {
   const { token } = useUserAuth();
   const [amount, setAmount] = useState('');
   const [file, setFile] = useState(null);
@@ -13,6 +13,7 @@ const PaymentForm = ({ method, onBack, onDepositResult }) => {
   const { currency } = useBalance();
   const [copiedIndex, setCopiedIndex] = useState(null);
   const fileInputRef = useRef(null);
+  
 
   const copyIconUrl = "https://cdn.builder.io/api/v1/image/assets/TEMP/2fd1f31c640e4a8bc61ad64aa34bd7d9e147f00417163c84ba0f049ad7bf2b6f?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8";
   const checkmarkIconUrl = "https://cdn.builder.io/api/v1/image/assets/TEMP/2fd1f31c640e4a8bc61ad64aa34bd7d9e147f00417163c84ba0f049ad7bf2b6f?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8";
@@ -36,7 +37,7 @@ const PaymentForm = ({ method, onBack, onDepositResult }) => {
     try {
       const formData = new FormData();
       formData.append('paymentMethodId', method.methodId);
-      formData.append('amount', amount);
+      formData.append('amount', forceAmount ?? amount);
       formData.append('currency', currency);
       formData.append('paymentProof', file);
 
@@ -91,9 +92,16 @@ const PaymentForm = ({ method, onBack, onDepositResult }) => {
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
   };
 
-  return (
-    <div className="flex flex-col mt-2 items-center px-5 mx-auto w-full max-w-[480px] rounded-3xl bg-neutral-900">
-      <div className="w-full p-2 space-y-6">
+return (
+  <div className="w-full mt-2 grid grid-cols-1 xl:grid-cols-[889px_370px] gap- px-0">
+
+    {/* Unified Left Section: Column 1 + Column 2 */}
+    <div className="grid grid-cols-1 lg:grid-cols-2  gap-6 bg-[#1D1D1F] rounded-3xl p-6">
+
+      {/* Column 1: Bank Details + Amount */}
+      <div className="space-y-6">
+        {/* Top section: Back + Method info */}
+        <h2 className="text-base text-[#C7C7C7] mb-6">Select Payment Method</h2>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button onClick={onBack} className="text-white">
@@ -137,9 +145,7 @@ const PaymentForm = ({ method, onBack, onDepositResult }) => {
                           alt={copiedIndex === index ? "Copied" : "Copy now"}
                           className="object-contain w-3.5 aspect-square"
                         />
-                        <span>
-                          {copiedIndex === index ? "Copied" : "Copy now"}
-                        </span>
+                        <span>{copiedIndex === index ? "Copied" : "Copy now"}</span>
                       </button>
                     </div>
                   </div>
@@ -154,17 +160,21 @@ const PaymentForm = ({ method, onBack, onDepositResult }) => {
           <label className="text-gray-400 text-[10px]">Amount ({currency})</label>
           <input
             type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            value={forceAmount ?? amount}
+            onChange={(e) => !forceAmount && setAmount(e.target.value)}
             placeholder={`Deposit Amount (${currency})`}
-            className="w-full h-[52px] bg-[#1D1D1F] text-[10px] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
+            className="w-full h-[52px] bg-[#1D1D1F] lg:bg-[#242426] text-[10px] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
             min={method?.minAmount || 0}
             max={method?.maxAmount || ''}
+            disabled={!!forceAmount}
             required
           />
         </div>
+      </div>
 
-        {/* Upload Section */}
+      {/* Column 2: Upload & Submit */}
+      <div className="space-y-6">
+        {/* Upload Proof */}
         <div className="space-y-2">
           <label className="text-gray-400 text-[10px]">Upload payment proof</label>
           <div className="bg-[#1D1D1F] p-5 rounded-[10px]">
@@ -215,8 +225,10 @@ const PaymentForm = ({ method, onBack, onDepositResult }) => {
           </div>
         </div>
 
-        {error && <div className="bg-red-500/10 text-red-500 p-3 rounded-lg text-center">{error}</div>}
-
+        {/* Error and Submit */}
+        {error && (
+          <div className="bg-red-500/10 text-red-500 p-3 rounded-lg text-center text-xs">{error}</div>
+        )}
         <button
           onClick={handleSubmit}
           disabled={loading || !amount || !file}
@@ -225,55 +237,54 @@ const PaymentForm = ({ method, onBack, onDepositResult }) => {
           {loading ? 'Processing...' : 'Submit'}
         </button>
       </div>
-
-      {/* Instructions Section */}
-      <div className="w-full mt-4 flex justify-center">
-        <article className="overflow-hidden w-[370px] px-3 py-4 rounded-xl bg-[#1D1D1F]">
-          <header className="font-medium">
-            <div className="flex gap-2.5 items-center text-[14px] text-zinc-100">
-              <h2 className="flex-1">Lets Proceed with that Deposit</h2>
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/28f76ca51ab932c417ae5480603e7ceb025031fd?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-                className="object-contain aspect-square w-[18px]"
-                alt="Information icon"
-              />
-            </div>
-            <p className="mt-3 text-[10px] text-neutral-500">
-              To make a deposit, please follow these simple steps:
-            </p>
-          </header>
-          <div className="flex gap-1.5 items-start mt-1.5 text-[10px] leading-4 text-neutral-400">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-              className="object-contain aspect-square w-[18px]"
-              alt="Step icon"
-            />
-            <p className="flex-1">
-              Payment Information: Initiate the payment by transferring the funds to
-              the provided payment details.
-            </p>
-          </div>
-          <div className="flex gap-1.5 items-start mt-4 text-[10px] leading-4 text-neutral-400">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-              className="object-contain aspect-square w-[18px]"
-              alt="Step icon"
-            />
-            <p className="flex-1">
-              Proof of Payment: After making the payment, upload the proof of
-              payment in the designated section. This ensures a seamless update to
-              your account.
-            </p>
-          </div>
-          <p className="mt-4 text-[10px] text-neutral-400">
-            Once completed, our team will verify the payment and credit the amount
-            to your account promptly. For any assistance, our dedicated support team
-            is available to help you.
-          </p>
-        </article>
-      </div>
     </div>
-  );
+
+    {/* Right Panel - Instructions */}
+    <div className="flex justify-center items-start">
+      <article className="overflow-hidden w-full max-w-[290px] px-3 py-4 rounded-xl bg-[#1D1D1F]">
+        <header className="font-medium">
+          <div className="flex gap-2.5 items-center text-[14px] text-zinc-100">
+            <h2 className="flex-1">Let's Proceed with that Deposit</h2>
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/28f76ca51ab932c417ae5480603e7ceb025031fd?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
+              className="object-contain aspect-square w-[18px]"
+              alt="Information icon"
+            />
+          </div>
+          <p className="mt-3 text-[10px] text-neutral-500">
+            To make a deposit, please follow these simple steps:
+          </p>
+        </header>
+        <div className="flex gap-1.5 items-start mt-1.5 text-[10px] leading-4 text-neutral-400">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
+            className="object-contain aspect-square w-[18px]"
+            alt="Step icon"
+          />
+          <p className="flex-1">
+            Payment Information: Initiate the payment by transferring the funds to the provided payment details.
+          </p>
+        </div>
+        <div className="flex gap-1.5 items-start mt-4 text-[10px] leading-4 text-neutral-400">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
+            className="object-contain aspect-square w-[18px]"
+            alt="Step icon"
+          />
+          <p className="flex-1">
+            Proof of Payment: After making the payment, upload the proof of payment in the designated section.
+            This ensures a seamless update to your account.
+          </p>
+        </div>
+        <p className="mt-4 text-[10px] text-neutral-400">
+          Once completed, our team will verify the payment and credit the amount to your account promptly. For any assistance, our dedicated support team is available to help you.
+        </p>
+      </article>
+    </div>
+  </div>
+);
+
+
 };
 
 export default PaymentForm;

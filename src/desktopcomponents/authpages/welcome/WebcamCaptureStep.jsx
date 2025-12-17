@@ -64,149 +64,134 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
     height: 720,
   };
 
+  const renderInstructions = () => (
+  <>
+    <p className="text-[10px] font-regular text-[#9F9F9F] mb-2">
+      Welcome to our secure and advanced facial verification system! To ensure the highest level of security and identity verification, we kindly request you to undergo facial recognition.
+    </p>
+    <p className="text-[#9F9F9F] text-[10px] mb-3">To get started, please follow these steps:</p>
+
+    {[
+      'Find a well-lit area with minimal shadows for the best results.',
+      'Position your face within the frame provided, ensuring your entire face is visible.',
+      'Keep your face straight and look directly into the camera.',
+      'Take a clear and unobstructed photo.',
+    ].map((item, idx) => (
+      <div className="flex mb-2 items-center" key={idx}>
+        <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0" />
+        <p className="text-[#9F9F9F] text-[10px]">{item}</p>
+      </div>
+    ))}
+
+    <p className="text-[#9F9F9F] text-[10px] mb-3">
+      Your facial data will be handled confidentially and securely stored in compliance with privacy policies.
+    </p>
+    <p className="text-[#9F9F9F] text-[10px] mb-3">
+      For any issues, our support team is available to assist you.
+    </p>
+  </>
+);
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-[18px] font-medium text-[#F3F3F3]">Webcam Capture</h1>
-      <p className="text-[#787878] text-[12px]">
-      We will need to authenticate your account credibility details with a Face Capture
-      </p>
-      <div className="flex justify-center item-center">
-
-      <div className="w-[242px] aspect-square bg-black relative overflow-hidden">
-        {!isCaptured ? (
-          <>
-           <Webcam
-            audio={false}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            videoConstraints={videoConstraints}
-            className="w-full h-full object-cover"
-          />
-           {/* Focus Frame */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-48 h-48 border-2 border-[#2563EB] rounded-[20px] shadow-md opacity-80" />
-      </div>
-          </>
-         
-        ) : (
-          <img src={imgSrc} alt="Captured" className="w-[242px] h-[244] object-cover" />
-        )}
-      </div>
-
-
-      </div>
+  <div className="md:flex md:items-start md:justify-center md:gap-6">
+    {/* LEFT PANEL (Camera + Actions) */}
+    <div className="w-full md:w-[866px] lg:h-[603px] rounded-[10px] md:p-6 lg:bg-[#1D1D1F] flex flex-col md:flex-row md:gap-6">
       
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-
-      {!isCaptured ? (
-        <button
-          onClick={capture}
-          className="w-full bg-[#2563EB] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center gap-2"
-        >
-          Capture Photo
-        </button>
-      ) : (
-        <button
-          onClick={handleUpload}
-          disabled={loading}
-          className="w-full bg-green-500 text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center gap-2"
-        >
-          {loading ? 'Uploading...' : 'Upload and Verify'}
-        </button>
-      )}
-
-      <div className="flex gap-4">
+      {/* Camera Section (Top on mobile, Right on desktop) */}
+      <div className="w-[242px] aspect-square bg-black relative overflow-hidden self-center md:self-start mb-6 md:mb-0">
         {!isCaptured ? (
           <>
-            <button
-              onClick={switchCamera}
-              className="w-1/2 border border-[#2563EB] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
-            >
-              Switch Camera
-            </button>
-            <button
-              onClick={onBack}
-              className="w-1/2 bg-red-500 text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
-            >
-              Cancel
-            </button>
+            <Webcam
+              audio={false}
+              ref={webcamRef}
+              screenshotFormat="image/jpeg"
+              videoConstraints={videoConstraints}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-48 h-48 border-2 border-[#2563EB] rounded-[20px] shadow-md opacity-80" />
+            </div>
           </>
         ) : (
-          <>
-            <button
-              onClick={retake}
-              className="w-1/2 border border-[#2563EB] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
-            >
-              
-              Retake
-            </button>
-            <button
-              onClick={onBack}
-              className="w-1/2 bg-red-500 text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
-            >
-              
-              Cancel
-            </button>
-          </>
+          <img src={imgSrc} alt="Captured" className="w-full h-full object-cover" />
         )}
       </div>
 
-      <div className="mt-6 bg-[#1D1D1F] rounded-[10px] p-4">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-[10px] font-regular text-[#9F9F9F]">Welcome to our secure and advanced facial verification system! 
-              To ensure the highest level of security and identity verification, 
-              we kindly request you to undergo facial recognition. Our facial 
-              verification process is designed to match your live image with the 
-              photo in your identification document, providing a seamless and 
-              reliable way to confirm your identity.</p>
-            
-          </div>
-          <p className="text-[#9F9F9F] text-[10px] mb-3">To get started, please follow these steps:</p>
-          
-          <div className="flex mb-2 item-center">
-            <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0" />
-            <p className="text-[#9F9F9F] text-[10px]">
-            Find a well-lit area with minimal shadows for the best results.
-            </p>
-          </div>
+      {/* Buttons and Text Content */}
+      <div className="flex-1 flex flex-col justify-start space-y-4">
+        <h1 className="text-[18px] font-medium text-[#F3F3F3]">Webcam Capture</h1>
+        <p className="text-[#787878] text-[12px]">
+          We will need to authenticate your account credibility details with a Face Capture
+        </p>
 
-          <div className="flex mb-2 item-center">
-            <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0" />
-            <p className="text-[#9F9F9F] text-[10px]">
-            Position your face within the frame provided, ensuring your entire face is visible.
-            </p>
-          </div>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
 
-          <div className="flex mb-2 item-center">
-            <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0" />
-            <p className="text-[#9F9F9F] text-[10px]">
-            Keep your face straight and look directly into the camera.
-            </p>
-          </div>
+        {!isCaptured ? (
+          <button
+            onClick={capture}
+            className="w-full bg-[#2563EB] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center gap-2"
+          >
+            Capture Photo
+          </button>
+        ) : (
+          <button
+            onClick={handleUpload}
+            disabled={loading}
+            className="w-full bg-green-500 text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center gap-2"
+          >
+            {loading ? 'Uploading...' : 'Upload and Verify'}
+          </button>
+        )}
 
-         
-
-          <div className="flex mb-2 item-center">
-            <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0" />
-            <p className="text-[#9F9F9F] text-[10px]">
-            Take a clear and unobstructed photo.
-            </p>
-          </div>
-
-          <p className="text-[#9F9F9F] text-[10px] mb-3">Rest assured that your facial data will be handled with the 
-            utmost confidentiality and securely stored in compliance with 
-            our strict privacy policies. This verification process allows us to 
-            maintain a safe and trustworthy environment for all our users.</p>
-
-            <p className="text-[#9F9F9F] text-[10px] mb-3">Thank you for your cooperation. Should you encounter any issues 
-              or have any questions, our support team is available to assist you. 
-              Get ready to experience the convenience and security of facial 
-              verification with us!</p>
-          
-          
+        <div className="flex gap-4">
+          {!isCaptured ? (
+            <>
+              <button
+                onClick={switchCamera}
+                className="w-1/2 border border-[#2563EB] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+              >
+                Switch Camera
+              </button>
+              <button
+                onClick={onBack}
+                className="w-1/2 bg-red-500 text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={retake}
+                className="w-1/2 border border-[#2563EB] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+              >
+                Retake
+              </button>
+              <button
+                onClick={onBack}
+                className="w-1/2 bg-red-500 text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+              >
+                Cancel
+              </button>
+            </>
+          )}
         </div>
-
-
+      </div>
     </div>
-  );
+
+    {/* Desktop Instruction Panel */}
+    <div className="hidden md:block md:w-[403px] md:h-[603px]">
+      <div className="bg-[#1D1D1F] rounded-[10px] p-4 sticky top-4 overflow-y-auto h-full">
+        {renderInstructions()}
+      </div>
+    </div>
+
+    {/* Mobile Instruction Panel */}
+    <div className="md:hidden mt-6 bg-[#1D1D1F] rounded-[10px] p-4">
+      {renderInstructions()}
+    </div>
+  </div>
+);
+
+
 }

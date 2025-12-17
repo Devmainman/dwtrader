@@ -1,11 +1,39 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useUserAuth } from "../../context/UserAuthContext";
 
-const ReferralInfoPanel = ({ referralLink }) => {
-  const handleCopy = () => {
-    navigator.clipboard.writeText(referralLink);
-    // Could add a toast notification here in a real implementation
-  };
+const ReferralInfoPanel = () => {
+    const { fetchWithAuth, user } = useUserAuth();
+    const [referralLink, setReferralLink] = useState("Loading...");
+    const [isCopied, setIsCopied] = useState(false);
+  
+    useEffect(() => {
+      const fetchReferral = async () => {
+        try {
+          const response = await fetchWithAuth("/referrals");
+          const code = response.data.referral?.code || response.data.referralCode;
+          if (code) {
+            const link = `${window.location.origin}/signup?ref=${code}`;
+            setReferralLink(link);
+          } else {
+            setReferralLink("Error: No referral code found.");
+          }
+        } catch (error) {
+          console.error("Failed to fetch referral info:", error);
+          setReferralLink("Error: Unable to load referral link");
+        }
+      };
+  
+      if (user) fetchReferral();
+    }, [fetchWithAuth, user]);
+  
+    const handleCopy = () => {
+      if (!referralLink || referralLink.includes("Error")) return;
+      navigator.clipboard.writeText(referralLink);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    };
+
 
   const benefits = [
     "For every 1 referrals, users receive a bonus $10 in addition to the $5 per referral.",

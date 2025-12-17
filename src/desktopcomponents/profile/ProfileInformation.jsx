@@ -3,7 +3,7 @@ import React from "react";
 import ProfileMetricCard from "./ProfileMetricCard";
 import ProfileTabs from "./ProfileTabs";
 import ProfileDetails from "./ProfileDetails";
-import SignalStrengthIndicator from "./SignalStrengthIndicator";
+import SignalStrengthBar from "../trade/SignalStrengthBar";
 import StatisticsCards from "../home/StatisticsCards";
 
 function ProfileInformation() {
@@ -16,7 +16,7 @@ function ProfileInformation() {
       <div className="mt-3 max-md:max-w-full">
         <StatisticsCards />
         <div className="mt-6">
-        <SignalStrengthIndicator percentage={60} />
+        <SignalStrengthBar />
         </div>
       
       <div className="">

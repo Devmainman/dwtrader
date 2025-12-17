@@ -4,7 +4,13 @@ import { useUserAuth } from "../../context/UserAuthContext";
 import axios from "axios";
 import { API_BASE_URL } from "../../api/config";
 
-const ReferredUser = ({ user }) => {
+const ReferredUser = ({ user, currency }) => {
+  const bonusFormatted = new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: currency || "USD",
+    minimumFractionDigits: 2,
+  }).format(user.bonusEarned || 0);
+
   return (
     <div className="flex overflow-hidden flex-col justify-center items-start px-5 py-2.5 w-full rounded-md bg-[#1D1D1F]">
       <div className="flex gap-2 items-center">
@@ -21,7 +27,7 @@ const ReferredUser = ({ user }) => {
             Joined: {new Date(user.joinedDate).toLocaleDateString()}
           </span>
           <span className="text-xs text-green-400">
-            Bonus Earned: ${user.bonusEarned?.toFixed(2) || "0.00"}
+            Bonus Earned: {bonusFormatted}
           </span>
         </div>
       </div>
@@ -30,7 +36,7 @@ const ReferredUser = ({ user }) => {
 };
 
 const ReferredUsersList = () => {
-  const { user, token } = useUserAuth();
+  const { user: currentUser, token } = useUserAuth(); // current logged-in user
   const [referredUsers, setReferredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,7 +56,7 @@ const ReferredUsersList = () => {
         setLoading(false);
       }
     };
-  
+
     if (token) {
       fetchReferredUsers();
     }
@@ -62,9 +68,9 @@ const ReferredUsersList = () => {
   return (
     <div className="mt-2.5 w-full text-xs tracking-normal leading-none text-zinc-100">
       {referredUsers.length > 0 ? (
-        referredUsers.map((user, index) => (
-          <div key={user._id} className={index > 0 ? "mt-2" : ""}>
-            <ReferredUser user={user} />
+        referredUsers.map((refUser, index) => (
+          <div key={refUser._id} className={index > 0 ? "mt-2" : ""}>
+            <ReferredUser user={refUser} currency={currentUser?.currency} />
           </div>
         ))
       ) : (

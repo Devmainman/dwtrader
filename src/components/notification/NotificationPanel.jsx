@@ -103,7 +103,7 @@ const NotificationPanel = () => {
   }
 
   return (
-    <section className="flex flex-col w-full overflow-y-auto bg-neutral-900">
+    <section className="flex flex-col  lg:mt-6 lg:rounded-xl w-full overflow-y-auto bg-neutral-900">
       {/* Connection status - simple indicator */}
       {/* <div className="p-2 text-xs text-center bg-green-600">
         Live notifications active
@@ -145,9 +145,9 @@ const NotificationPanel = () => {
 
       {/* Mark all as read button */}
       {unreadCount > 0 && (
-        <div className="p-4 sticky bottom-0 bg-neutral-900 border-t border-neutral-800">
+        <div className="p-4 sticky lg:flex lg:justify-center bottom-0 bg-neutral-900 border-t border-neutral-800">
           <button
-            className="w-full p-4 text-[10px] text-white bg-blue-600 rounded-full"
+            className="w-full lg:w-[200px] p-4 text-[10px] text-white bg-blue-600 rounded-full"
             onClick={() => markAllAsRead().then(fetchNotifications)}
           >
             Mark All as Read

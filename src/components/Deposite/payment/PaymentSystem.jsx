@@ -120,7 +120,7 @@ const PaymentSystem = () => {
   }
 
   return (
-    <div className="min-h-screen lg:w-[1050px] bg-[#161617] text-white relative">
+    <div className="min-h-screen lg:w-[1050px] text-white relative">
       {/* Status Modal */}
       {modal.show && (
         <StatusModal 
@@ -130,7 +130,7 @@ const PaymentSystem = () => {
         />
       )}
 
-      <div className="max-w-md p-">
+      <div className="w-full px-4 xl:px-0">
         {!selectedMethod ? (
           <PaymentMethodSelector
             methods={methods}

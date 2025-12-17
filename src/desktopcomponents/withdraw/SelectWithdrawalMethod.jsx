@@ -1,12 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import StatCard from "./StatCard";
-import ProgressBar from "./ProgressBar";
+import SignalStrengthBar from "../trade/SignalStrengthBar";
 import BalanceDisplay from "./BalanceDisplay";
 import BankWithdraw from "./bankwithdraw/MakeWithdrawal";
 import BitcoinWithdraw from "./bitcoinwithdraw/MakeWithdrawal";
 import EthereumWithdraw from "./ethereumwithdraw/MakeWithdrawal";
 import StatisticsCards from "../home/StatisticsCards";
+import WithdrawalSystem from "../../components/withdrawal/withdrawalsystem/WithdrawalSystem";
 
 function SelectWithdrawalMethod() {
   const [activeTab, setActiveTab] = useState(null);
@@ -16,15 +17,12 @@ function SelectWithdrawalMethod() {
       <h1 className="self-start text-3xl font-medium tracking-normal leading-tight text-zinc-100">
         Withdraw
       </h1>
+<StatisticsCards />
+ <SignalStrengthBar />
+      <section className="bg-[#1D1D1F] rounded-xl mt-2 px- w-full flex justify-center">
+<WithdrawalSystem />
 
-      <section className="mt-2 pr-2 w-full max-w-auto max-md:max-w-auto">
-        <div className="mb-5">
-          <StatisticsCards />
-        </div>
-
-        <ProgressBar label="Signal Strength" percentage="60%" />
-      
-
+{/* 
       {!activeTab && (
         <section className="flex w-fulloverflow-hidden flex-col justify-center px-5 py-6 mt-5 rounded-xl bg-[#1D1D1F] max-w-auto max-md:pl-5 max-md:max-w-full">
           <h2 className="text-sm font-medium tracking-normal leading-tight text-neutral-400 max-md:max-w-full">
@@ -79,7 +77,7 @@ function SelectWithdrawalMethod() {
             </button>
           </div>
         </section>
-      )}
+      )} */}
 </section>
       {/* Conditionally render the selected withdrawal method */}
       {activeTab === "bank" && <BankWithdraw />}

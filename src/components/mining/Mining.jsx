@@ -1,0 +1,448 @@
+"use client";
+import React, { useState, useEffect } from "react";
+import { useUserAuth } from "../../context/UserAuthContext";
+import MiningTabs from "./MiningTabs";
+import MiningControls from "./MiningControls";
+import MiningStats from "./MiningStats";
+import MiningEquipmentList from "./MiningEquipmentList";
+import MiningBoostersList from "./MiningBoostersList";
+import MiningRewardsList from "./MiningRewardsList";
+import MiningHistoryList from "./MiningHistoryList";
+import MiningPoolsList from "./MiningPoolsList";
+
+export default function Mining() {
+  const { fetchWithAuth, user } = useUserAuth();
+  
+  const [activeTab, setActiveTab] = useState("overview");
+  const [isMining, setIsMining] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+  const [refreshLoading, setRefreshLoading] = useState(false);
+  
+  // Changed to match backend structure
+  const [stats, setStats] = useState({
+    hashRate: 0,
+    coinsMined: 0,
+    earningsToday: 0,
+    totalEarnings: 0,
+    activeTime: 0,
+    powerConsumption: 0,
+    temperature: 0,
+    efficiency: 0,
+    isMining: false,
+    activeSession: null
+  });
+  
+  const [equipment, setEquipment] = useState([]);
+  const [rewards, setRewards] = useState([]);
+  const [boosters, setBoosters] = useState([]);
+  const [activeBoosters, setActiveBoosters] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [pools, setPools] = useState([]);
+  const [selectedPool, setSelectedPool] = useState(null);
+
+  const formatDuration = (seconds) => {
+    if (!seconds) return "0h 0m";
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
+  };
+
+  const formatCurrency = (amount) => {
+    const num = parseFloat(amount);
+    if (isNaN(num)) return `$0.00`;
+    return `$${num.toFixed(2)}`;
+  };
+
+  // FIXED: Load data to match backend response structure
+  const loadMiningData = async (showLoading = true) => {
+    if (showLoading) setLoading(true);
+    
+    try {
+      // Load all data in parallel
+      const [statsRes, equipmentRes, rewardsRes, boostersRes, historyRes, poolsRes] = await Promise.all([
+        fetchWithAuth("/mining/stats"),
+        fetchWithAuth("/mining/equipment"),
+        fetchWithAuth("/mining/rewards"),
+        fetchWithAuth("/mining/boosters"),
+        fetchWithAuth("/mining/history"),
+        fetchWithAuth("/mining/pools")
+      ]);
+
+      // Debug logging
+      console.log('Stats Response:', statsRes);
+      console.log('Equipment Response:', equipmentRes);
+      console.log('Rewards Response:', rewardsRes);
+      console.log('Boosters Response:', boostersRes);
+      console.log('History Response:', historyRes);
+      console.log('Pools Response:', poolsRes);
+
+      // Set data from backend responses
+      if (statsRes.data?.success) {
+        setStats(statsRes.data.stats);
+        setIsMining(statsRes.data.stats?.isMining || false);
+      }
+
+      if (equipmentRes.data?.success) {
+        setEquipment(equipmentRes.data.equipment || []);
+      }
+
+      if (rewardsRes.data?.success) {
+        setRewards(rewardsRes.data.rewards || []);
+      }
+
+      if (boostersRes.data?.success) {
+        setBoosters(boostersRes.data.boosters || []);
+        setActiveBoosters(boostersRes.data.activeBoosters || []);
+      }
+
+      if (historyRes.data?.success) {
+        setHistory(historyRes.data.history || []);
+      }
+
+      if (poolsRes.data?.success) {
+        const poolList = poolsRes.data.pools || [];
+        setPools(poolList);
+        // Set default selected pool if not set
+        if (!selectedPool && poolList.length > 0) {
+          setSelectedPool(poolList[0]);
+        }
+      }
+
+      setMessage("");
+    } catch (err) {
+      console.error('Load mining data error:', err);
+      setMessage("Failed to load mining data");
+      // Fallback data for development
+      setFallbackData();
+    } finally {
+      if (showLoading) setLoading(false);
+      setRefreshLoading(false);
+    }
+  };
+
+  // Fallback data for development
+  const setFallbackData = () => {
+    const mockPools = [
+      { id: '1', name: 'Bitcoin Pool', fee: 1.0, algorithm: 'SHA-256', miners: 12500, uptime: 99.8, minPayout: 0.001 }
+    ];
+    
+    setPools(mockPools);
+    setSelectedPool(mockPools[0]);
+    setEquipment([
+      { id: 'gpu_1', name: 'NVIDIA RTX 4090', type: 'GPU', hashRate: 120, powerConsumption: 450, efficiency: 0.27, status: 'active', temperature: 68, purchasePrice: 1599 },
+      { id: 'gpu_2', name: 'NVIDIA RTX 4080', type: 'GPU', hashRate: 85, powerConsumption: 320, efficiency: 0.27, status: 'active', temperature: 65, purchasePrice: 1199 }
+    ]);
+    setRewards([
+      { id: '1', coin: 'BTC', amount: 0.000123, value: 5.23, status: 'pending', createdAt: new Date() },
+      { id: '2', coin: 'BTC', amount: 0.000089, value: 3.78, status: 'pending', createdAt: new Date() }
+    ]);
+  };
+
+  const handleRefresh = async () => {
+    setRefreshLoading(true);
+    await loadMiningData(false);
+  };
+
+  // FIXED: Updated to match backend parameters
+  const startMining = async () => {
+    try {
+      const response = await fetchWithAuth("/mining/start", {
+        method: "POST",
+        data: { poolId: selectedPool?.id }
+      });
+      
+      if (response.data?.success) {
+        setIsMining(true);
+        setMessage("Mining started successfully!");
+        // Refresh stats
+        const statsRes = await fetchWithAuth("/mining/stats");
+        if (statsRes.data?.success) {
+          setStats(statsRes.data.stats);
+        }
+      } else {
+        setMessage(response.data?.error || "Failed to start mining");
+      }
+    } catch (err) {
+      setMessage(err.message || "Failed to start mining");
+    }
+  };
+
+  const stopMining = async () => {
+    try {
+      const response = await fetchWithAuth("/mining/stop", {
+        method: "POST"
+      });
+      
+      if (response.data?.success) {
+        setIsMining(false);
+        setMessage("Mining stopped successfully!");
+        // Refresh stats
+        const statsRes = await fetchWithAuth("/mining/stats");
+        if (statsRes.data?.success) {
+          setStats(statsRes.data.stats);
+        }
+      } else {
+        setMessage(response.data?.error || "Failed to stop mining");
+      }
+    } catch (err) {
+      setMessage(err.message || "Failed to stop mining");
+    }
+  };
+
+  const claimRewards = async () => {
+    try {
+      const response = await fetchWithAuth("/mining/claim-rewards", {
+        method: "POST"
+      });
+      
+      if (response.data?.success) {
+        setMessage(`Rewards claimed successfully! Amount: $${response.data.amount}`);
+        // Refresh rewards
+        const rewardsRes = await fetchWithAuth("/mining/rewards");
+        if (rewardsRes.data?.success) {
+          setRewards(rewardsRes.data.rewards);
+        }
+        // Refresh stats
+        const statsRes = await fetchWithAuth("/mining/stats");
+        if (statsRes.data?.success) {
+          setStats(statsRes.data.stats);
+        }
+      } else {
+        setMessage(response.data?.error || "Failed to claim rewards");
+      }
+    } catch (err) {
+      setMessage(err.message || "Failed to claim rewards");
+    }
+  };
+
+  const activateBooster = async (boosterId) => {
+    try {
+      const response = await fetchWithAuth("/mining/activate-booster", {
+        method: "POST",
+        data: { boosterId }
+      });
+      
+      if (response.data?.success) {
+        setMessage(`${response.data.booster?.name || "Booster"} activated successfully!`);
+        // Refresh boosters
+        const boostersRes = await fetchWithAuth("/mining/boosters");
+        if (boostersRes.data?.success) {
+          setBoosters(boostersRes.data.boosters);
+          setActiveBoosters(boostersRes.data.activeBoosters);
+        }
+      } else {
+        setMessage(response.data?.error || "Failed to activate booster");
+      }
+    } catch (err) {
+      setMessage(err.message || "Failed to activate booster");
+    }
+  };
+
+  const purchaseEquipment = async (equipmentId) => {
+    try {
+      const response = await fetchWithAuth("/mining/purchase-equipment", {
+        method: "POST",
+        data: { equipmentId }
+      });
+      
+      if (response.data?.success) {
+        setMessage(`${response.data.equipment?.name || "Equipment"} purchased successfully!`);
+        // Refresh equipment
+        const equipmentRes = await fetchWithAuth("/mining/equipment");
+        if (equipmentRes.data?.success) {
+          setEquipment(equipmentRes.data.equipment);
+        }
+        // Refresh stats
+        const statsRes = await fetchWithAuth("/mining/stats");
+        if (statsRes.data?.success) {
+          setStats(statsRes.data.stats);
+        }
+      } else {
+        setMessage(response.data?.error || "Failed to purchase equipment");
+      }
+    } catch (err) {
+      setMessage(err.message || "Failed to purchase equipment");
+    }
+  };
+
+  const switchPool = async (poolId) => {
+    try {
+      const response = await fetchWithAuth("/mining/switch-pool", {
+        method: "POST",
+        data: { poolId }
+      });
+      
+      if (response.data?.success) {
+        setMessage(`Switched to ${response.data.pool?.name || "pool"} successfully!`);
+        setSelectedPool(response.data.pool);
+        // Refresh stats
+        const statsRes = await fetchWithAuth("/mining/stats");
+        if (statsRes.data?.success) {
+          setStats(statsRes.data.stats);
+        }
+      } else {
+        setMessage(response.data?.error || "Failed to switch pool");
+      }
+    } catch (err) {
+      setMessage(err.message || "Failed to switch pool");
+    }
+  };
+
+  // Load data on mount
+  useEffect(() => {
+    loadMiningData();
+    
+    // Poll for updates if mining is active
+    let interval;
+    if (isMining) {
+      interval = setInterval(() => {
+        fetchWithAuth("/mining/stats").then(statsRes => {
+          if (statsRes.data?.success) {
+            setStats(statsRes.data.stats);
+          }
+        });
+      }, 10000); // Update every 10 seconds while mining
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isMining]);
+
+  if (loading) {
+    return (
+      <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+        <div className="w-full flex flex-col gap-4">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="w-full px-3 py-3 rounded-3xl bg-neutral-800 animate-pulse h-24" />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+      {/* Header */}
+      <div className="w-full flex flex-col">
+        <div className="flex justify-between items-center mb-2.5">
+          <div>
+            <h2 className="text-[28px] font-medium tracking-wide leading-tight text-zinc-100">
+              Mining Dashboard
+            </h2>
+            <p className="text-[10px] text-stone-300 mt-1">
+              Mine cryptocurrencies efficiently
+            </p>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <div className={`px-2 py-1 rounded-3xl text-[10px] font-semibold ${
+              isMining ? 'bg-green-700/20 text-green-700' : 'bg-red-600/20 text-red-600'
+            }`}>
+              {isMining ? 'MINING ACTIVE' : 'MINING INACTIVE'}
+            </div>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshLoading}
+              className="p-1.5 bg-neutral-800 hover:bg-neutral-700 rounded-3xl text-stone-300 hover:text-zinc-100"
+            >
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/...refresh-icon..."
+                className={`w-3.5 h-3.5 ${refreshLoading ? 'animate-spin' : ''}`}
+                alt="Refresh"
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Mining Tabs */}
+        <MiningTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+      </div>
+      
+      {/* Content based on active tab */}
+      {activeTab === "overview" && (
+        <div className="w-full mt-5 space-y-5">
+          <MiningStats stats={{ ...stats, isMining }} />
+          <MiningControls 
+            isMining={isMining}
+            selectedPool={selectedPool}
+            onStartMining={startMining}
+            onStopMining={stopMining}
+            onClaimRewards={claimRewards}
+          />
+          {equipment.length > 0 && (
+            <MiningEquipmentList 
+              equipment={equipment.slice(0, 3)}
+              onPurchaseEquipment={purchaseEquipment}
+            />
+          )}
+          {rewards.length > 0 && (
+            <MiningRewardsList 
+              rewards={rewards.slice(0, 3)}
+              onClaimRewards={claimRewards}
+            />
+          )}
+        </div>
+      )}
+
+      {activeTab === "equipment" && (
+        <MiningEquipmentList 
+          equipment={equipment}
+          onPurchaseEquipment={purchaseEquipment}
+          detailed={true}
+        />
+      )}
+
+      {activeTab === "boosters" && (
+        <MiningBoostersList 
+          boosters={boosters}
+          activeBoosters={activeBoosters}
+          onActivateBooster={activateBooster}
+        />
+      )}
+
+      {activeTab === "rewards" && (
+        <MiningRewardsList 
+          rewards={rewards}
+          onClaimRewards={claimRewards}
+          detailed={true}
+        />
+      )}
+
+      {activeTab === "history" && (
+        <MiningHistoryList 
+          history={history}
+          formatDuration={formatDuration}
+        />
+      )}
+
+      {activeTab === "pools" && (
+        <MiningPoolsList 
+          pools={pools}
+          selectedPool={selectedPool}
+          onSelectPool={switchPool}
+        />
+      )}
+
+      {/* Message Display */}
+      {message && (
+        <div className={`fixed bottom-4 right-4 px-4 py-3 rounded-lg text-[10px] ${
+          message.includes('Success') || message.includes('success') || 
+          message.includes('started') || message.includes('claimed') ||
+          message.includes('activated') || message.includes('purchased') ||
+          message.includes('Switched')
+            ? 'bg-green-900/90 text-green-300' 
+            : 'bg-red-900/90 text-red-300'
+        }`}>
+          {message}
+          <button 
+            onClick={() => setMessage("")}
+            className="ml-4 text-stone-300 hover:text-zinc-100"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}

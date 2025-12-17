@@ -93,186 +93,193 @@ const WithdrawalForm = ({ method, onBack }) => {
   message={modal.message}
   type={modal.type}
   onClose={() => setModal({ ...modal, isOpen: false })}
-/>
+/>  
+    <div className="lg:flex lg:justify-between">
+      {/* left side */}
+    <div className="lg:flex lg:bg-[#1D1D1F] lg:rounded-xl lg:p-6 lg:items-center lg:w-[800px] lg:justify-between mb-6">
+      <div className="lg:w-[390px]">
+        <button 
+          onClick={onBack}
+          className="flex items-center text-gray-400 mb-6"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <span className="ml-2 text-[10px]">Back to methods</span>
+        </button>
 
-      <button 
-        onClick={onBack}
-        className="flex items-center text-gray-400 mb-6"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-        <span className="ml-2 text-[10px]">Back to methods</span>
-      </button>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-[16px] font-medium text-[#C7C7C7]">Make Withdrawal</h1>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center">
+              <img
+                src={iconUrl}
+                alt={`${method.title} icon`}
+                className="w-full h-full object-contain rounded-full bg-[#2A2A2A] p-1"
+                onError={(e) => {
+                  console.log('Form Icon load error:', iconUrl);
+                  e.target.src = '/icons/default.png';
+                }}
+              />
+            </div>
+            <span className="text-[#C7C7C7] text-[12px] font-medium">{method.title}</span>
+          </div>
+        </div>
 
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-[16px] font-medium text-[#C7C7C7]">Make Withdrawal</h1>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center">
-            <img
-              src={iconUrl}
-              alt={`${method.title} icon`}
-              className="w-full h-full object-contain rounded-full bg-[#2A2A2A] p-1"
-              onError={(e) => {
-                console.log('Form Icon load error:', iconUrl);
-                e.target.src = '/icons/default.png';
-              }}
+        <div className="space-y-6">
+          <div className="flex justify-between">
+          <label className="text-gray-400 text-[10px] mb-2 block">Amount ({currency})</label>
+            <input
+              type="number"
+              name="amount"
+              value={formData.amount}
+              onChange={handleChange}
+              className="w-[243px] h-[36px] bg-[#2A2A2A] text-[10px] text-white p-4 rounded-lg border-none outline-none"
+              min={method.minAmount}
+              max={method.maxAmount}
+              placeholder={`${currency} ${method.minAmount} - ${method.maxAmount}`}
+
             />
           </div>
-          <span className="text-[#C7C7C7] text-[12px] font-medium">{method.title}</span>
-        </div>
-      </div>
 
-      <div className="space-y-6">
-        <div className="flex justify-between">
-        <label className="text-gray-400 text-[10px] mb-2 block">Amount ({currency})</label>
-          <input
-            type="number"
-            name="amount"
-            value={formData.amount}
-            onChange={handleChange}
-            className="w-[243px] h-[36px] bg-[#2A2A2A] text-[10px] text-white p-4 rounded-lg border-none outline-none"
-            min={method.minAmount}
-            max={method.maxAmount}
-            placeholder={`${currency} ${method.minAmount} - ${method.maxAmount}`}
+          {method.details?.map(detail => (
+            <div key={detail.label} className="flex justify-between">
+              <label className="text-gray-400 text-[10px] mb-2 block">{detail.label}</label>
+              <input
+                type="text"
+                name={detail.label.toLowerCase().replace(/\s+/g, '_')}
+                value={formData[detail.label.toLowerCase().replace(/\s+/g, '_')]}
+                onChange={handleChange}
+                placeholder={`Enter ${detail.label}`}
+                className="w-[243px] h-[36px] bg-[#2A2A2A] text-[10px] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
+                required
+              />
+            </div>
+          ))}
 
-          />
-        </div>
-
-        {method.details?.map(detail => (
-          <div key={detail.label} className="flex justify-between">
-            <label className="text-gray-400 text-[10px] mb-2 block">{detail.label}</label>
+          <div className="flex justify-between">
+            <label className="text-gray-400 text-[10px] mb-2 block">Withdrawal Token</label>
             <input
               type="text"
-              name={detail.label.toLowerCase().replace(/\s+/g, '_')}
-              value={formData[detail.label.toLowerCase().replace(/\s+/g, '_')]}
+              name="withdrawalToken"
+              value={formData.withdrawalToken}
               onChange={handleChange}
-              placeholder={`Enter ${detail.label}`}
+              placeholder="Enter Withdrawal Token"
               className="w-[243px] h-[36px] bg-[#2A2A2A] text-[10px] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
               required
             />
           </div>
-        ))}
+            <div className="flex justify-between">
+            <button 
+              type="button"
+              className="text-blue-500 text-[10px] mt-1"
+              onClick={() => {
+                setModal({
+                  isOpen: true,
+                  title: 'Oops!',
+                  message: 'Please contact support to acquire your withdrawal token.',
+                  type: 'warning'
+                });
+              }}
+            >
+              Request Withdrawal Token
+            </button>
+            <p className="text-yellow-500 text-[10px] mt-1">
+              min {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: method.currency,
+              }).format(method.minAmount)} – max {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: method.currency,
+              }).format(method.maxAmount)}
+            </p>
 
-        <div className="flex justify-between">
-          <label className="text-gray-400 text-[10px] mb-2 block">Withdrawal Token</label>
-          <input
-            type="text"
-            name="withdrawalToken"
-            value={formData.withdrawalToken}
-            onChange={handleChange}
-            placeholder="Enter Withdrawal Token"
-            className="w-[243px] h-[36px] bg-[#2A2A2A] text-[10px] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
-            required
-          />
+                  </div>
+          
         </div>
-          <div className="flex justify-between">
-          <button 
-            type="button"
-            className="text-blue-500 text-[10px] mt-1"
-            onClick={() => {
-              setModal({
-                isOpen: true,
-                title: 'Oops!',
-                message: 'Please contact support to acquire your withdrawal token.',
-                type: 'warning'
-              });
-            }}
-          >
-            Request Withdrawal Token
-          </button>
-          <p className="text-yellow-500 text-[10px] mt-1">
-            min {new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: method.currency,
-            }).format(method.minAmount)} – max {new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: method.currency,
-            }).format(method.maxAmount)}
-          </p>
-
-                </div>
-        
-      </div>
-
-
-      <button
-        onClick={handleSubmit}
-        disabled={loading || success}
-        className={`w-full ${success ? 'bg-green-500' : 'bg-[#2563EB]'} text-white py-4 rounded-full font-medium text-[12px] my-5 disabled:opacity-50`}
-      >
-        {loading ? 'Processing...' : success ? 'Success!' : 'Submit'}
-      </button>
-
-      <article className="overflow-hidden px-3 py-4 mt-2 w-full rounded-xl bg-[#1D1D1F]">
-        <header className="w-full font-medium">
-          <div className="flex gap-2.5 items-center w-full text-[14px] tracking-normal leading-tight text-zinc-100">
-            <h2 className="flex-1 shrink self-stretch my-auto basis-0">Withdrawal Instructions:</h2>
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/28f76ca51ab932c417ae5480603e7ceb025031fd?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-              className="object-contain shrink-0 self-stretch my-auto aspect-square w-[18px]"
-              alt="Information icon"
-            />
-          </div>
-          <p className="mt-3 text-[10px] text-neutral-500">
-            To initiate a withdrawal, please follow these simple steps:
-          </p>
-        </header>
-        <div className="flex gap-1.5 items-start mt-1.5 text-[10px] leading-4 text-neutral-400">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-            className="object-contain shrink-0 aspect-square w-[18px]"
-            alt="Step icon"
-          />
-          <p className="flex-1 shrink basis-0">
-            Payment Details: Request a withdrawal by providing the necessary payment 
-            information, such as your preferred method and account details.
-          </p>
-        </div>
-        <div className="flex gap-1.5 items-start mt-1.5 text-[10px] leading-4 text-neutral-400">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-            className="object-contain shrink-0 aspect-square w-[18px]"
-            alt="Step icon"
-          />
-          <p className="flex-1 shrink basis-0">
-            Verification: Our team will promptly review your withdrawal request and ensure 
-            all the provided details are accurate and complete.
-          </p>
-        </div>
-        <div className="flex gap-1.5 items-start mt-1.5 text-[10px] leading-4 text-neutral-400">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-            className="object-contain shrink-0 aspect-square w-[18px]"
-            alt="Step icon"
-          />
-          <p className="flex-1 shrink basis-0">
-            Processing: Once verified, your withdrawal will be processed promptly. The processing time 
-            may vary based on your chosen payment method.
-          </p>
-        </div>
-        <div className="flex gap-1.5 items-start mt-4 text-[10px] leading-4 text-neutral-400">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-            className="object-contain shrink-0 aspect-square w-[18px]"
-            alt="Step icon"
-          />
-          <p className="flex-1 shrink basis-0">
-            Confirmation: You will receive an email notification confirming 
-            the successful completion of your withdrawal.
-          </p>
-        </div>
-        <p className="mt-4 text-[10px] text-neutral-400">
-          If you have any questions or require assistance, our dedicated support
-          team is available to assist you throughout the withdrawal process.
-        </p>
-        <p className="mt-4 text-[10px] text-neutral-400">
-          Once completed, our team will verify the payment and credit the amount to 
-          your account promptly. For any assistance, our dedicated support team is 
-          available to help you.
-        </p>
-      </article>
     </div>
+        <div className="lg:w-[300px] lg:mt-0">
+          <button
+          onClick={handleSubmit}
+          disabled={loading || success}
+          className={`w-full ${success ? 'bg-green-500' : 'bg-[#2563EB]'} text-white py-4 rounded-full font-medium text-[12px] my-5 disabled:opacity-50`}
+        >
+          {loading ? 'Processing...' : success ? 'Success!' : 'Submit'}
+        </button>
+        </div>
+    </div>
+    {/* right side */}
+  <article className="overflow-hidden px-3 py-4 mt-2 lg:w-[350px] w-full rounded-xl bg-[#1D1D1F]">
+    <header className="w-full font-medium">
+      <div className="flex gap-2.5 items-center w-full text-[14px] tracking-normal leading-tight text-zinc-100">
+        <h2 className="flex-1 shrink self-stretch my-auto basis-0">Withdrawal Instructions:</h2>
+        <img
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/28f76ca51ab932c417ae5480603e7ceb025031fd?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
+          className="object-contain shrink-0 self-stretch my-auto aspect-square w-[18px]"
+          alt="Information icon"
+        />
+      </div>
+      <p className="mt-3 text-[10px] text-neutral-500">
+        To initiate a withdrawal, please follow these simple steps:
+      </p>
+    </header>
+    <div className="flex gap-1.5 items-start mt-1.5 text-[10px] leading-4 text-neutral-400">
+      <img
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
+        className="object-contain shrink-0 aspect-square w-[18px]"
+        alt="Step icon"
+      />
+      <p className="flex-1 shrink basis-0">
+        Payment Details: Request a withdrawal by providing the necessary payment 
+        information, such as your preferred method and account details.
+      </p>
+    </div>
+    <div className="flex gap-1.5 items-start mt-1.5 text-[10px] leading-4 text-neutral-400">
+      <img
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
+        className="object-contain shrink-0 aspect-square w-[18px]"
+        alt="Step icon"
+      />
+      <p className="flex-1 shrink basis-0">
+        Verification: Our team will promptly review your withdrawal request and ensure 
+        all the provided details are accurate and complete.
+      </p>
+    </div>
+    <div className="flex gap-1.5 items-start mt-1.5 text-[10px] leading-4 text-neutral-400">
+      <img
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
+        className="object-contain shrink-0 aspect-square w-[18px]"
+        alt="Step icon"
+      />
+      <p className="flex-1 shrink basis-0">
+        Processing: Once verified, your withdrawal will be processed promptly. The processing time 
+        may vary based on your chosen payment method.
+      </p>
+    </div>
+    <div className="flex gap-1.5 items-start mt-4 text-[10px] leading-4 text-neutral-400">
+      <img
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/290eed2833e1286c06dece9ea7d1150d7b0e1dfe?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
+        className="object-contain shrink-0 aspect-square w-[18px]"
+        alt="Step icon"
+      />
+      <p className="flex-1 shrink basis-0">
+        Confirmation: You will receive an email notification confirming 
+        the successful completion of your withdrawal.
+      </p>
+    </div>
+    <p className="mt-4 text-[10px] text-neutral-400">
+      If you have any questions or require assistance, our dedicated support
+      team is available to assist you throughout the withdrawal process.
+    </p>
+    <p className="mt-4 text-[10px] text-neutral-400">
+      Once completed, our team will verify the payment and credit the amount to 
+      your account promptly. For any assistance, our dedicated support team is 
+      available to help you.
+    </p>
+  </article>
+    </div>
+    </div>
+    
   );
 };
 
@@ -331,83 +338,94 @@ const WithdrawalInterface = () => {
     />;
   }
 
-  return (
-    <div className="bg-[#161617] mx-3 text-white min-h-screen">
-      <div className="max-w-md mx-auto">
-        <div className="p-6 flex justify-between">
-          <div>
-            <h1 className="text-[16px] font-medium mb-2">Withdraw</h1>
-          </div>
-          <div className="text-right">
-            <div className="text-[10px] text-gray-400 mb-1">Available Balance</div>
-            <div className="text-[16px] font-medium">
-              {currency} {balance.toLocaleString()}
-            </div>
-          </div>
-
-        </div>
-
-        <div className="px-6 mb-6">
-          <div className="text-[12px] text-gray-400 mb-1">From</div>
-          <div className="bg-[#242426] border border-[#505050] rounded-[10px] w-full h-[80px] p-4 flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center mr-3">
-                <img src={Logo} alt="Logo" />
+ return (
+  <div className="bg-[#1D1D1F] md:rounded-[20px] text-white min-h-screen w-full px-4 py-6 md:px-5">
+    <div className="w-full mx-auto">
+      {!selectedMethod ? (
+        <>
+          {/* Header */}
+          <div className="flex md:hidden justify-between md:w-[350px] mb-6">
+            <h1 className="text-[16px] font-medium">Withdraw</h1>
+            <div className="text-right">
+              <div className="text-[10px] text-gray-400 mb-1">Available Balance</div>
+              <div className="text-[16px] font-medium">
+                {currency} {balance.toLocaleString()}
               </div>
-              <span className="text-white text-[12px] font-medium">Balance</span>
             </div>
-            <span className="text-white text-[16px] font-medium">
-              {currency} {balance.toLocaleString()}
-            </span>
-
           </div>
-        </div>
 
-        <div className="px-6">
-          <div className="text-sm text-gray-400 mb-3">To</div>
-          {methods.length === 0 && (
-            <div className="text-center text-gray-400 text-[12px]">
-              No withdrawal methods available
-            </div>
-          )}
-          <div className="space-y-3">
-            {methods.map((method) => {
-              const iconUrl = method.icon 
-                ? `${STATIC_BASE_URL}${method.icon.replace(/^\/icons\//, '/icons/')}`
-                : '/icons/default.png';
-
-              return (
-                <div
-                  key={method._id}
-                  className="bg-[#242426] border border-[#505050] rounded-[10px] w-full h-[80px] p-4 flex items-center justify-between cursor-pointer hover:bg-gray-750 transition-colors"
-                  onClick={() => setSelectedMethod(method)}
-                >
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center mr-3">
-                      <img
-                        src={iconUrl}
-                        alt={`${method.title} icon`}
-                        className="w-full h-full object-contain rounded-full bg-[#2A2A2A] p-1"
-                        onError={(e) => {
-                          e.target.src = '/icons/default.png';
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <span className="text-white text-[12px] font-medium block">{method.title}</span>
-                    </div>
-                  </div>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+          {/* From Balance Section */}
+          <div className="mb-6  md:w-[350px]">
+            <div className="text-[12px] text-gray-400 mb-1">From</div>
+            <div className="bg-[#242426] border border-[#505050] rounded-[10px] w-full h-[80px] p-4 flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                  <img src={Logo} alt="Logo" />
                 </div>
-              );
-            })}
+                <span className="text-white text-[12px] font-medium">Balance</span>
+              </div>
+              <span className="text-white text-[16px] font-medium">
+                {currency} {balance.toLocaleString()}
+              </span>
+            </div>
           </div>
-        </div>
-      </div>
+
+          {/* To Methods */}
+          <div>
+            <div className="text-sm text-gray-400 mb-3">To</div>
+            {methods.length === 0 ? (
+              <div className="text-center text-gray-400 text-[12px]">
+                No withdrawal methods available
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-4">
+                {methods.map((method) => {
+                  const iconUrl = method.icon
+                    ? `${STATIC_BASE_URL}${method.icon.replace(/^\/icons\//, '/icons/')}`
+                    : '/icons/default.png';
+
+                  return (
+                    <div
+                      key={method._id}
+                      className="bg-[#242426] border border-[#505050] rounded-[10px] w-full md:w-[calc(33.333%-1rem)] h-[80px] p-4 flex items-center justify-between cursor-pointer hover:bg-gray-750 transition-colors"
+                      onClick={() => setSelectedMethod(method)}
+                    >
+                      <div className="flex items-center">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                          <img
+                            src={iconUrl}
+                            alt={`${method.title} icon`}
+                            className="w-full h-full object-contain rounded-full bg-[#2A2A2A] p-1"
+                            onError={(e) => {
+                              e.target.src = '/icons/default.png';
+                            }}
+                          />
+                        </div>
+                        <span className="text-white text-[12px] font-medium">{method.title}</span>
+                      </div>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M9 18L15 12L9 6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <WithdrawalForm method={selectedMethod} onBack={() => setSelectedMethod(null)} />
+      )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default WithdrawalInterface;

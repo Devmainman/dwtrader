@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import StatCard from "./StatCard";
-import ProgressBar from "./ProgressBar";
+import SignalStrengthBar from "../trade/SignalStrengthBar";
 import TicketCard from "./TicketCard";
 import Button from "./Button";
 import StatisticsCards from "../home/StatisticsCards";
@@ -36,7 +36,7 @@ function SupportTicket() {
         <StatisticsCards />
       </div>
       <div className="mt-2">
-        <ProgressBar label="Signal Strength" percentage={60} />
+        <SignalStrengthBar />
       </div>
 
       <section className="flex flex-col px-5 py-6 mt-5 rounded-xl bg-[#1D1D1F] max-w-[1128px] w-full mx-auto">
@@ -96,7 +96,7 @@ function SupportTicket() {
       <StatisticsCards />
 
       <div className="mt-4 w-full max-w-[1128px] mx-auto">
-        <ProgressBar label="Signal Strength" percentage={60} />
+        <SignalStrengthBar />
       </div>
 
       <div className="flex justify-between items-center mt-6 bg-[#1D1D1F] rounded-xl p-6 text-[#F3F3F3] w-full max-w-[1128px] mx-auto">

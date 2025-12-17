@@ -24,7 +24,7 @@ const Navbar = ({ style = {} }) => {
       active: homeActive,
       inactive: homeInactive
     },
-    trade: {
+    trademain: {
       active: tradeActive,
       inactive: tradeInactive
     },
@@ -54,9 +54,9 @@ const Navbar = ({ style = {} }) => {
           <span className="nav-label">Home</span>
         </Link>
 
-        <Link to="/trade" className={`nav-item ${location.pathname === "/trade" ? "active" : ""}`}>
+        <Link to="/trademain" className={`nav-item ${location.pathname === "/trademain" ? "active" : ""}`}>
           <img
-            src={location.pathname === "/trade" ? icons.trade.active : icons.trade.inactive}
+            src={location.pathname === "/trademain" ? icons.trademain.active : icons.trademain.inactive}
             alt="Trade"
             className="nav-icon"
           />

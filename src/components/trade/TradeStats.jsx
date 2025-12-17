@@ -14,10 +14,12 @@ function TradeStats() {
     error: null
   });
 
+  const [userCurrency, setUserCurrency] = useState("USD"); // Default fallback
+
   useEffect(() => {
     const fetchTradeStats = async () => {
       try {
-        const [profitRes, amountRes, referralRes] = await Promise.all([
+        const [profitRes, amountRes, referralRes, userRes] = await Promise.all([
           axios.get(`${API_BASE_URL}/trading/total-profit`, {
             headers: { Authorization: `Bearer ${token}` }
           }),
@@ -26,8 +28,13 @@ function TradeStats() {
           }),
           axios.get(`${API_BASE_URL}/referrals/stats`, {
             headers: { Authorization: `Bearer ${token}` }
+          }),
+          axios.get(`${API_BASE_URL}/verification/users`, {
+            headers: { Authorization: `Bearer ${token}` }
           })
         ]);
+
+        const userCurrencyCode = userRes?.data?.currency || "USD";
 
         setStats({
           totalProfit: profitRes.data.totalProfit || 0,
@@ -36,6 +43,8 @@ function TradeStats() {
           loading: false,
           error: null
         });
+
+        setUserCurrency(userCurrencyCode);
       } catch (error) {
         console.error("Error fetching stats:", error);
         setStats(prev => ({
@@ -51,10 +60,18 @@ function TradeStats() {
     }
   }, [token]);
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: userCurrency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  };
+
   if (stats.loading) {
     return (
       <section className="flex flex-wrap items-center justify-between w-full font-medium text-xs sm:text-sm md:text-base">
-        {/* Loading skeletons */}
         {[1, 2, 3].map((item) => (
           <div key={item} className="flex flex-col justify-center items-center py-3 flex-1 min-w-0 border-r border-neutral-500 last:border-r-0">
             <div className="h-4 w-20 bg-gray-700 rounded animate-pulse"></div>
@@ -87,7 +104,7 @@ function TradeStats() {
             <p className="text-[10px] sm:text-xs md:text-sm truncate">Total Profit</p>
           </div>
           <p className="mt-2 text-center text-zinc-100 text-xs sm:text-sm md:text-base font-semibold">
-            $ {stats.totalProfit.toFixed(2)}
+            {formatCurrency(stats.totalProfit)}
           </p>
         </div>
       </div>
@@ -104,7 +121,7 @@ function TradeStats() {
             <p className="text-[10px] sm:text-xs md:text-sm truncate">Total Trades</p>
           </div>
           <p className="mt-2 text-center text-zinc-100 text-xs sm:text-sm md:text-base font-semibold">
-            $ {stats.totalAmount.toFixed(2)}
+            {formatCurrency(stats.totalAmount)}
           </p>
         </div>
       </div>
@@ -121,7 +138,7 @@ function TradeStats() {
             <p className="text-[10px] sm:text-xs md:text-sm truncate">Referral Earnings</p>
           </div>
           <p className="mt-2 text-center text-zinc-100 text-xs sm:text-sm md:text-base font-semibold">
-            $ {stats.referralEarnings.toFixed(2)}
+            {formatCurrency(stats.referralEarnings)}
           </p>
         </div>
       </div>

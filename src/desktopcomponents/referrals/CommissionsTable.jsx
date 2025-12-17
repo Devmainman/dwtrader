@@ -1,41 +1,10 @@
 import React from "react";
 import CommissionEntry from "./CommissionEntry";
+import ReferredUsersList from "../../components/referrals/ReferredUsersList"
 
 const CommissionsTable = () => {
   // Sample data for commission entries
-  const commissions = [
-    {
-      id: 1,
-      name: "Adesuwa Lateef",
-      amount: "10.00 NGN",
-      date: "27 Nov, 2024",
-    },
-    {
-      id: 2,
-      name: "Adesuwa Lateef",
-      amount: "10.00 NGN",
-      date: "27 Nov, 2024",
-    },
-    {
-      id: 3,
-      name: "Adesuwa Lateef",
-      amount: "10.00 NGN",
-      date: "27 Nov, 2024",
-    },
-    {
-      id: 4,
-      name: "Adesuwa Lateef",
-      amount: "10.00 NGN",
-      date: "27 Nov, 2024",
-    },
-    {
-      id: 5,
-      name: "Adesuwa Lateef",
-      amount: "10.00 NGN",
-      date: "27 Nov, 2024",
-    },
-  ];
-
+ 
   return (
     <section className="flex overflow-hidden grow shrink gap-2.5 justify-center items-center p-4 rounded-xl border border-solid bg-[#1D1D1F] border-neutral-600 min-w-60 w-[776px] max-md:max-w-full">
       <div className="flex-1 shrink self-stretch my-auto w-full basis-0 min-w-60 max-md:max-w-full">
@@ -67,14 +36,9 @@ const CommissionsTable = () => {
           </div>
         </div>
 
-        {commissions.map((commission) => (
-          <CommissionEntry
-            key={commission.id}
-            name={commission.name}
-            amount={commission.amount}
-            date={commission.date}
-          />
-        ))}
+        
+          <ReferredUsersList />
+      
       </div>
     </section>
   );

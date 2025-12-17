@@ -1,7 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSidebar } from "../../context/SidebarContext";
 import { useUserAuth } from "../../context/UserAuthContext";
+
+// Import Lucide icons for mining and copy trading
+import { 
+  Cpu as MiningIcon, 
+  Users as CopyTradingIcon,
+  ChevronDown,
+  ChevronUp,
+  TrendingUp
+} from "lucide-react";
 
 import dashboard from "../../assets/dashboard.svg";
 import deposit from "../../assets/deposit.svg";
@@ -21,6 +30,7 @@ function SideBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const sidebarRef = useRef(null);
+  const [tradingGroupOpen, setTradingGroupOpen] = useState(true);
 
   // Close sidebar on click outside
   useEffect(() => {
@@ -47,13 +57,42 @@ function SideBar() {
       console.error("Logout failed:", error);
     }
   };
-  
-  
 
   const menuItems = [
     { name: "Dashboard", path: "/", icon: dashboard },
     { name: "Profile", path: "/settings", icon: profile },
-    { name: "Trading Activities", path: "/trade", icon: tradingactivities },
+    
+    // Trading Group - Collapsible Section
+    {
+      name: "Trading",
+      isGroup: true,
+      items: [
+        { 
+          name: "Trading Activities", 
+          path: "/trade", 
+          icon: tradingactivities 
+        },
+        { 
+          name: "Live Trading", 
+          path: "/trademain", 
+          icon: "trading",
+          LucideIcon: TrendingUp 
+        },
+        { 
+          name: "Copy Trading", 
+          path: "/copytrade", 
+          icon: "copytrading",
+          LucideIcon: CopyTradingIcon
+        },
+        { 
+          name: "Mining", 
+          path: "/mining", 
+          icon: "mining",
+          LucideIcon: MiningIcon
+        },
+      ]
+    },
+
     { name: "Deposit", path: "/deposite", icon: deposit },
     { name: "Withdraw", path: "/withdraw", icon: withdraw },
     { name: "Transaction History", path: "/transactionhistory", icon: transaction },
@@ -93,7 +132,6 @@ function SideBar() {
       />
     </svg>
   );
-  
 
   return (
     <>
@@ -115,8 +153,71 @@ function SideBar() {
         </div>
 
         <ul className="mt-4 w-full text-sm font-medium tracking-normal leading-tight text-stone-300">
-          {menuItems.map(({ name, path, icon }, index) => {
-            const isActive = location.pathname === path;
+          {menuItems.map((item, index) => {
+            if (item.isGroup) {
+              return (
+                <li key={index} className="mb-2">
+                  {/* Trading Group Header */}
+                  <button
+                    onClick={() => setTradingGroupOpen(!tradingGroupOpen)}
+                    className="flex justify-between items-center w-full px-8 py-3 rounded-3xl hover:bg-white/10 transition-all"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
+                        style={{
+                          background: "linear-gradient(80deg,#EB25C6_18.83%,#0E7BF8_103.47%)",
+                        }}
+                      >
+                        <TrendingUp className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="text-stone-300 font-medium">{item.name}</span>
+                    </div>
+                    {tradingGroupOpen ? (
+                      <ChevronUp className="w-4 h-4 text-stone-400" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-stone-400" />
+                    )}
+                  </button>
+
+                  {/* Trading Group Items */}
+                  {tradingGroupOpen && (
+                    <div className="ml-8 pl-8 mt-1 border-l border-white/20">
+                      {item.items.map((subItem, subIndex) => {
+                        const isActive = location.pathname === subItem.path;
+                        return (
+                          <div
+                            key={subIndex}
+                            className={`flex gap-2.5 items-center px-4 mt-2 w-full rounded-3xl min-h-[45px] transition-all ${
+                              isActive ? "bg-black text-white font-semibold" : "hover:bg-white/10"
+                            }`}
+                          >
+                            <div
+                              className="flex items-center justify-center rounded-full w-[30px] h-[30px]"
+                              style={{
+                                background: "linear-gradient(80deg,#EB25C6_18.83%,#0E7BF8_103.47%)",
+                              }}
+                            >
+                              {subItem.LucideIcon ? (
+                                <subItem.LucideIcon className="w-4 h-4 text-white" />
+                              ) : (
+                                <img src={subItem.icon} alt={`${subItem.name} Icon`} className="w-4 h-4" />
+                              )}
+                            </div>
+                            <Link to={subItem.path} className="w-full">
+                              {subItem.name}
+                            </Link>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </li>
+              );
+            }
+
+            // Regular menu items
+            const isActive = location.pathname === item.path;
             return (
               <li
                 key={index}
@@ -130,10 +231,14 @@ function SideBar() {
                     background: "linear-gradient(80deg,#EB25C6_18.83%,#0E7BF8_103.47%)",
                   }}
                 >
-                  <img src={icon} alt={`${name} Icon`} className="w-5 h-5" />
+                  {item.LucideIcon ? (
+                    <item.LucideIcon className="w-5 h-5 text-white" />
+                  ) : (
+                    <img src={item.icon} alt={`${item.name} Icon`} className="w-5 h-5" />
+                  )}
                 </div>
-                <Link to={path} className="w-full">
-                  {name}
+                <Link to={item.path} className="w-full">
+                  {item.name}
                 </Link>
               </li>
             );

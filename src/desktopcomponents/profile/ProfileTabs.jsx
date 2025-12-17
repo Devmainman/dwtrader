@@ -11,7 +11,7 @@ function ProfileTabs({ onTabChange }) {
   ];
 
   return (
-    <nav className="flex overflow-hidden flex-wrap gap-8 items-center mt-5 w-full text-xs max-w-[1129px] text-stone-300 max-md:max-w-full">
+    <nav className="flex overflow-hidden flex-wrap gap-8 items-center mt-5 w-full text-xs max-w-[1229px] text-stone-300 max-md:max-w-full">
       {tabs.map((tab) => (
         <button
           key={tab}
