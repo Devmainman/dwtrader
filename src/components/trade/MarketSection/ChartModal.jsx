@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-function ChartModal({ show, onClose, selectedPair, priceFeed, chartTimeframe, setChartTimeframe, chartKey, onPlaceOrder }) {
+function ChartModal({ show, onClose, selectedPair, priceFeed, chartTimeframe, setChartTimeframe, chartKey, onPlaceOrder, amount, setAmount }) {
   if (!show) return null;
 
   const timeframes = [
@@ -93,6 +93,14 @@ function ChartModal({ show, onClose, selectedPair, priceFeed, chartTimeframe, se
               
               <div className="flex justify-between items-center gap-2 w-full sm:w-auto">
                 <div className="flex gap-2">
+                  <input
+  type="number"
+  placeholder="Amount"
+  value={amount}
+  onChange={(e) => setAmount(e.target.value)}
+  className="px-3 py-2 bg-neutral-800 text-white rounded-lg text-xs w-24"
+/>
+
                   <button
                     onClick={() => onPlaceOrder("buy")}
                     className="px-3 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-xs font-medium text-white transition-colors"

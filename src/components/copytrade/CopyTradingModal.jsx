@@ -1,7 +1,12 @@
 "use client";
 import React, { useState } from "react";
 
-function CopyTradingModal({ trader, userBalance, onCopy, onClose }) {
+function CopyTradingModal({ trader, userBalance, userCurrency, onCopy, onClose }) {
+
+  console.log('CopyTradingModal rendered with trader:', trader); // Add this
+  console.log('Trader ID:', trader?.id); // Add this
+
+
   const [amount, setAmount] = useState("");
   const [allocationType, setAllocationType] = useState("percentage");
   const [riskLevel, setRiskLevel] = useState("same");
@@ -25,40 +30,89 @@ function CopyTradingModal({ trader, userBalance, onCopy, onClose }) {
   const allocation = calculateAllocation();
 
   const formatCurrency = (amount) => {
-    return `$${parseFloat(amount).toFixed(2)}`;
+    const formattedAmount = parseFloat(amount).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    
+    // Add currency symbol based on currency code
+    const currencySymbols = {
+      'USD': '$',
+      'EUR': '€',
+      'GBP': '£',
+      'JPY': '¥',
+      'CAD': 'C$',
+      'AUD': 'A$',
+      'CHF': 'CHF',
+      'CNY': '¥',
+      'INR': '₹',
+      'KRW': '₩',
+      'RUB': '₽',
+      'TRY': '₺',
+      'BRL': 'R$',
+      'MXN': '$',
+      'ZAR': 'R',
+      'NGN': '₦',
+      'GHS': 'GH₵',
+      'KES': 'KSh',
+      'UGX': 'USh',
+      'TZS': 'TSh'
+    };
+    
+    const symbol = currencySymbols[userCurrency] || userCurrency;
+    return `${symbol}${formattedAmount}`;
   };
 
   const handleCopy = () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      alert("Please enter a valid amount");
-      return;
-    }
+  if (!amount || parseFloat(amount) <= 0) {
+    alert("Please enter a valid amount");
+    return;
+  }
 
-    if (allocationType === "percentage" && parseFloat(amount) > 100) {
-      alert("Percentage cannot exceed 100%");
-      return;
-    }
+  if (allocationType === "percentage" && parseFloat(amount) > 100) {
+    alert("Percentage cannot exceed 100%");
+    return;
+  }
 
-    if (allocationType === "fixed" && parseFloat(amount) > userBalance) {
-      alert("Amount exceeds your available balance");
-      return;
-    }
+  if (allocationType === "fixed" && parseFloat(amount) > userBalance) {
+    alert("Amount exceeds your available balance");
+    return;
+  }
 
-    onCopy(trader.id, allocation.amount);
-  };
+  // Debug: Check all possible ID properties
+  console.log('Trader IDs available:', {
+    id: trader?.id,
+    _id: trader?._id,
+    traderId: trader?.traderId,
+    username: trader?.username
+  });
+
+  // Try different ID properties in order of priority
+  const traderId = trader?.id || trader?.traderId || trader?._id;
+  
+  if (!traderId) {
+    alert(`Trader information is missing. Available IDs: _id=${trader?._id}, traderId=${trader?.traderId}`);
+    return;
+  }
+
+  console.log('Sending copy request with traderId:', traderId, 'amount:', allocation.amount);
+  onCopy(traderId, allocation.amount);
+};
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-black/70 backdrop-blur-sm pb-30">
       <div className="bg-neutral-900 rounded-3xl p-5 max-w-[480px] w-full max-h-[90vh] overflow-y-auto border border-neutral-800">
         {/* Header */}
         <div className="flex items-center gap-2.5 mb-5">
           <img
-            src={trader.avatar}
-            alt={trader.username}
+            src={trader?.avatar || `https://ui-avatars.com/api/?name=${trader?.username || 'Trader'}&background=6366f1&color=fff`}
+            alt={trader?.username || 'Trader'}
             className="w-9 h-9 rounded-full"
           />
           <div>
-            <h3 className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">Copy {trader.username}</h3>
+            <h3 className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">
+              Copy {trader?.username || trader?.fullName || 'Trader'}
+            </h3>
             <p className="text-[10px] text-stone-300">Start copying trades automatically</p>
           </div>
           <button
@@ -69,26 +123,28 @@ function CopyTradingModal({ trader, userBalance, onCopy, onClose }) {
           </button>
         </div>
 
-        {/* Trader Stats */}
+       {/* Trader Stats */}
         <div className="mb-5 px-2.5 py-3 bg-neutral-800 rounded-3xl border border-neutral-900">
           <div className="grid grid-cols-2 gap-4 text-[10px]">
             <div>
               <div className="text-stone-300">Profit</div>
-              <div className={`text-[12px] font-medium tracking-wide leading-tight ${trader.profitPercent >= 0 ? 'text-green-700' : 'text-red-600'}`}>
-                {trader.profitPercent >= 0 ? '+' : ''}{trader.profitPercent.toFixed(2)}%
+              <div className={`text-[12px] font-medium tracking-wide leading-tight ${(trader?.performance?.profitPercent || 0) >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                {(trader?.performance?.profitPercent || 0) >= 0 ? '+' : ''}{(trader?.performance?.profitPercent || 0).toFixed(2)}%
               </div>
             </div>
             <div>
               <div className="text-stone-300">Win Rate</div>
-              <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">{trader.winRate.toFixed(1)}%</div>
+              <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">
+                {(trader?.performance?.winRate || 0).toFixed(1)}%
+              </div>
             </div>
             <div>
               <div className="text-stone-300">Trades</div>
-              <div className="text-zinc-100 font-semibold">{trader.totalTrades}</div>
+              <div className="text-zinc-100 font-semibold">{trader?.performance?.totalTrades || 0}</div>
             </div>
             <div>
               <div className="text-stone-300">Copiers</div>
-              <div className="text-zinc-100 font-semibold">{trader.totalCopiers}</div>
+              <div className="text-zinc-100 font-semibold">{trader?.socialStats?.copiers || 0}</div>
             </div>
           </div>
         </div>
@@ -116,7 +172,7 @@ function CopyTradingModal({ trader, userBalance, onCopy, onClose }) {
         {/* Amount Input */}
         <div className="mb-2.5">
           <label className="block text-[10px] text-stone-300 mb-1">
-            {allocationType === "percentage" ? "Percentage of Balance" : "Fixed Amount (USD)"}
+            {allocationType === "percentage" ? "Percentage of Balance" : `Fixed Amount  (${userCurrency})`}
           </label>
           <div className="relative">
             {allocationType === "percentage" ? (
@@ -153,7 +209,7 @@ function CopyTradingModal({ trader, userBalance, onCopy, onClose }) {
           <div className="flex gap-1 mt-1">
             {(allocationType === "percentage" ? [10, 25, 50, 75, 100] : [100, 500, 1000, 5000]).map((value) => (
               <button
-                key={value}
+                key={value}  // Add this line
                 onClick={() => setAmount(value.toString())}
                 className="px-2 py-1 text-[10px] bg-neutral-700 hover:bg-neutral-600 rounded-3xl text-stone-300 hover:text-zinc-100"
               >
@@ -172,7 +228,7 @@ function CopyTradingModal({ trader, userBalance, onCopy, onClose }) {
           <div className="flex justify-between text-[10px] mb-1">
             <span className="text-stone-300">Allocation Amount:</span>
             <span className="text-zinc-100 font-semibold">
-              {amount ? formatCurrency(allocation.amount) : "$0.00"}
+              {amount ? formatCurrency(allocation.amount) : "0.00"}
             </span>
           </div>
           <div className="flex justify-between text-[10px]">
@@ -192,21 +248,21 @@ function CopyTradingModal({ trader, userBalance, onCopy, onClose }) {
             <div className="text-[10px] text-stone-300 mb-1">Risk Level</div>
             <div className="flex gap-1">
               {["same", "low", "medium", "high"].map((level) => (
-                <button
-                  key={level}
-                  onClick={() => setRiskLevel(level)}
-                  className={`flex-1 px-2.5 py-1.5 rounded-3xl text-[10px] font-semibold ${
-                    riskLevel === level
-                      ? level === 'same' ? 'bg-blue-700/80 text-zinc-100' :
-                        level === 'low' ? 'bg-green-700/80 text-zinc-100' :
-                        level === 'medium' ? 'bg-yellow-700/80 text-zinc-100' :
-                        'bg-red-600/80 text-zinc-100'
-                      : "bg-neutral-800 text-stone-300"
-                  }`}
-                >
-                  {level === 'same' ? 'Same as Trader' : level}
-                </button>
-              ))}
+              <button
+                key={level}  // Add key prop here too
+                onClick={() => setRiskLevel(level)}
+                className={`flex-1 px-2.5 py-1.5 rounded-3xl text-[10px] font-semibold ${
+                  riskLevel === level
+                    ? level === 'same' ? 'bg-blue-700/80 text-zinc-100' :
+                      level === 'low' ? 'bg-green-700/80 text-zinc-100' :
+                      level === 'medium' ? 'bg-yellow-700/80 text-zinc-100' :
+                      'bg-red-600/80 text-zinc-100'
+                    : "bg-neutral-800 text-stone-300"
+                }`}
+              >
+                {level === 'same' ? 'Same as Trader' : level}
+              </button>
+            ))}
             </div>
           </div>
           

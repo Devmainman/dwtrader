@@ -14,34 +14,30 @@ function TopTradersList({ traders, onSelectTrader, onShowStats }) {
 
   const displayTraders = traders.slice(currentIndex, currentIndex + 3);
 
+  if (traders.length === 0) return null;
+
   return (
     <div className="w-full mt-5">
       <div className="flex justify-between items-center mb-1.5">
         <h3 className="text-[12px] tracking-normal leading-none text-stone-300">
-          🔥 TOP PERFORMERS THIS WEEK
+          🔥 TOP PERFORMERS
         </h3>
-        <div className="flex gap-1">
-          <button
-            onClick={prevTrader}
-            className="p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-stone-300 hover:text-zinc-100"
-          >
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/...left-arrow..."
-              className="w-3.5 h-3.5"
-              alt="Previous"
-            />
-          </button>
-          <button
-            onClick={nextTrader}
-            className="p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-stone-300 hover:text-zinc-100"
-          >
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/...right-arrow..."
-              className="w-3.5 h-3.5"
-              alt="Next"
-            />
-          </button>
-        </div>
+        {traders.length > 3 && (
+          <div className="flex gap-1">
+            <button
+              onClick={prevTrader}
+              className="p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-stone-300 hover:text-zinc-100"
+            >
+              ←
+            </button>
+            <button
+              onClick={nextTrader}
+              className="p-1 bg-neutral-700 hover:bg-neutral-600 rounded-full text-stone-300 hover:text-zinc-100"
+            >
+              →
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="mt-1.5 space-y-1.5">
@@ -51,7 +47,7 @@ function TopTradersList({ traders, onSelectTrader, onShowStats }) {
               <div className="flex items-center gap-2.5">
                 <div className="relative">
                   <img
-                    src={trader.avatar}
+                    src={trader.avatar || `https://ui-avatars.com/api/?name=${trader.username || 'Trader'}&background=6366f1&color=fff`}
                     alt={trader.username}
                     className="object-contain shrink-0 self-stretch my-auto w-11 aspect-square rounded-full border-2 border-blue-700"
                   />
@@ -73,13 +69,13 @@ function TopTradersList({ traders, onSelectTrader, onShowStats }) {
                 </div>
                 <div>
                   <h4 className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">
-                    {trader.username}
+                    {trader.username || "Trader"}
                   </h4>
                   <div className="flex gap-1 items-center mt-0.5">
-                    <span className={`text-[10px] font-bold ${trader.profitPercent >= 0 ? 'text-green-700' : 'text-red-600'}`}>
-                      {trader.profitPercent >= 0 ? '+' : ''}{trader.profitPercent.toFixed(1)}%
+                    <span className={`text-[10px] font-bold ${(trader.profitPercent || 0) >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                      {(trader.profitPercent || 0) >= 0 ? '+' : ''}{(trader.profitPercent || 0).toFixed(1)}%
                     </span>
-                    <span className="text-[10px] text-stone-300">this week</span>
+                    <span className="text-[10px] text-stone-300">profit</span>
                   </div>
                 </div>
               </div>
@@ -88,15 +84,15 @@ function TopTradersList({ traders, onSelectTrader, onShowStats }) {
             <div className="mt-2.5 grid grid-cols-2 gap-2.5 text-[10px]">
               <div className="flex gap-0.5 items-center">
                 <span className="text-stone-300">Win Rate:</span>
-                <span className="text-zinc-100 font-semibold">{trader.winRate.toFixed(1)}%</span>
+                <span className="text-zinc-100 font-semibold">{(trader.winRate || 0).toFixed(1)}%</span>
               </div>
               <div className="flex gap-0.5 items-center">
                 <span className="text-stone-300">Copiers:</span>
-                <span className="text-zinc-100 font-semibold">{trader.totalCopiers}</span>
+                <span className="text-zinc-100 font-semibold">{trader.totalCopiers || 0}</span>
               </div>
               <div className="flex gap-0.5 items-center">
                 <span className="text-stone-300">Trades:</span>
-                <span className="text-zinc-100 font-semibold">{trader.totalTrades}</span>
+                <span className="text-zinc-100 font-semibold">{trader.totalTrades || 0}</span>
               </div>
               <div className="flex gap-0.5 items-center">
                 <span className="text-stone-300">Risk:</span>
@@ -105,7 +101,7 @@ function TopTradersList({ traders, onSelectTrader, onShowStats }) {
                   trader.riskLevel === 'medium' ? 'bg-yellow-700/20 text-yellow-700' :
                   'bg-red-600/20 text-red-600'
                 }`}>
-                  {trader.riskLevel}
+                  {trader.riskLevel || "medium"}
                 </span>
               </div>
             </div>

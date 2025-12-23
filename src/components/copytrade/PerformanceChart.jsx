@@ -1,10 +1,12 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 
 function PerformanceChart({ trader, onClose }) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] = useState(null);
 
   const timeframes = [
     { label: "1D", value: "daily" },
@@ -15,58 +17,35 @@ function PerformanceChart({ trader, onClose }) {
     { label: "ALL", value: "all" }
   ];
 
-  const [selectedTimeframe, setSelectedTimeframe] = React.useState("monthly");
-  const [chartType, setChartType] = React.useState("line");
+  const [selectedTimeframe, setSelectedTimeframe] = useState("monthly");
+  const [chartType, setChartType] = useState("line");
 
-  // Generate sample data for the chart
-  const generateChartData = () => {
-    const baseData = {
-      daily: [65, 59, 80, 81, 56, 55, 40, 70, 85, 90, 95, 88],
-      weekly: [12, 8, -5, 15, 20, 18, 25, 30, 22, 28, 32, 35],
-      monthly: [5, 10, 8, 12, 15, 20, 18, 25, 30, 35, 40, 45],
-      quarterly: [15, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75],
-      yearly: [30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85],
-      all: [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65]
-    };
-
-    const labels = {
-      daily: ["9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM"],
-      weekly: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"],
-      monthly: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-      quarterly: ["Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4", "Q1", "Q2", "Q3", "Q4"],
-      yearly: ["2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030", "2031"],
-      all: ["2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027", "2028", "2029"]
-    };
-
-    const data = baseData[selectedTimeframe] || baseData.monthly;
-    const label = labels[selectedTimeframe] || labels.monthly;
-
-    return {
-      labels: label,
-      datasets: [
-        {
-          label: "Profit/Loss (%)",
-          data: data,
-          borderColor: trader?.profitPercent >= 0 ? "#15803d" : "#dc2626",
-          backgroundColor: chartType === "line" || chartType === "area" 
-            ? `rgba(21, 128, 61, 0.1)` 
-            : `rgba(21, 128, 61, 0.7)`,
-          borderWidth: 2,
-          fill: chartType === "area",
-          tension: 0.4,
-          pointBackgroundColor: trader?.profitPercent >= 0 ? "#15803d" : "#dc2626",
-          pointBorderColor: "#fafafa",
-          pointBorderWidth: 2,
-          pointRadius: 3,
-          pointHoverRadius: 5
-        }
-      ]
-    };
+  // Fetch chart data from API
+  const fetchChartData = async (timeframe) => {
+    if (!trader?.id) return;
+    
+    setLoading(true);
+    try {
+      // This should be replaced with your actual API endpoint
+      // const response = await fetch(`/api/trader-performance/${trader.id}?timeframe=${timeframe}`);
+      // const data = await response.json();
+      
+      // For now, return empty data
+      const labels = Array.from({ length: 12 }, (_, i) => `Period ${i + 1}`);
+      const data = Array.from({ length: 12 }, () => 0);
+      
+      setChartData({ labels, data });
+    } catch (err) {
+      console.error('Error fetching chart data:', err);
+      setChartData({ labels: [], data: [] });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Initialize chart
   useEffect(() => {
-    if (!chartRef.current || !trader) return;
+    if (!chartRef.current || !chartData) return;
 
     if (chartInstance.current) {
       chartInstance.current.destroy();
@@ -74,11 +53,31 @@ function PerformanceChart({ trader, onClose }) {
 
     const ctx = chartRef.current.getContext("2d");
     
-    const chartData = generateChartData();
+    const chartConfig = {
+      labels: chartData.labels,
+      datasets: [
+        {
+          label: "Profit/Loss (%)",
+          data: chartData.data,
+          borderColor: (trader?.profitPercent || 0) >= 0 ? "#15803d" : "#dc2626",
+          backgroundColor: chartType === "line" || chartType === "area" 
+            ? `rgba(21, 128, 61, 0.1)` 
+            : `rgba(21, 128, 61, 0.7)`,
+          borderWidth: 2,
+          fill: chartType === "area",
+          tension: 0.4,
+          pointBackgroundColor: (trader?.profitPercent || 0) >= 0 ? "#15803d" : "#dc2626",
+          pointBorderColor: "#fafafa",
+          pointBorderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 5
+        }
+      ]
+    };
 
     chartInstance.current = new Chart(ctx, {
       type: chartType === "area" ? "line" : chartType,
-      data: chartData,
+      data: chartConfig,
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -98,7 +97,7 @@ function PerformanceChart({ trader, onClose }) {
             backgroundColor: "rgba(23, 23, 23, 0.9)",
             titleColor: "#fafafa",
             bodyColor: "#fafafa",
-            borderColor: trader?.profitPercent >= 0 ? "#15803d" : "#dc2626",
+            borderColor: (trader?.profitPercent || 0) >= 0 ? "#15803d" : "#dc2626",
             borderWidth: 1,
             cornerRadius: 6,
             padding: 8,
@@ -156,7 +155,12 @@ function PerformanceChart({ trader, onClose }) {
         chartInstance.current.destroy();
       }
     };
-  }, [selectedTimeframe, chartType, trader]);
+  }, [chartData, chartType, trader]);
+
+  // Fetch data when timeframe changes
+  useEffect(() => {
+    fetchChartData(selectedTimeframe);
+  }, [selectedTimeframe, trader?.id]);
 
   if (!trader) return null;
 
@@ -166,7 +170,7 @@ function PerformanceChart({ trader, onClose }) {
         {/* Header */}
         <div className="flex items-center gap-2.5 mb-5">
           <img
-            src={trader.avatar}
+            src={trader.avatar || `https://ui-avatars.com/api/?name=${trader.username || 'Trader'}&background=6366f1&color=fff`}
             alt={trader.username}
             className="w-11 h-11 rounded-full"
           />
@@ -175,7 +179,7 @@ function PerformanceChart({ trader, onClose }) {
               {trader.username}'s Performance
             </h3>
             <p className="text-[10px] text-stone-300">
-              Profit/Loss analysis and trading metrics
+              Profit/Loss analysis
             </p>
           </div>
           <button
@@ -190,21 +194,21 @@ function PerformanceChart({ trader, onClose }) {
         <div className="grid grid-cols-2 gap-1.5 mb-5">
           <div className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900">
             <div className="text-[10px] text-stone-300">Total Profit</div>
-            <div className={`text-[12px] font-medium tracking-wide leading-tight ${trader.profitPercent >= 0 ? 'text-green-700' : 'text-red-600'}`}>
-              {trader.profitPercent >= 0 ? '+' : ''}{trader.profitPercent.toFixed(2)}%
+            <div className={`text-[12px] font-medium tracking-wide leading-tight ${(trader.profitPercent || 0) >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+              {(trader.profitPercent || 0) >= 0 ? '+' : ''}{(trader.profitPercent || 0).toFixed(2)}%
             </div>
           </div>
           <div className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900">
             <div className="text-[10px] text-stone-300">Win Rate</div>
-            <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">{trader.winRate.toFixed(1)}%</div>
+            <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">{(trader.winRate || 0).toFixed(1)}%</div>
           </div>
           <div className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900">
             <div className="text-[10px] text-stone-300">Total Trades</div>
-            <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">{trader.totalTrades}</div>
+            <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">{trader.totalTrades || 0}</div>
           </div>
           <div className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900">
             <div className="text-[10px] text-stone-300">Active Copiers</div>
-            <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">{trader.totalCopiers}</div>
+            <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">{trader.totalCopiers || 0}</div>
           </div>
         </div>
 
@@ -244,61 +248,34 @@ function PerformanceChart({ trader, onClose }) {
         {/* Chart Container */}
         <div className="bg-neutral-800 rounded-3xl border border-neutral-900 p-2.5 mb-5">
           <div className="h-[200px]">
-            <canvas ref={chartRef} />
+            {loading ? (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-stone-300 text-[10px]">Loading chart data...</div>
+              </div>
+            ) : (
+              <canvas ref={chartRef} />
+            )}
           </div>
         </div>
 
-        {/* Detailed Metrics */}
-        <div className="space-y-2.5 mb-5">
-          {/* Risk Metrics */}
-          <div className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900">
-            <h4 className="text-[10px] font-semibold text-zinc-100 mb-2.5">Risk Metrics</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-[10px] text-stone-300">Risk Level</span>
-                <span className={`px-2 py-0.5 rounded-3xl text-[10px] font-semibold ${
-                  trader.riskLevel === 'low' ? 'bg-green-700/20 text-green-700' :
-                  trader.riskLevel === 'medium' ? 'bg-yellow-700/20 text-yellow-700' :
-                  'bg-red-600/20 text-red-600'
-                }`}>
-                  {trader.riskLevel}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-[10px] text-stone-300">Max Drawdown</span>
-                <span className="text-[10px] text-zinc-100 font-semibold">{trader.maxDrawdown?.toFixed(1) || "5.2"}%</span>
-              </div>
+        {/* Risk Metrics */}
+        <div className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900 mb-5">
+          <h4 className="text-[10px] font-semibold text-zinc-100 mb-2.5">Risk Metrics</h4>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] text-stone-300">Risk Level</span>
+              <span className={`px-2 py-0.5 rounded-3xl text-[10px] font-semibold ${
+                trader.riskLevel === 'low' ? 'bg-green-700/20 text-green-700' :
+                trader.riskLevel === 'medium' ? 'bg-yellow-700/20 text-yellow-700' :
+                'bg-red-600/20 text-red-600'
+              }`}>
+                {trader.riskLevel || "medium"}
+              </span>
             </div>
-          </div>
-
-          {/* Trading Stats */}
-          <div className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900">
-            <h4 className="text-[10px] font-semibold text-zinc-100 mb-2.5">Trading Statistics</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <span className="text-[10px] text-stone-300">Average Trade Size</span>
-                <span className="text-[10px] text-zinc-100 font-semibold">${trader.avgTradeSize?.toFixed(2) || "1,250"}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-[10px] text-stone-300">Trading Style</span>
-                <span className="text-[10px] text-zinc-100 font-semibold capitalize">{trader.tradingStyle}</span>
-              </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[10px] text-stone-300">Max Drawdown</span>
+              <span className="text-[10px] text-zinc-100 font-semibold">{(trader.maxDrawdown || 0).toFixed(1)}%</span>
             </div>
-          </div>
-        </div>
-
-        {/* Performance Summary */}
-        <div className="px-2.5 py-3 bg-gradient-to-r from-neutral-800 to-neutral-900 rounded-3xl border border-neutral-900 mb-5">
-          <h4 className="text-[10px] font-semibold text-zinc-100 mb-1.5">Performance Summary</h4>
-          <p className="text-[10px] text-stone-300">
-            {trader.username} has maintained a consistent profit margin of {trader.profitPercent.toFixed(2)}% 
-            with a win rate of {trader.winRate.toFixed(1)}%.
-          </p>
-          <div className="flex items-center gap-1 mt-2.5">
-            <span className="text-[10px] text-stone-300">Verified:</span>
-            <span className={`px-1.5 py-0.5 rounded-3xl text-[10px] ${trader.verified ? 'bg-green-700/20 text-green-700' : 'bg-yellow-700/20 text-yellow-700'}`}>
-              {trader.verified ? '✓ Verified Trader' : 'Pending Verification'}
-            </span>
           </div>
         </div>
 

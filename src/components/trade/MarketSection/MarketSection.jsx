@@ -585,6 +585,8 @@ export default function MarketSection() {
         onPlaceOrder={placeOrder}
         formatPrice={formatPrice}
         formatVolume={formatVolume}
+        amount={amount}
+        setAmount={setAmount}
       />
     </section>
   );

@@ -11,6 +11,7 @@ import CopyTradingPositions from "./CopyTradingPositions";
 export default function CopyTrading() {
   const { fetchWithAuth, user } = useUserAuth();
   
+  const userCurrency = user?.currency || "USD";
   // State management
   const [traders, setTraders] = useState([]);
   const [topTraders, setTopTraders] = useState([]);
@@ -30,6 +31,7 @@ export default function CopyTrading() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showCopyModal, setShowCopyModal] = useState(false);
   const [showStatsModal, setShowStatsModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [sortBy, setSortBy] = useState("profit");
 
   // Load traders data
@@ -38,7 +40,7 @@ export default function CopyTrading() {
     try {
       const response = await fetchWithAuth("/copy-trading/traders");
       
-      if (response.data?.success) {
+      if (response?.data?.success) {
         setTraders(response.data.traders || []);
         setTopTraders(response.data.topTraders || []);
         setStats(response.data.stats || {
@@ -50,13 +52,15 @@ export default function CopyTrading() {
       }
     } catch (err) {
       console.error('Error loading traders:', err);
-      setTraders(generateMockTraders());
-      setTopTraders(generateMockTraders().slice(0, 5));
+      setMessage("Failed to load traders data");
+      // No fallback data - just empty states
+      setTraders([]);
+      setTopTraders([]);
       setStats({
-        totalCopiers: 1245,
-        totalTraders: 87,
-        totalVolume: 24500000,
-        averageProfit: 12.5
+        totalCopiers: 0,
+        totalTraders: 0,
+        totalVolume: 0,
+        averageProfit: 0
       });
     } finally {
       setLoading(false);
@@ -67,121 +71,69 @@ export default function CopyTrading() {
   const loadCopyPositions = async () => {
     try {
       const response = await fetchWithAuth("/copy-trading/positions");
-      if (response.data?.success) {
+      if (response?.data?.success) {
         setCopyPositions(response.data.positions || []);
       }
     } catch (err) {
       console.error('Error loading copy positions:', err);
-      setCopyPositions(generateMockPositions());
+      setCopyPositions([]);
     }
-  };
-
-  // Generate mock traders for fallback
-  const generateMockTraders = () => {
-    const names = ["CryptoWizard", "ForexMaster", "DayTraderPro", "SwingKing", "ArbitrageBot", 
-                   "TrendHunter", "VolatilityPro", "ScalpMaster", "PositionTrader", "AlgorithmicX"];
-    
-    return names.map((name, index) => ({
-      id: `trader_${index + 1}`,
-      username: name,
-      fullName: `${name} Trader`,
-      avatar: `https://ui-avatars.com/api/?name=${name}&background=6366f1&color=fff`,
-      profitPercent: 15 + Math.random() * 50,
-      winRate: 60 + Math.random() * 35,
-      totalTrades: 100 + Math.floor(Math.random() * 400),
-      totalCopiers: 50 + Math.floor(Math.random() * 200),
-      avgTradeSize: 1000 + Math.floor(Math.random() * 4000),
-      maxDrawdown: 5 + Math.random() * 15,
-      riskLevel: ["low", "medium", "high"][Math.floor(Math.random() * 3)],
-      tradingStyle: ["scalping", "day", "swing", "position"][Math.floor(Math.random() * 4)],
-      markets: ["crypto", "forex", "both"][Math.floor(Math.random() * 3)],
-      isCopying: index < 3,
-      copyAmount: index < 3 ? (500 + Math.random() * 2000) : 0,
-      weeklyPerformance: [12, 8, -5, 15, 20, 18, 25],
-      monthlyProfit: 1500 + Math.random() * 5000,
-      joinedDate: "2024-01-15",
-      description: "Professional trader with 5+ years experience in crypto and forex markets."
-    }));
-  };
-
-  // Generate mock positions
-  const generateMockPositions = () => {
-    return [
-      {
-        id: "pos_1",
-        traderId: "trader_1",
-        traderName: "CryptoWizard",
-        symbol: "BTC/USDT",
-        side: "buy",
-        quantity: 0.5,
-        entryPrice: 45250.50,
-        currentPrice: 46000.00,
-        profitLoss: 375.25,
-        profitPercent: 1.66,
-        openedAt: "2024-01-15T10:30:00Z"
-      },
-      {
-        id: "pos_2",
-        traderId: "trader_2",
-        traderName: "ForexMaster",
-        symbol: "EUR/USD",
-        side: "sell",
-        quantity: 10000,
-        entryPrice: 1.0850,
-        currentPrice: 1.0800,
-        profitLoss: 50.00,
-        profitPercent: 0.46,
-        openedAt: "2024-01-15T09:15:00Z"
-      }
-    ];
   };
 
   // Copy a trader
   const handleCopyTrader = async (traderId, amount) => {
-    try {
-      const response = await fetchWithAuth("/copy-trading/copy", {
-        method: "POST",
-        data: { traderId, amount }
-      });
-      
-      if (response.data?.success) {
-        setMessage(`Successfully started copying trader with $${amount}`);
-        loadTraders();
-        loadCopyPositions();
-        setShowCopyModal(false);
-      } else {
-        setMessage(response.data?.error || "Failed to copy trader");
-      }
-    } catch (err) {
-      console.error('Error copying trader:', err);
-      setMessage(err.response?.data?.error || "Failed to copy trader");
+  console.log('handleCopyTrader called with:', { traderId, amount });
+  
+  try {
+    const response = await fetchWithAuth("/copy-trading/copy", {
+      method: "POST",
+      data: { traderId, amount }
+    });
+    
+    console.log('Backend response:', response);
+    
+    if (response?.data?.success) {
+      setMessage(`Successfully started copying trader with $${amount}`);
+      loadTraders();
+      loadCopyPositions();
+      setShowCopyModal(false);
+    } else {
+      setMessage(response?.data?.error || "Failed to copy trader");
     }
-  };
+  } catch (err) {
+    console.error('Error copying trader:', err);
+    setMessage("Failed to copy trader. Please try again.");
+  }
+};
 
   // Stop copying a trader
   const handleStopCopying = async (traderId) => {
-    try {
-      const response = await fetchWithAuth("/copy-trading/stop", {
-        method: "POST",
-        data: { traderId }
-      });
-      
-      if (response.data?.success) {
-        setMessage("Stopped copying trader successfully");
-        loadTraders();
-        loadCopyPositions();
-      } else {
-        setMessage(response.data?.error || "Failed to stop copying");
-      }
-    } catch (err) {
-      console.error('Error stopping copy:', err);
-      setMessage(err.response?.data?.error || "Failed to stop copying");
+  console.log('Stopping copy for traderId:', traderId);
+  
+  try {
+    const response = await fetchWithAuth("/copy-trading/stop", {
+      method: "POST",
+      data: { traderId }
+    });
+    
+    if (response?.data?.success) {
+      setMessage("Stopped copying trader successfully");
+      loadTraders();
+      loadCopyPositions();
+    } else {
+      setMessage(response?.data?.error || "Failed to stop copying");
     }
-  };
+  } catch (err) {
+    console.error('Error stopping copy:', err);
+    setMessage("Failed to stop copying. Please try again.");
+  }
+};
 
   // Filter traders based on active filter and search
   const filteredTraders = traders.filter(trader => {
-    if (searchTerm && !trader.username.toLowerCase().includes(searchTerm.toLowerCase())) {
+    if (!trader) return false;
+    
+    if (searchTerm && !trader.username?.toLowerCase().includes(searchTerm.toLowerCase())) {
       return false;
     }
     
@@ -198,19 +150,187 @@ export default function CopyTrading() {
     return true;
   });
 
+  // TraderDetailsModal Component
+const TraderDetailsModal = ({ trader, onClose, userCurrency }) => {
+  if (!trader) return null;
+
+  const formatCurrency = (amount) => {
+    const currencySymbols = {
+      'USD': '$',
+      'EUR': '€',
+      'GBP': '£',
+      'JPY': '¥',
+      // ... add more
+    };
+    const symbol = currencySymbols[userCurrency] || userCurrency;
+    return `${symbol}${parseFloat(amount).toFixed(2)}`;
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-black/70 backdrop-blur-sm pb-30">
+      <div className="bg-neutral-900 rounded-3xl p-5 max-w-[480px] w-full max-h-[90vh] overflow-y-auto border border-neutral-800">
+        {/* Header */}
+        <div className="flex items-center gap-2.5 mb-5">
+          <img
+            src={trader.avatar || `https://ui-avatars.com/api/?name=${trader.username || 'Trader'}&background=6366f1&color=fff`}
+            alt={trader.username}
+            className="w-12 h-12 rounded-full"
+          />
+          <div className="flex-1">
+            <h3 className="text-[14px] font-medium tracking-wide leading-tight text-zinc-100">
+              {trader.username || "Unknown Trader"}
+            </h3>
+            <p className="text-[11px] text-stone-300">{trader.fullName || "Professional Trader"}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1 text-stone-300 hover:text-zinc-100 rounded-full hover:bg-neutral-800"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Trader Info */}
+        <div className="mb-5 space-y-3">
+          {trader.bio && (
+            <div>
+              <h4 className="text-[11px] font-medium text-stone-300 mb-1">About</h4>
+              <p className="text-[12px] text-zinc-100">{trader.bio}</p>
+            </div>
+          )}
+
+          {/* Performance Stats */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 bg-neutral-800 rounded-2xl">
+              <div className="text-[10px] text-stone-300">Trading Experience</div>
+              <div className="text-[12px] font-medium text-zinc-100">{trader.tradingExperience || "N/A"}</div>
+            </div>
+            <div className="p-3 bg-neutral-800 rounded-2xl">
+              <div className="text-[10px] text-stone-300">Country</div>
+              <div className="text-[12px] font-medium text-zinc-100">{trader.country || "Global"}</div>
+            </div>
+          </div>
+
+          {/* Detailed Stats */}
+          <div className="p-3 bg-neutral-800 rounded-2xl">
+            <h4 className="text-[11px] font-medium text-stone-300 mb-2">Performance Statistics</h4>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <div className="text-[10px] text-stone-300">Total Profit</div>
+                <div className={`text-[12px] font-medium ${(trader.performance?.profitPercent || 0) >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+                  {(trader.performance?.profitPercent || 0) >= 0 ? '+' : ''}{(trader.performance?.profitPercent || 0).toFixed(2)}%
+                </div>
+              </div>
+              <div>
+                <div className="text-[10px] text-stone-300">Win Rate</div>
+                <div className="text-[12px] font-medium text-zinc-100">{(trader.performance?.winRate || 0).toFixed(1)}%</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-stone-300">Total Trades</div>
+                <div className="text-[12px] font-medium text-zinc-100">{trader.performance?.totalTrades || 0}</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-stone-300">Avg. Trade</div>
+                <div className="text-[12px] font-medium text-zinc-100">{formatCurrency(trader.performance?.averageTrade || 0)}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Risk Metrics */}
+          <div className="p-3 bg-neutral-800 rounded-2xl">
+            <h4 className="text-[11px] font-medium text-stone-300 mb-2">Risk Profile</h4>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <div className="text-[10px] text-stone-300">Risk Level</div>
+                <div className="text-[12px] font-medium text-zinc-100 capitalize">{trader.riskLevel || "medium"}</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-stone-300">Max Drawdown</div>
+                <div className="text-[12px] font-medium text-red-600">-{(trader.riskMetrics?.maxDrawdown || 0).toFixed(1)}%</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-stone-300">Sharpe Ratio</div>
+                <div className="text-[12px] font-medium text-zinc-100">{(trader.riskMetrics?.sharpeRatio || 0).toFixed(2)}</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-stone-300">Profit Factor</div>
+                <div className="text-[12px] font-medium text-zinc-100">{(trader.riskMetrics?.profitFactor || 0).toFixed(2)}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Trading Info */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 bg-neutral-800 rounded-2xl">
+              <div className="text-[10px] text-stone-300">Trading Style</div>
+              <div className="text-[12px] font-medium text-zinc-100 capitalize">{trader.tradingStyle || "day"}</div>
+            </div>
+            <div className="p-3 bg-neutral-800 rounded-2xl">
+              <div className="text-[10px] text-stone-300">Markets</div>
+              <div className="text-[12px] font-medium text-zinc-100 capitalize">{trader.markets || "crypto"}</div>
+            </div>
+          </div>
+
+          {/* Social Stats */}
+          <div className="p-3 bg-neutral-800 rounded-2xl">
+            <h4 className="text-[11px] font-medium text-stone-300 mb-2">Community</h4>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <div className="text-[10px] text-stone-300">Copiers</div>
+                <div className="text-[12px] font-medium text-zinc-100">{trader.socialStats?.copiers || 0}</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-stone-300">Followers</div>
+                <div className="text-[12px] font-medium text-zinc-100">{trader.socialStats?.followers || 0}</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-stone-300">Rating</div>
+                <div className="text-[12px] font-medium text-zinc-100">{(trader.socialStats?.rating || 0).toFixed(1)}/5</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-2.5">
+          <button
+            onClick={onClose}
+            className="flex-1 px-2.5 py-3 bg-neutral-800 hover:bg-neutral-700 rounded-3xl text-[10px] text-zinc-100 font-semibold"
+          >
+            Close
+          </button>
+          {!trader.isCopying && (
+            <button
+              onClick={() => {
+                onClose();
+                // You would need to pass a callback to open the copy modal here
+              }}
+              className="flex-1 px-2.5 py-3 bg-green-700/80 hover:bg-green-700 rounded-3xl text-[10px] text-zinc-100 font-semibold"
+            >
+              Copy This Trader
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
   // Sort traders
   const sortedTraders = [...filteredTraders].sort((a, b) => {
+    if (!a || !b) return 0;
+    
     switch (sortBy) {
       case "profit":
-        return b.profitPercent - a.profitPercent;
+        return (b.profitPercent || 0) - (a.profitPercent || 0);
       case "winRate":
-        return b.winRate - a.winRate;
+        return (b.winRate || 0) - (a.winRate || 0);
       case "copiers":
-        return b.totalCopiers - a.totalCopiers;
+        return (b.totalCopiers || 0) - (a.totalCopiers || 0);
       case "trades":
-        return b.totalTrades - a.totalTrades;
+        return (b.totalTrades || 0) - (a.totalTrades || 0);
       default:
-        return b.profitPercent - a.profitPercent;
+        return (b.profitPercent || 0) - (a.profitPercent || 0);
     }
   });
 
@@ -253,7 +373,7 @@ export default function CopyTrading() {
       />
 
       {/* Statistics Cards */}
-      <TraderStats stats={stats} />
+      <TraderStats stats={stats} userCurrency={userCurrency} />
 
       {/* Top Traders Carousel */}
       <TopTradersList 
@@ -272,32 +392,55 @@ export default function CopyTrading() {
         </div>
         
         <div className="mt-1.5 space-y-1.5">
-          {sortedTraders.map((trader) => (
+          {sortedTraders.length > 0 ? (
+            sortedTraders.map((trader) => (
             <TraderCard
-              key={trader.id}
+              key={trader._id || trader.traderId || trader.id}
+              userCurrency={userCurrency}
               trader={trader}
               onCopy={() => {
                 setSelectedTrader(trader);
                 setShowCopyModal(true);
               }}
-              onStopCopy={() => handleStopCopying(trader.id)}
-              onViewDetails={() => setSelectedTrader(trader)}
+              onStopCopy={() => {
+                const traderId = trader.id || trader.traderId || trader._id;
+                handleStopCopying(traderId);
+              }}
+              onViewDetails={() => {
+                setSelectedTrader(trader);
+                setShowDetailsModal(true); // Add this line
+              }}
             />
-          ))}
+          ))
+
+          ) : (
+            <div className="text-center py-12 text-stone-300 text-[12px]">
+              {traders.length === 0 ? "No traders available" : "No traders found matching your criteria"}
+            </div>
+          )}
         </div>
-        
-        {sortedTraders.length === 0 && (
-          <div className="text-center py-12 text-stone-300 text-[12px]">
-            No traders found matching your criteria
-          </div>
-        )}
       </div>
 
       {/* My Copy Positions */}
-      <CopyTradingPositions 
-        positions={copyPositions}
-        onClosePosition={handleStopCopying}
+      {copyPositions.length > 0 && (
+        <CopyTradingPositions 
+          positions={copyPositions}
+          onClosePosition={handleStopCopying}
+          userCurrency={userCurrency}
+        />
+      )}
+
+      {/* Trader Details Modal */}
+    {selectedTrader && showDetailsModal && (
+      <TraderDetailsModal
+        trader={selectedTrader}
+        onClose={() => {
+          setSelectedTrader(null);
+          setShowDetailsModal(false);
+        }}
+        userCurrency={userCurrency}
       />
+    )}
 
       {/* Performance Chart Modal */}
       {selectedTrader && showStatsModal && (
@@ -307,6 +450,7 @@ export default function CopyTrading() {
             setSelectedTrader(null);
             setShowStatsModal(false);
           }}
+          userCurrency={userCurrency}
         />
       )}
 
@@ -315,6 +459,7 @@ export default function CopyTrading() {
         <CopyTradingModal
           trader={selectedTrader}
           userBalance={user?.balance || 0}
+          userCurrency={userCurrency}
           onCopy={handleCopyTrader}
           onClose={() => {
             setSelectedTrader(null);
@@ -343,8 +488,11 @@ export default function CopyTrading() {
   );
 }
 
-// TraderCard Component with updated styling
+// TraderCard Component
+// TraderCard Component
 const TraderCard = ({ trader, onCopy, onStopCopy, onViewDetails }) => {
+  if (!trader) return null;
+
   const riskColor = {
     low: "bg-green-700/20 text-green-700",
     medium: "bg-yellow-700/20 text-yellow-700",
@@ -358,24 +506,34 @@ const TraderCard = ({ trader, onCopy, onStopCopy, onViewDetails }) => {
     position: "bg-indigo-700/20 text-indigo-700"
   };
 
+  // Use nested properties
+  const profitPercent = trader.performance?.profitPercent || 0;
+  const winRate = trader.performance?.winRate || 0;
+  const totalTrades = trader.performance?.totalTrades || 0;
+  const totalCopiers = trader.socialStats?.copiers || 0;
+
   return (
     <div className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900 min-h-[60px]">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2.5">
           <img
-            src={trader.avatar}
+            src={trader.avatar || `https://ui-avatars.com/api/?name=${trader.username || 'Trader'}&background=6366f1&color=fff`}
             alt={trader.username}
             className="object-contain shrink-0 self-stretch my-auto w-9 aspect-square rounded-full"
           />
           <div>
-            <h4 className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">{trader.username}</h4>
-            <p className="text-[10px] text-stone-300">{trader.fullName}</p>
+            <h4 className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">
+              {trader.username || "Unknown Trader"}
+            </h4>
+            <p className="text-[10px] text-stone-300">
+              {trader.fullName || "Professional Trader"}
+            </p>
           </div>
         </div>
         
         <div className="text-right">
-          <div className={`text-[12px] font-medium tracking-wide leading-tight ${trader.profitPercent >= 0 ? 'text-green-700' : 'text-red-600'}`}>
-            {trader.profitPercent >= 0 ? '+' : ''}{trader.profitPercent.toFixed(2)}%
+          <div className={`text-[12px] font-medium tracking-wide leading-tight ${profitPercent >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+            {profitPercent >= 0 ? '+' : ''}{profitPercent.toFixed(2)}%
           </div>
           <div className="text-[10px] text-stone-300">Profit</div>
         </div>
@@ -384,30 +542,30 @@ const TraderCard = ({ trader, onCopy, onStopCopy, onViewDetails }) => {
       <div className="mt-1.5 grid grid-cols-2 gap-2.5 text-[10px]">
         <div className="flex gap-0.5 items-center">
           <span className="text-stone-300">Win Rate:</span>
-          <span className="text-zinc-100 font-semibold">{trader.winRate.toFixed(1)}%</span>
+          <span className="text-zinc-100 font-semibold">{winRate.toFixed(1)}%</span>
         </div>
         <div className="flex gap-0.5 items-center">
           <span className="text-stone-300">Trades:</span>
-          <span className="text-zinc-100 font-semibold">{trader.totalTrades}</span>
+          <span className="text-zinc-100 font-semibold">{totalTrades}</span>
         </div>
         <div className="flex gap-0.5 items-center">
           <span className="text-stone-300">Copiers:</span>
-          <span className="text-zinc-100 font-semibold">{trader.totalCopiers}</span>
+          <span className="text-zinc-100 font-semibold">{totalCopiers}</span>
         </div>
         <div className="flex gap-0.5 items-center">
           <span className="text-stone-300">Risk:</span>
-          <span className={`px-1 py-0.5 rounded text-[10px] ${riskColor[trader.riskLevel]}`}>
-            {trader.riskLevel}
+          <span className={`px-1 py-0.5 rounded text-[10px] ${riskColor[trader.riskLevel] || 'bg-neutral-700 text-stone-300'}`}>
+            {trader.riskLevel || "medium"}
           </span>
         </div>
       </div>
 
       <div className="mt-1.5 flex flex-wrap gap-1">
-        <span className={`px-1 py-0.5 rounded text-[10px] ${styleColor[trader.tradingStyle]}`}>
-          {trader.tradingStyle}
+        <span className={`px-1 py-0.5 rounded text-[10px] ${styleColor[trader.tradingStyle] || 'bg-neutral-700 text-stone-300'}`}>
+          {trader.tradingStyle || "day"}
         </span>
         <span className="px-1 py-0.5 rounded text-[10px] bg-neutral-700 text-stone-300">
-          {trader.markets}
+          {trader.markets || "crypto"}
         </span>
       </div>
 

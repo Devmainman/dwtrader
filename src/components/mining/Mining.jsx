@@ -4,7 +4,7 @@ import { useUserAuth } from "../../context/UserAuthContext";
 import MiningTabs from "./MiningTabs";
 import MiningControls from "./MiningControls";
 import MiningStats from "./MiningStats";
-import MiningEquipmentList from "./MiningEquipmentList";
+import MiningEquipmentList from "./MiningEquipmentList"; // Import the actual component
 import MiningBoostersList from "./MiningBoostersList";
 import MiningRewardsList from "./MiningRewardsList";
 import MiningHistoryList from "./MiningHistoryList";
@@ -18,6 +18,7 @@ export default function Mining() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [refreshLoading, setRefreshLoading] = useState(false);
+  const [showDebugTools, setShowDebugTools] = useState(false);
   
   // Changed to match backend structure
   const [stats, setStats] = useState({
@@ -69,14 +70,6 @@ export default function Mining() {
         fetchWithAuth("/mining/pools")
       ]);
 
-      // Debug logging
-      console.log('Stats Response:', statsRes);
-      console.log('Equipment Response:', equipmentRes);
-      console.log('Rewards Response:', rewardsRes);
-      console.log('Boosters Response:', boostersRes);
-      console.log('History Response:', historyRes);
-      console.log('Pools Response:', poolsRes);
-
       // Set data from backend responses
       if (statsRes.data?.success) {
         setStats(statsRes.data.stats);
@@ -101,9 +94,13 @@ export default function Mining() {
       }
 
       if (poolsRes.data?.success) {
-        const poolList = poolsRes.data.pools || [];
+        const poolList = (poolsRes.data.pools || []).map(pool => ({
+          ...pool,
+          id: pool.id || pool._id
+        }));
+
         setPools(poolList);
-        // Set default selected pool if not set
+
         if (!selectedPool && poolList.length > 0) {
           setSelectedPool(poolList[0]);
         }
@@ -144,27 +141,170 @@ export default function Mining() {
     await loadMiningData(false);
   };
 
-  // FIXED: Updated to match backend parameters
-  const startMining = async () => {
+  // Debug function to check equipment status
+  const checkEquipmentStatus = async () => {
     try {
-      const response = await fetchWithAuth("/mining/start", {
+      console.log("🔍 Checking equipment status...");
+      const response = await fetchWithAuth("/mining/equipment");
+      
+      if (response.data?.success) {
+        const equipmentList = response.data.equipment || [];
+        console.log("📊 Equipment List:", equipmentList);
+        
+        // Group by status
+        const byStatus = {};
+        equipmentList.forEach(eq => {
+          if (!byStatus[eq.status]) byStatus[eq.status] = [];
+          byStatus[eq.status].push(eq.name);
+        });
+        
+        console.log("📈 Equipment by status:", byStatus);
+        
+        if (equipmentList.length === 0) {
+          setMessage("No equipment found. Please purchase equipment first.");
+        } else if (!byStatus['active'] || byStatus['active'].length === 0) {
+          setMessage(`Found ${equipmentList.length} equipment items, but none are active. Statuses: ${Object.keys(byStatus).join(', ')}`);
+        } else {
+          setMessage(`Found ${byStatus['active'].length} active equipment items: ${byStatus['active'].join(', ')}`);
+        }
+      }
+    } catch (err) {
+      console.error("Error checking equipment:", err);
+    }
+  };
+
+  // Function to activate equipment
+  const activateEquipment = async (equipmentId) => {
+    try {
+      const response = await fetchWithAuth("/mining/activate-equipment", {
         method: "POST",
-        data: { poolId: selectedPool?.id }
+        data: { equipmentId }
       });
       
       if (response.data?.success) {
+        setMessage(`${response.data.equipment?.name || "Equipment"} activated successfully!`);
+        // Refresh equipment list
+        await loadMiningData(false);
+      } else {
+        setMessage(response.data?.error || "Failed to activate equipment");
+      }
+    } catch (err) {
+      setMessage(err.message || "Failed to activate equipment");
+    }
+  };
+
+  // Function to activate all equipment
+  const activateAllEquipment = async () => {
+    try {
+      const response = await fetchWithAuth("/mining/activate-all-equipment", {
+        method: "POST"
+      });
+      
+      if (response.data?.success) {
+        setMessage(`Activated ${response.data.modifiedCount} equipment items!`);
+        // Refresh equipment list
+        await loadMiningData(false);
+      } else {
+        setMessage(response.data?.error || "Failed to activate equipment");
+      }
+    } catch (err) {
+      setMessage(err.message || "Failed to activate equipment");
+    }
+  };
+
+  // Debug function to test purchase
+  const testPurchaseEquipment = async () => {
+    try {
+      console.log("Testing equipment purchase...");
+      const response = await fetchWithAuth("/mining/purchase-equipment", {
+        method: "POST",
+        data: { equipmentId: "gpu_1" }
+      });
+      
+      console.log("Purchase response:", response.data);
+      
+      if (response.data?.success) {
+        setMessage(`Purchased ${response.data.equipment?.name || "equipment"} successfully!`);
+        await loadMiningData(false);
+      } else {
+        setMessage(`Purchase failed: ${response.data?.error || "Unknown error"}`);
+      }
+    } catch (err) {
+      console.error("Purchase error:", err);
+      setMessage(`Error: ${err.message}`);
+    }
+  };
+
+  // FIXED: Updated to match backend parameters
+  const startMining = async () => {
+    if (!selectedPool) {
+      setMessage("Please select a mining pool first.");
+      return;
+    }
+
+    console.log("=== DEBUG START MINING ===");
+    console.log("1. Selected Pool:", selectedPool);
+    console.log("2. Pool ID:", selectedPool.id);
+    console.log("3. Is Mining State:", isMining);
+    console.log("4. Current equipment:", equipment);
+    
+    const poolId = selectedPool.id || selectedPool._id;
+    
+    if (!poolId) {
+      setMessage("Selected pool has an invalid ID.");
+      return;
+    }
+
+    try {
+      console.log("5. Sending request with poolId:", poolId);
+      
+      const response = await fetchWithAuth("/mining/start", {
+        method: "POST",
+        data: { poolId: poolId }
+      });
+
+      console.log("6. Full response:", response);
+      console.log("7. Response data:", response.data);
+
+      if (response.data?.success) {
         setIsMining(true);
-        setMessage("Mining started successfully!");
-        // Refresh stats
+        setMessage(`Mining started successfully in ${selectedPool.name}!`);
+        
+        // Refresh stats immediately
         const statsRes = await fetchWithAuth("/mining/stats");
         if (statsRes.data?.success) {
           setStats(statsRes.data.stats);
         }
       } else {
-        setMessage(response.data?.error || "Failed to start mining");
+        console.error("8. Server returned error:", response.data);
+        const errorMsg = response.data?.error || 
+                        response.data?.message || 
+                        "Failed to start mining";
+        setMessage(`Error: ${errorMsg}`);
       }
     } catch (err) {
-      setMessage(err.message || "Failed to start mining");
+      console.error("=== START MINING CATCH ERROR ===");
+      console.error("Error object:", err);
+      console.error("Error response:", err.response);
+      console.error("Error data:", err.response?.data);
+      console.error("Error status:", err.response?.status);
+      console.error("Error message:", err.message);
+      
+      // Extract error from server response
+      let errorMessage = "Failed to start mining";
+      
+      if (err.response?.data) {
+        const serverError = err.response.data;
+        console.log("Server error details:", serverError);
+        
+        if (serverError.error) {
+          errorMessage = serverError.error;
+        } else if (serverError.message) {
+          errorMessage = serverError.message;
+        }
+      }
+      
+      setMessage(`Error: ${errorMessage}`);
     }
   };
 
@@ -249,15 +389,7 @@ export default function Mining() {
       if (response.data?.success) {
         setMessage(`${response.data.equipment?.name || "Equipment"} purchased successfully!`);
         // Refresh equipment
-        const equipmentRes = await fetchWithAuth("/mining/equipment");
-        if (equipmentRes.data?.success) {
-          setEquipment(equipmentRes.data.equipment);
-        }
-        // Refresh stats
-        const statsRes = await fetchWithAuth("/mining/stats");
-        if (statsRes.data?.success) {
-          setStats(statsRes.data.stats);
-        }
+        await loadMiningData(false);
       } else {
         setMessage(response.data?.error || "Failed to purchase equipment");
       }
@@ -266,26 +398,48 @@ export default function Mining() {
     }
   };
 
-  const switchPool = async (poolId) => {
+  const switchPool = async (newPool) => {
+    if (!newPool) {
+      setMessage("Please select a valid pool to switch to.");
+      return;
+    }
+
+    const poolId = newPool.id || newPool._id;
+    
+    if (!poolId) {
+      setMessage("Selected pool has an invalid ID.");
+      return;
+    }
+
     try {
       const response = await fetchWithAuth("/mining/switch-pool", {
         method: "POST",
-        data: { poolId }
+        data: { 
+          poolId: poolId 
+        }
       });
-      
+
+      console.log("Switch pool response:", response);
+
       if (response.data?.success) {
-        setMessage(`Switched to ${response.data.pool?.name || "pool"} successfully!`);
-        setSelectedPool(response.data.pool);
-        // Refresh stats
+        setMessage(`Switched to ${newPool.name} successfully!`);
+        setSelectedPool(newPool);
+        
+        // If mining was active, it might have been restarted
         const statsRes = await fetchWithAuth("/mining/stats");
         if (statsRes.data?.success) {
           setStats(statsRes.data.stats);
+          setIsMining(statsRes.data.stats?.isMining || false);
         }
       } else {
-        setMessage(response.data?.error || "Failed to switch pool");
+        const errorMsg = response.data?.error || 
+                        response.data?.message || 
+                        "Failed to switch pool.";
+        setMessage(errorMsg);
       }
     } catch (err) {
-      setMessage(err.message || "Failed to switch pool");
+      console.error("Switch pool error:", err);
+      setMessage(err.message || "Failed to switch pool.");
     }
   };
 
@@ -352,12 +506,47 @@ export default function Mining() {
                 alt="Refresh"
               />
             </button>
+            {/* Debug toggle button */}
+            <button
+              onClick={() => setShowDebugTools(!showDebugTools)}
+              className="p-1.5 bg-neutral-800 hover:bg-neutral-700 rounded-3xl text-stone-300 hover:text-zinc-100 text-xs"
+              title="Toggle debug tools"
+            >
+              🐞
+            </button>
           </div>
         </div>
 
         {/* Mining Tabs */}
         <MiningTabs activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
+      
+      {/* Debug Tools (Conditional) */}
+      {showDebugTools && (
+        <div className="w-full mt-3 p-3 rounded-3xl bg-neutral-800 border border-yellow-600/50">
+          <h3 className="text-xs font-semibold text-yellow-400 mb-2">Debug Tools</h3>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={checkEquipmentStatus}
+              className="px-2 py-1 text-xs bg-purple-600 hover:bg-purple-700 rounded-lg"
+            >
+              Check Equipment
+            </button>
+            <button
+              onClick={activateAllEquipment}
+              className="px-2 py-1 text-xs bg-orange-600 hover:bg-orange-700 rounded-lg"
+            >
+              Activate All
+            </button>
+            <button
+              onClick={testPurchaseEquipment}
+              className="px-2 py-1 text-xs bg-green-600 hover:bg-green-700 rounded-lg"
+            >
+              Test Purchase
+            </button>
+          </div>
+        </div>
+      )}
       
       {/* Content based on active tab */}
       {activeTab === "overview" && (
@@ -374,12 +563,14 @@ export default function Mining() {
             <MiningEquipmentList 
               equipment={equipment.slice(0, 3)}
               onPurchaseEquipment={purchaseEquipment}
+              detailed={false}
             />
           )}
           {rewards.length > 0 && (
             <MiningRewardsList 
               rewards={rewards.slice(0, 3)}
               onClaimRewards={claimRewards}
+              detailed={false}
             />
           )}
         </div>

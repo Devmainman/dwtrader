@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-function MiningEquipmentList({ equipment, onPurchaseEquipment, detailed = false }) {
+function MiningEquipmentList({ equipment, onPurchaseEquipment, onActivateEquipment, detailed = false }) {
   const equipmentTemplates = {
     'gpu_1': {
       name: 'NVIDIA RTX 4090',
@@ -39,6 +39,22 @@ function MiningEquipmentList({ equipment, onPurchaseEquipment, detailed = false 
     }
   };
 
+  const handleActivate = (equipmentId, equipmentName) => {
+    if (window.confirm(`Activate ${equipmentName}?`)) {
+      onActivateEquipment(equipmentId);
+    }
+  };
+
+  // Check if user has any purchased equipment
+  const hasPurchasedEquipment = equipment.length > 0;
+  
+  // Show available equipment for purchase if no equipment owned
+  const availableEquipment = Object.entries(equipmentTemplates).map(([id, template]) => ({
+    id,
+    ...template,
+    status: 'available'
+  }));
+
   return (
     <div className="w-full mt-5">
       <div className="flex justify-between items-center mb-1.5">
@@ -53,7 +69,8 @@ function MiningEquipmentList({ equipment, onPurchaseEquipment, detailed = false 
       </div>
 
       <div className="mt-1.5 space-y-1.5">
-        {equipment.length > 0 ? (
+        {hasPurchasedEquipment ? (
+          // Show user's purchased equipment
           equipment.slice(0, detailed ? equipment.length : 3).map((item) => (
             <div key={item.id} className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900">
               <div className="flex justify-between items-center">
@@ -108,19 +125,76 @@ function MiningEquipmentList({ equipment, onPurchaseEquipment, detailed = false 
                 </div>
               </div>
               
-              {detailed && item.status === 'idle' && (
+              {item.status === 'idle' && onActivateEquipment && (
                 <button
-                  onClick={() => handlePurchase(item.id)}
-                  className="w-full mt-2.5 px-2.5 py-1.5 bg-blue-700/80 hover:bg-blue-700 rounded-3xl text-[10px] text-zinc-100 font-semibold"
+                  onClick={() => handleActivate(item.id, item.name)}
+                  className="w-full mt-2.5 px-2.5 py-1.5 bg-green-700/80 hover:bg-green-700 rounded-3xl text-[10px] text-zinc-100 font-semibold"
                 >
                   Activate Equipment
                 </button>
               )}
             </div>
           ))
+        ) : detailed ? (
+          // Show available equipment for purchase (detailed view)
+          availableEquipment.map((item) => (
+            <div key={item.id} className="overflow-hidden px-2.5 py-3 rounded-3xl border border-solid bg-neutral-800 border-neutral-900">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center bg-blue-700/20">
+                    <span className="text-[14px]">
+                      {item.type === 'GPU' ? '🎮' : 
+                       item.type === 'ASIC' ? '⚙️' : 
+                       item.type === 'CPU' ? '💻' : '🖥️'}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">
+                      {item.name}
+                    </div>
+                    <div className="text-[10px] text-stone-300">{item.type}</div>
+                  </div>
+                </div>
+                
+                <div className="text-right">
+                  <div className="text-[12px] font-medium tracking-wide leading-tight text-zinc-100">
+                    {item.hashRate} MH/s
+                  </div>
+                  <div className="text-[10px] text-stone-300">{item.powerConsumption}W</div>
+                </div>
+              </div>
+              
+              <div className="mt-2.5 grid grid-cols-2 gap-2.5 text-[10px]">
+                <div className="flex gap-0.5 items-center">
+                  <span className="text-stone-300">Efficiency:</span>
+                  <span className="text-zinc-100 font-semibold">{item.efficiency} J/MH</span>
+                </div>
+                <div className="flex gap-0.5 items-center">
+                  <span className="text-stone-300">Status:</span>
+                  <span className="text-blue-700 font-semibold">Available</span>
+                </div>
+                <div className="flex gap-0.5 items-center">
+                  <span className="text-stone-300">Type:</span>
+                  <span className="text-zinc-100 font-semibold">{item.type}</span>
+                </div>
+                <div className="flex gap-0.5 items-center">
+                  <span className="text-stone-300">Price:</span>
+                  <span className="text-green-700 font-semibold">${item.purchasePrice}</span>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => handlePurchase(item.id)}
+                className="w-full mt-2.5 px-2.5 py-1.5 bg-gradient-to-r from-blue-700/80 to-purple-700/80 hover:from-blue-700 hover:to-purple-700 rounded-3xl text-[10px] text-zinc-100 font-semibold"
+              >
+                Purchase Equipment
+              </button>
+            </div>
+          ))
         ) : (
+          // Empty state for overview
           <div className="text-center py-6 text-stone-300 text-[12px]">
-            No equipment available. Purchase equipment to start mining.
+            No equipment available. Go to Equipment tab to purchase.
           </div>
         )}
       </div>

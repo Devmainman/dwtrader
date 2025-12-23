@@ -1,39 +1,96 @@
 "use client";
 import React from "react";
 
-function TraderStats({ stats }) {
+function TraderStats({ stats, userCurrency }) {
+  console.log('TraderStats received stats:', stats);
+  console.log('TraderStats received userCurrency:', userCurrency);
+  
+  // Extract values with multiple possible property names
+  const totalCopiers = stats?.totalCopiers || stats?.totalCopiersCount || stats?.copiers || 0;
+  const totalTraders = stats?.totalTraders || stats?.tradersCount || stats?.traders || 0;
+  const totalVolume = stats?.totalVolume || stats?.volume || stats?.tradingVolume || 0;
+  const rawAverageProfit = stats?.averageProfit ?? stats?.avgProfit ?? stats?.profit ?? 0;
+  const averageProfit = Number(rawAverageProfit) || 0;
+
+  const formatCurrency = (amount) => {
+    // Handle undefined or null userCurrency
+    const currency = userCurrency;
+    
+    const currencySymbols = {
+      'USD': '$',
+      'EUR': '€',
+      'GBP': '£',
+      'JPY': '¥',
+      'CAD': 'C$',
+      'AUD': 'A$',
+      'CHF': 'CHF',
+      'CNY': '¥',
+      'INR': '₹',
+      'KRW': '₩',
+      'RUB': '₽',
+      'TRY': '₺',
+      'BRL': 'R$',
+      'MXN': '$',
+      'ZAR': 'R',
+      'NGN': '₦',
+      'GHS': 'GH₵',
+      'KES': 'KSh',
+      'UGX': 'USh',
+      'TZS': 'TSh'
+    };
+    
+    const symbol = currencySymbols[currency] || currency;
+    const amountNumber = Number(amount) || 0;
+    
+    // Format based on the amount size
+    if (amountNumber >= 1000000000) {
+      return `${symbol}${(amountNumber / 1000000000).toFixed(1)}B`;
+    } else if (amountNumber >= 1000000) {
+      return `${symbol}${(amountNumber / 1000000).toFixed(1)}M`;
+    } else if (amountNumber >= 1000) {
+      return `${symbol}${(amountNumber / 1000).toFixed(1)}K`;
+    } else {
+      // For JPY, no decimal places for whole numbers
+      if (currency === 'JPY' && amountNumber % 1 === 0) {
+        return `${symbol}${amountNumber.toFixed(0)}`;
+      }
+      // For other currencies, show 2 decimal places
+      return `${symbol}${amountNumber.toFixed(2)}`;
+    }
+  };
+  
   const statCards = [
     {
       id: "totalCopiers",
       label: "Active Copiers",
-      value: stats.totalCopiers.toLocaleString(),
-      icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/...users-icon...",
-      change: "+12.5%",
+      value: totalCopiers.toLocaleString(),
+      icon: "👥",
+      change: "",
       trend: "up"
     },
     {
       id: "totalTraders",
       label: "Expert Traders",
-      value: stats.totalTraders,
-      icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/...trader-icon...",
-      change: "+8.2%",
+      value: totalTraders.toLocaleString(),
+      icon: "👤",
+      change: "",
       trend: "up"
     },
     {
       id: "totalVolume",
       label: "Total Volume",
-      value: `$${(stats.totalVolume / 1000000).toFixed(1)}M`,
-      icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/...chart-icon...",
-      change: "+24.7%",
+      value: formatCurrency(totalVolume),
+      icon: "📈",
+      change: "",
       trend: "up"
     },
     {
       id: "averageProfit",
       label: "Avg. Profit",
-      value: `${stats.averageProfit.toFixed(1)}%`,
-      icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/...money-icon...",
-      change: "+3.1%",
-      trend: "up"
+      value: `${averageProfit.toFixed(1)}%`,
+      icon: "💰",
+      change: "",
+      trend: averageProfit >= 0 ? "up" : "down"
     }
   ];
 
@@ -51,28 +108,22 @@ function TraderStats({ stats }) {
                 <div className="text-[28px] font-medium tracking-wide leading-tight text-zinc-100 mt-1">
                   {stat.value}
                 </div>
-                <div className="flex gap-0.5 items-start self-start mt-1">
-                  <div className={`flex gap-0.5 justify-center items-center ${stat.trend === 'up' ? 'text-green-700' : 'text-red-600'}`}>
-                    <img
-                      src={stat.trend === 'up' 
-                        ? "https://cdn.builder.io/api/v1/image/assets/TEMP/8618c649fa66b3ae7a6da6429776b793c56523f7c9f2ae8a586af42b5f9346cf?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-                        : "https://cdn.builder.io/api/v1/image/assets/TEMP/...down-arrow..."}
-                      className="object-contain shrink-0 self-stretch my-auto w-3.5 aspect-square"
-                      alt="Trend icon"
-                    />
-                    <p className="self-stretch my-auto text-[10px]">
-                      {stat.change}
-                    </p>
+                {stat.change && (
+                  <div className="flex gap-0.5 items-start self-start mt-1">
+                    <div className={`flex gap-0.5 justify-center items-center ${stat.trend === 'up' ? 'text-green-700' : 'text-red-600'}`}>
+                      <span className="text-[10px]">
+                        {stat.trend === 'up' ? '↗' : '↘'}
+                      </span>
+                      <p className="self-stretch my-auto text-[10px]">
+                        {stat.change}
+                      </p>
+                    </div>
+                    <p className="text-[10px] font-semibold text-stone-300">Past Week</p>
                   </div>
-                  <p className="text-[10px] font-semibold text-stone-300">Past Week</p>
-                </div>
+                )}
               </div>
               <div className="p-1.5 bg-neutral-700 rounded-full">
-                <img
-                  src={stat.icon}
-                  alt={stat.label}
-                  className="w-6 h-6"
-                />
+                <span className="text-[16px]">{stat.icon}</span>
               </div>
             </div>
           </div>
