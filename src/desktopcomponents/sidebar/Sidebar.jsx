@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import dashboard from "../../assets/dashboard.svg";
 import deposit from "../../assets/deposit.svg";
@@ -14,6 +14,11 @@ import logout from "../../assets/logout.svg";
 
 function Sidebar() {
   const location = useLocation();
+
+  const [openTrading, setOpenTrading] = useState(
+  ["/trademain", "/mining", "/copytrade"].includes(location.pathname)
+);
+
 
   return (
     <nav className="top-0 left-0 h-screen w-[258px] px-1 pt-12 pb-3.5 border-r bg-zinc-900 border-neutral-600 
@@ -60,6 +65,77 @@ function Sidebar() {
               <span>Trading Activities</span>
             </Link>
           </li>
+
+          {/* TRADING DROPDOWN */}
+<li>
+  <button
+    onClick={() => setOpenTrading(!openTrading)}
+    className={`flex gap-2.5 items-center px-4 w-full rounded-3xl min-h-[51px] ${
+      ["/trademain", "/mining", "/copytrade"].includes(location.pathname)
+        ? "bg-black bg-opacity-80 text-white"
+        : ""
+    }`}
+  >
+    <div
+      className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
+        ["/trademain", "/mining", "/copytrade"].includes(location.pathname)
+          ? "bg-[linear-gradient(180deg,#EB25C6_0%,#0E7BF8_100%)]"
+          : "bg-transparent"
+      }`}
+    >
+      <img src={tradingactivities} alt="Logo" className="w-5 h-5" />
+    </div>
+
+    <span className="flex-1 text-left">Trading</span>
+    <span className="text-xs">{openTrading ? "▲" : "▼"}</span>
+  </button>
+
+  {/* DROPDOWN ITEMS */}
+  {openTrading && (
+    <ul className="ml-12 mt-2 space-y-2 text-sm">
+      <li>
+        <Link
+          to="/trademain"
+          className={`block px-4 py-2 rounded-xl ${
+            location.pathname === "/trademain"
+              ? "bg-zinc-800 text-white"
+              : "text-stone-300 hover:text-white"
+          }`}
+        >
+          Live Trading
+        </Link>
+      </li>
+
+      <li>
+        <Link
+          to="/copytrade"
+          className={`block px-4 py-2 rounded-xl ${
+            location.pathname === "/copytrade"
+              ? "bg-zinc-800 text-white"
+              : "text-stone-300 hover:text-white"
+          }`}
+        >
+          Copy Trading
+        </Link>
+      </li>
+
+      <li>
+        <Link
+          to="/mining"
+          className={`block px-4 py-2 rounded-xl ${
+            location.pathname === "/mining"
+              ? "bg-zinc-800 text-white"
+              : "text-stone-300 hover:text-white"
+          }`}
+        >
+          Mining
+        </Link>
+      </li>
+    </ul>
+  )}
+</li>
+
+          
           <li>
             <Link
               to="/settings"

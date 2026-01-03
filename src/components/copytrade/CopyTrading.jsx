@@ -349,7 +349,16 @@ const TraderDetailsModal = ({ trader, onClose, userCurrency }) => {
 
   if (loading) {
     return (
-      <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+      <section className="
+  overflow-hidden
+  px-5 py-3
+  mx-auto w-full
+  rounded-3xl
+  bg-neutral-900
+  max-w-[480px]
+  md:max-w-[900px]
+  lg:max-w-[1200px]
+">
         <div className="w-full flex flex-col gap-4">
           {[...Array(6)].map((_, i) => (
             <div key={i} className="w-full px-3 py-3 rounded-xl bg-neutral-800 animate-pulse h-24" />
@@ -360,7 +369,16 @@ const TraderDetailsModal = ({ trader, onClose, userCurrency }) => {
   }
 
   return (
-    <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+    <section className="
+  overflow-hidden
+  px-5 py-3
+  mx-auto w-full
+  rounded-3xl
+  bg-neutral-900
+  max-w-[480px]
+  md:max-w-[900px]
+  lg:max-w-[1200px]
+">
       {/* Header */}
       <CopyTradingHeader 
         stats={stats}
@@ -391,7 +409,14 @@ const TraderDetailsModal = ({ trader, onClose, userCurrency }) => {
           </span>
         </div>
         
-        <div className="mt-1.5 space-y-1.5">
+        <div className="
+  mt-1.5
+  space-y-1.5
+  md:space-y-0
+  md:grid md:grid-cols-2
+  lg:grid-cols-3
+  md:gap-3
+">
           {sortedTraders.length > 0 ? (
             sortedTraders.map((trader) => (
             <TraderCard

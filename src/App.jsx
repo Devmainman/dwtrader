@@ -35,6 +35,8 @@ import TransactionHistoryDesktop from "./desktopcomponents/transactionhistory/Tr
 import AccountUpgradeDesktop from "./desktopcomponents/upgradeaccount/UpgradeAccount";
 import AccountReferralDesktop from "./desktopcomponents/referrals/Referrals";
 import OpenSupportDesktop from "./desktopcomponents/support/OpenSupportDesktop";
+import CopyTradingDesktop from "./components/copytrade/CopyTrading";
+import MiningDesktop from "./components/mining/Mining";
 
 // Layouts
 import DesktopLayout from "./desktopcomponents/DesktopLayout";
@@ -330,7 +332,11 @@ useEffect(() => {
             <Route path="withdraw" element={<WithdrawDesktop />} />
             <Route path="transactionhistory" element={<TransactionHistoryDesktop />} />
             <Route path="accountupgrade" element={<AccountUpgradeDesktop />} />
+            <Route path="referrals" element={<AccountReferralDesktop />} />
             <Route path="referrals" element={<AccountReferralDesktop />} /> 
+            <Route path="/copytrade" element={<CopyTradingDesktop />} />
+            <Route path="/mining" element={<MiningDesktop />} /> 
+              
           </Route>
         </Routes>
         </>

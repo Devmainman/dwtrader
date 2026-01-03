@@ -466,7 +466,16 @@ export default function Mining() {
 
   if (loading) {
     return (
-      <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+      <section className="
+  overflow-hidden
+  px-5 py-3
+  mx-auto w-full
+  rounded-3xl
+  bg-neutral-900
+  max-w-[480px]
+  md:max-w-[900px]
+  lg:max-w-[1200px]
+">
         <div className="w-full flex flex-col gap-4">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="w-full px-3 py-3 rounded-3xl bg-neutral-800 animate-pulse h-24" />
@@ -477,7 +486,16 @@ export default function Mining() {
   }
 
   return (
-    <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+    <section className="
+  overflow-hidden
+  px-5 py-3
+  mx-auto w-full
+  rounded-3xl
+  bg-neutral-900
+  max-w-[480px]
+  md:max-w-[900px]
+  lg:max-w-[1200px]
+">
       {/* Header */}
       <div className="w-full flex flex-col">
         <div className="flex justify-between items-center mb-2.5">
@@ -550,7 +568,12 @@ export default function Mining() {
       
       {/* Content based on active tab */}
       {activeTab === "overview" && (
-        <div className="w-full mt-5 space-y-5">
+        <div className="
+          w-full mt-5
+          space-y-5
+          md:space-y-0
+          md:grid md:grid-cols-2 md:gap-5
+        ">
           <MiningStats stats={{ ...stats, isMining }} />
           <MiningControls 
             isMining={isMining}

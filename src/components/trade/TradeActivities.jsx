@@ -60,6 +60,13 @@ function TradeActivities() {
   const baseWrapperClass =
     "w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 rounded-3xl bg-[#1D1D1F]";
 
+    const formatCurrency = (amount, currency) =>
+  new Intl.NumberFormat(undefined, {
+    style: 'currency',
+    currency
+  }).format(amount);
+
+
   if (loading) {
     return (
       <section className={baseWrapperClass}>
@@ -140,8 +147,8 @@ function TradeActivities() {
                 isActive={index === activeTradeIndex}
                 tradeName={trade.name}
                 tradeDate={trade.date}
-                tradeAmount={trade.amount}
-                profitReturns={trade.profit}
+                 tradeAmount={formatCurrency(trade.amount, trade.currency)}
+  profitReturns={formatCurrency(trade.profit, trade.currency)}
               />
             </div>
           ))}

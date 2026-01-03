@@ -1,32 +1,54 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 function TradingSection() {
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    if (!chartRef.current) return;
+
+    chartRef.current.innerHTML = "";
+
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/tv.js";
+    script.async = true;
+
+    script.onload = () => {
+      // eslint-disable-next-line no-undef
+      new TradingView.widget({
+        autosize: true,
+        symbol: "BINANCE:BTCUSDT",
+        interval: "15",
+        timezone: "Etc/UTC",
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        toolbar_bg: "#1D1D1F",
+        enable_publishing: false,
+        hide_top_toolbar: false,
+        hide_legend: false,
+        container_id: "tradingview_chart",
+      });
+    };
+
+    chartRef.current.appendChild(script);
+  }, []);
+
   return (
     <section className="w-full max-w-[866px] rounded-[20px] border border-neutral-600 bg-[#1D1D1F]">
       <nav className="flex flex-wrap gap-10 justify-between items-center px-6 py-3 text-xs border-b border-neutral-600 text-neutral-400">
         <span className="text-blue-600">Chart</span>
-        <span>Order Book</span>
         <span>Market</span>
         <span>History</span>
       </nav>
 
       <div className="rounded-b-[20px]">
-        <div className="flex flex-col md:flex-row">
+        <div className="flex">
           {/* Chart */}
-          <div className="w-full md:w-2/3">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/32228b5c936390efac69972ae30f43a66364a2dca33bb9fa59080c0fb557e00e"
-              alt="Trading chart"
-              className="w-full h-auto object-contain aspect-[0.89]"
-            />
-          </div>
-
-          {/* Order Book */}
-          <div className="w-full md:w-1/3 border-l border-neutral-600">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/5b4798a93f85dcebf465a478c056322305ab398258325c55a230abe481e00686"
-              alt="Order book"
-              className="w-full h-auto object-contain aspect-[0.44]"
+          <div className="w-full aspect-[0.89]">
+            <div
+              id="tradingview_chart"
+              ref={chartRef}
+              className="w-full h-full"
             />
           </div>
         </div>

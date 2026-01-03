@@ -434,7 +434,16 @@ export default function MarketSection() {
   // Show loading until all data is loaded
   if (loading || !initialLoadComplete) {
     return (
-      <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+      <section className="
+  overflow-hidden
+  px-5 py-3
+  mx-auto w-full
+  rounded-3xl
+  bg-neutral-900
+  max-w-[480px]
+  md:max-w-[900px]
+  lg:max-w-[1200px]
+">
         <div className="flex flex-col gap-4">
           {/* Header Skeleton */}
           <div className="flex justify-between items-center">
@@ -470,7 +479,16 @@ export default function MarketSection() {
   }
 
   return (
-    <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+    <section className="
+  overflow-hidden
+  px-5 py-3
+  mx-auto w-full
+  rounded-3xl
+  bg-neutral-900
+  max-w-[480px]
+  md:max-w-[900px]
+  lg:max-w-[1200px]
+">
       {/* Header */}
       <div className="w-full flex flex-col">
         <div className="flex justify-between items-center mb-2.5">
@@ -502,63 +520,79 @@ export default function MarketSection() {
           setSearchTerm={setSearchTerm}
         />
 
-        {/* Current Price Display */}
-        <PriceDisplay 
-          selectedPair={selectedPair}
-          priceFeed={priceFeed}
-          userCurrency={userCurrency}
-          conversionRate={conversionRate}
-          formatPrice={formatPrice}
-          formatCurrency={formatCurrency}
-        />
+        <div className="w-full md:grid md:grid-cols-3 md:gap-4">
+  
+  {/* LEFT: Market & Prices */}
+  <div className="md:col-span-2 flex flex-col gap-3">
+    <PriceDisplay 
+      selectedPair={selectedPair}
+      priceFeed={priceFeed}
+      userCurrency={userCurrency}
+      conversionRate={conversionRate}
+      formatPrice={formatPrice}
+      formatCurrency={formatCurrency}
+    />
 
-        {/* Crypto/Currency List */}
-        <CryptoList
-          activeTab={activeTab}
-          pairs={displayPairs}
-          priceFeed={priceFeed}
-          favorites={favorites}
-          selectedPair={selectedPair}
-          searchTerm={searchTerm}
-          showAllPairs={showAllPairs}
-          onToggleFavorite={toggleFavorite}
-          onSelectPair={setSelectedPair}
-          onViewChart={(pair) => {
-            setSelectedPair(pair);
-            setChartKey(Date.now());
-            setShowChart(true);
-          }}
-          onLoadMore={() => setShowAllPairs(!showAllPairs)}
-          formatPrice={formatPrice}
-          formatVolume={formatVolume}
-        />
+    <CryptoList
+      activeTab={activeTab}
+      pairs={displayPairs}
+      priceFeed={priceFeed}
+      favorites={favorites}
+      selectedPair={selectedPair}
+      searchTerm={searchTerm}
+      showAllPairs={showAllPairs}
+      onToggleFavorite={toggleFavorite}
+      onSelectPair={setSelectedPair}
+      onViewChart={(pair) => {
+        setSelectedPair(pair);
+        setChartKey(Date.now());
+        setShowChart(true);
+      }}
+      onLoadMore={() => setShowAllPairs(!showAllPairs)}
+      formatPrice={formatPrice}
+      formatVolume={formatVolume}
+    />
+  </div>
 
-        {/* Trading Panel */}
-        <TradingPanel
-          selectedPair={selectedPair}
-          amount={amount}
-          setAmount={setAmount}
-          priceFeed={priceFeed}
-          user={user}
-          onPlaceOrder={placeOrder}
-          userCurrency={userCurrency}
-          conversionRate={conversionRate}
-          calculateOrderValue={calculateOrderValue}
-          formatCurrency={formatCurrency}
-        />
+  {/* RIGHT: Trading Panel */}
+  <div className="md:col-span-1">
+    <TradingPanel
+      selectedPair={selectedPair}
+      amount={amount}
+      setAmount={setAmount}
+      priceFeed={priceFeed}
+      user={user}
+      onPlaceOrder={placeOrder}
+      userCurrency={userCurrency}
+      conversionRate={conversionRate}
+      calculateOrderValue={calculateOrderValue}
+      formatCurrency={formatCurrency}
+    />
+  </div>
+
+</div>
+
 
         {/* Positions Section */}
-        <PositionsSection
-          positions={positions}
-          realTimePL={realTimePL}
-          selectedPair={selectedPair}
-          onClosePosition={closePosition}
-          onViewChart={setSelectedPair}
-          formatCurrency={formatCurrency}
-        />
+        <div className="mt-4 md:w-[310px] lg:w-[770px] md:mt-6">
+  <PositionsSection
+    positions={positions}
+    realTimePL={realTimePL}
+    selectedPair={selectedPair}
+    onClosePosition={closePosition}
+    onViewChart={setSelectedPair}
+    formatCurrency={formatCurrency}
+  />
+</div>
+
 
         {/* Message Display */}
-        {message && <MessageDisplay message={message} />}
+        {message && (
+  <div className="mt-3 md:mt-4">
+    <MessageDisplay message={message} />
+  </div>
+)}
+
       </div>
 
       {/* Balance Modal */}
