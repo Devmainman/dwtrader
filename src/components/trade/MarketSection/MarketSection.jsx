@@ -296,35 +296,32 @@ export default function MarketSection() {
     setLoading(false);
   };
 
-  // Place order
-  const placeOrder = async (side) => {
-    if (!amount || amount <= 0) {
-      setMessage("Please enter a valid amount");
-      return;
+const placeOrder = async (side) => {
+  if (!amount || amount <= 0) {
+    setMessage("Please enter a valid amount");
+    return;
+  }
+
+  const result = await fetchWithAuth(`/trading/sim/${side}`, {
+    method: "POST",
+    data: { 
+      symbol: selectedPair.split('/')[0],
+      amount: parseFloat(amount)
     }
-    try {
-      const sidePath = side === "buy" ? "buy" : "sell";
-      const result = await fetchWithAuth(`/trading/sim/${sidePath}`, {
-        method: "POST",
-        data: { 
-          symbol: selectedPair.split('/')[0],
-          amount: parseFloat(amount)
-        }
-      });
-      
-      if (result.data?.success) {
-        setMessage(`${side.toUpperCase()} order for ${amount} ${selectedPair} executed successfully!`);
-      } else {
-        setMessage(result.data?.error || "Order failed");
-      }
-      
-      setAmount("");
-      loadData();
-    } catch (err) {
-      console.error('Order error:', err);
-      setMessage(err.response?.data?.error || "Order failed. Please try again.");
-    }
-  };
+  });
+
+  if (result.data?.success) {
+    setMessage(`${side.toUpperCase()} order for ${amount} ${selectedPair} executed successfully!`);
+    loadData();
+  } else {
+    setMessage(result.data?.error || "Order failed");
+  }
+
+  setAmount("");
+};
+
+
+
 
   // Close position
   const closePosition = async (positionId) => {

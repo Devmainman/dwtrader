@@ -128,6 +128,7 @@ function PackageCard({ title, price, currency, features, isActive, onSubscribe, 
             </>
           ) : (
             <PaymentForm
+            mode="account"
               method={methods.find((m) => m.methodId === selectedMethod)}
               onBack={() => setSelectedMethod(null)}
               onDepositResult={(msg, type) => {

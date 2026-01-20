@@ -97,6 +97,7 @@ function SideBar() {
     { name: "Withdraw", path: "/withdraw", icon: withdraw },
     { name: "Transaction History", path: "/transactionhistory", icon: transaction },
     { name: "Upgrade Account", path: "/accountupgrade", icon: upgrade },
+    { name: "Signal Packages", path: "/signal-packages", icon: upgrade },
     { name: "Notification", path: "/notification", icon: notification },
     { name: "Support Ticket", path: "/support", icon: ticket },
     { name: "Referrals", path: "/referrals", icon: referrals },

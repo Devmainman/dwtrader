@@ -4,7 +4,7 @@ import { useUserAuth } from '../../context/UserAuthContext';
 import { API_BASE_URL, STATIC_BASE_URL } from '../../api/config';
 import { useBalance } from '../../context/BalanceContext';
 
-const PaymentForm = ({ method, onBack, onDepositResult, forceAmount }) => {
+const PaymentForm = ({ method, onBack, onDepositResult, forceAmount, mode }) => {
   const { token, user } = useUserAuth();
   const [amount, setAmount] = useState('');
   const [file, setFile] = useState(null);
@@ -18,26 +18,26 @@ const PaymentForm = ({ method, onBack, onDepositResult, forceAmount }) => {
   const copyIconUrl = "https://cdn.builder.io/api/v1/image/assets/TEMP/2fd1f31c640e4a8bc61ad64aa34bd7d9e147f00417163c84ba0f049ad7bf2b6f?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8";
   const checkmarkIconUrl = "https://cdn.builder.io/api/v1/image/assets/TEMP/2fd1f31c640e4a8bc61ad64aa34bd7d9e147f00417163c84ba0f049ad7bf2b6f?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8";
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
-
-  const finalAmount = forceAmount;
-
-  if (!finalAmount) {
-    setError('Amount is required.');
-    return;
-  }
 
   if (!file) {
     setError('Please upload payment proof');
     return;
   }
 
-  setLoading(true);
-  setError('');
+  // 🔥 SIGNAL MODE → DO NOT SUBMIT HERE
+  if (mode === "signal") {
+    if (onDepositResult) {
+      onDepositResult('payment ready', 'success', file);
+    }
+    return;
+  }
 
+  // 🔥 ACCOUNT MODE → NORMAL FLOW (EXISTING)
   try {
-    // ⬇️ Submit payment
+    const finalAmount = forceAmount;
+
     const formData = new FormData();
     formData.append('paymentMethod', method.methodId);
     formData.append('amount', parseFloat(String(finalAmount).replace(/[^\d.]/g, '')));
@@ -51,23 +51,19 @@ const PaymentForm = ({ method, onBack, onDepositResult, forceAmount }) => {
       }
     });
 
-    setAmount('');
-    setFile(null);
-
     if (onDepositResult) {
       onDepositResult('upgrade completed successfully!', 'success');
     }
+
   } catch (err) {
-    console.error('upgrade error:', err);
     const errorMsg = err.response?.data?.message || 'upgrade submission failed';
     setError(errorMsg);
     if (onDepositResult) {
       onDepositResult(`upgrade failed: ${errorMsg}`, 'error');
     }
-  } finally {
-    setLoading(false);
   }
 };
+
 
   
 

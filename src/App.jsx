@@ -37,6 +37,7 @@ import AccountReferralDesktop from "./desktopcomponents/referrals/Referrals";
 import OpenSupportDesktop from "./desktopcomponents/support/OpenSupportDesktop";
 import CopyTradingDesktop from "./components/copytrade/CopyTrading";
 import MiningDesktop from "./components/mining/Mining";
+import SignalPackage1 from "./components/signals/SignalPackage1";
 
 // Layouts
 import DesktopLayout from "./desktopcomponents/DesktopLayout";
@@ -294,6 +295,8 @@ useEffect(() => {
               <Route path="/transactionhistory" element={<TransactionHistoryMobile />} />
               <Route path="/accountupgrade" element={<AccountUpgradeMobile />} />
               <Route path="/referrals" element={<AccountReferralMobile />} />
+              <Route path="/signal-packages" element={<SignalPackage1 />} />
+
             </Routes>
           </section>
         </>
@@ -336,6 +339,8 @@ useEffect(() => {
             <Route path="referrals" element={<AccountReferralDesktop />} /> 
             <Route path="/copytrade" element={<CopyTradingDesktop />} />
             <Route path="/mining" element={<MiningDesktop />} /> 
+            <Route path="signal-packages" element={<SignalPackage1 />} />
+
               
           </Route>
         </Routes>
