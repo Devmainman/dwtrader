@@ -297,35 +297,65 @@ export function UserAuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    try {
-      setLoading(prev => ({ ...prev, login: true }));
-  
-      const res = await axios.post(`${API_BASE_URL}/users/login`, { email, password });
-      const receivedToken = res.data.token;
-  
-      // Save token immediately and update headers
-      secureStorage.set('token', receivedToken);
-      setToken(receivedToken);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${receivedToken}`;
-  
-      // Use raw axios or inject token directly into `api` call
-      const userRes = await axios.get(`${API_BASE_URL}/users/me`, {
-        headers: { Authorization: `Bearer ${receivedToken}` }
-      });
-  
-      const fullUser = userRes.data.user || userRes.data;
-      console.log("Fetched user from login():", fullUser);
-      secureStorage.set('user', JSON.stringify(fullUser));
-      setUser(fullUser);
-  
-      return true;
-    } catch (error) {
-      setError(error.response?.data?.message || 'Login failed');
-      throw error;
-    } finally {
-      setLoading(prev => ({ ...prev, login: false }));
+  try {
+    setLoading(prev => ({ ...prev, login: true }));
+
+    const res = await axios.post(`${API_BASE_URL}/users/login`, { email, password });
+    const receivedToken = res.data.token;
+
+    if (!receivedToken) {
+      throw { type: "unknown", message: "Invalid server response" };
     }
-  };
+
+    // Save token immediately
+    secureStorage.set('token', receivedToken);
+    setToken(receivedToken);
+
+    // Fetch user with token
+    const userRes = await axios.get(`${API_BASE_URL}/users/me`, {
+      headers: { Authorization: `Bearer ${receivedToken}` }
+    });
+
+    const fullUser = userRes.data.user || userRes.data;
+
+    secureStorage.set('user', JSON.stringify(fullUser));
+    setUser(fullUser);
+
+    return true;
+
+  } catch (err) {
+    // 🚫 NEVER set global error here
+    // 🚫 NEVER console.error here
+
+    // 🌐 Network / no internet
+    if (!err.response) {
+      throw { type: "network" };
+    }
+
+    const status = err.response.status;
+    const message =
+      err.response.data?.error ||
+      err.response.data?.message ||
+      "Login failed";
+
+    // ❌ Wrong credentials
+    if (status === 400 || status === 401) {
+      throw { type: "credentials", message };
+    }
+
+    // 🔥 Server down
+    if (status >= 500) {
+      throw { type: "server" };
+    }
+
+    // Default
+    throw { type: "unknown", message };
+
+  } finally {
+    setLoading(prev => ({ ...prev, login: false }));
+  }
+};
+
   
 
   const updateUserProfile = useCallback((data) => {

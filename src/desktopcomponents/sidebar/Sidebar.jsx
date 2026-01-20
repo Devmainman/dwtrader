@@ -222,6 +222,23 @@ function Sidebar() {
               <span>Upgrade Account</span>
             </Link>
           </li>
+           <li>
+            <Link
+              to="/signal-packages"
+              className={`flex gap-2.5 items-center px-4 w-full rounded-3xl min-h-[51px] ${
+                location.pathname === "/signal-packages" ? "bg-black bg-opacity-80 text-white" : ""
+              }`}
+            >
+             <div
+                className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
+                  location.pathname === "/signal-packages" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#0E7BF8_100%)]" : "bg-transparent"
+                }`}
+              >
+                <img src={upgrade} alt="Logo" className="w-6 h-6" />
+              </div>
+              <span>Signal Packages</span>
+            </Link>
+          </li>
           <li>
             <Link
               to="/notification"

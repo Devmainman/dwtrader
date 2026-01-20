@@ -14,7 +14,11 @@ const LoginScreen = () => {
     password: ""
   });
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
+const [errors, setErrors] = useState({});
+const [loginError, setLoginError] = useState('');
+const [networkError, setNetworkError] = useState(false);
+const [shake, setShake] = useState(false);
+
   const navigate = useNavigate();
   const { login } = useUserAuth();
 
@@ -36,22 +40,57 @@ const LoginScreen = () => {
   };
 
   const handleLogin = async () => {
-    if (!validateForm()) return;
-  
-    setLoading(true);
-    try {
-      const success = await login(formData.email, formData.password);
-      if (success) {
-        toast.success("Login successful!");
-        navigate("/");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error(error || "Login failed. Please check your credentials");
-    } finally {
-      setLoading(false);
+  if (!validateForm()) return;
+
+  setLoginError('');
+  setNetworkError(false);
+  setLoading(true);
+
+  try {
+    const success = await login(formData.email, formData.password);
+
+    if (success) {
+      toast.success("Login successful!");
+      navigate("/");
     }
-  };
+
+} catch (err) {
+  setShake(true);
+  setTimeout(() => setShake(false), 400);
+
+  // 🟢 FIRST — HANDLE OUR CUSTOM ERROR TYPES
+  if (err?.type === "credentials") {
+    setLoginError("Invalid email or password. Please try again.");
+    return;
+  }
+
+  if (err?.type === "network") {
+    setNetworkError(true);
+    setLoginError("No internet connection. Please check your network and try again.");
+    return;
+  }
+
+  if (err?.type === "server") {
+    setLoginError("Server is temporarily unavailable. Please try again later.");
+    return;
+  }
+
+  // 🔥 FALLBACK — REAL AXIOS NETWORK FAILURE (JUST IN CASE)
+  if (!err?.response) {
+    setNetworkError(true);
+    setLoginError("No internet connection. Please check your network and try again.");
+    return;
+  }
+
+  // DEFAULT
+  setLoginError(err.message || "Login failed. Please try again.");
+
+} finally {
+  setLoading(false);
+}
+
+};
+
 
   return (
     <div className="flex flex-col min-h-screen bg-[#161617] text-white px-6 pt-8 md:px-12 md:pt-10">
@@ -75,7 +114,7 @@ const LoginScreen = () => {
           </section>
 
           {/* Login Form */}
-          <div className="flex flex-col w-full">
+          <div className={`flex flex-col w-full transition-all ${shake ? "animate-shake" : ""}`}>
             {/* Email input */}
             <div className="mb-4">
               <input
@@ -127,6 +166,22 @@ const LoginScreen = () => {
                 Forgot Password?
               </Link>
             </div>
+
+            {/* Login Error Message */}
+{loginError && (
+  <div className={`mb-4 p-3 rounded-lg text-sm flex items-center space-x-2
+    ${networkError
+      ? "bg-yellow-900/30 text-yellow-400 border border-yellow-500/30"
+      : "bg-red-900/30 text-red-400 border border-red-500/30"
+    }`}
+  >
+    <span className="text-lg">
+      {networkError ? "🌐" : "⚠️"}
+    </span>
+    <span>{loginError}</span>
+  </div>
+)}
+
 
             {/* Login button */}
             <button

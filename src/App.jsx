@@ -203,14 +203,7 @@ useEffect(() => {
     );
   }
 
-  // 3. Show error
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-neutral-900 text-red-500">
-        Error: {error}
-      </div>
-    );
-  }
+ 
 
   if (loggingOut) {
     return (
