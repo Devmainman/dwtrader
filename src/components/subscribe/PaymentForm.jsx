@@ -26,43 +26,80 @@ const handleSubmit = async (e) => {
     return;
   }
 
-  // 🔥 SIGNAL MODE → DO NOT SUBMIT HERE
-  if (mode === "signal") {
-    if (onDepositResult) {
-      onDepositResult('payment ready', 'success', file);
-    }
-    return;
-  }
+  setLoading(true);
+  setError("");
 
-  // 🔥 ACCOUNT MODE → NORMAL FLOW (EXISTING)
   try {
+    // 🔥 SIGNAL MODE → CALL SIGNAL ENDPOINT
+    if (mode === "signal") {
+      const params = new URLSearchParams(window.location.search);
+      const packageId = params.get("packageId");
+
+      if (!packageId) {
+        throw new Error("Missing signal package ID");
+      }
+
+      const formData = new FormData();
+      formData.append("packageId", packageId);
+      formData.append("paymentMethod", method.methodId);
+      formData.append("paymentProof", file);
+
+      await axios.post(
+       `${API_BASE_URL}/public/signal-packages`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+
+      if (onDepositResult) {
+        onDepositResult("Signal payment submitted. Awaiting approval.", "success");
+      }
+
+      return;
+    }
+
+    // 🔥 ACCOUNT MODE → EXISTING FLOW
     const finalAmount = forceAmount;
 
     const formData = new FormData();
     formData.append('paymentMethod', method.methodId);
-    formData.append('amount', parseFloat(String(finalAmount).replace(/[^\d.]/g, '')));
+    formData.append(
+      'amount',
+      parseFloat(String(finalAmount).replace(/[^\d.]/g, ''))
+    );
     formData.append('currency', currency);
     formData.append('paymentProof', file);
 
     await axios.post(`${API_BASE_URL}/upgradeinvoices`, formData, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data"
       }
     });
 
     if (onDepositResult) {
-      onDepositResult('upgrade completed successfully!', 'success');
+      onDepositResult("Upgrade completed successfully!", "success");
     }
 
   } catch (err) {
-    const errorMsg = err.response?.data?.message || 'upgrade submission failed';
+    const errorMsg =
+      err.response?.data?.message || err.message || "Submission failed";
+
     setError(errorMsg);
+
     if (onDepositResult) {
-      onDepositResult(`upgrade failed: ${errorMsg}`, 'error');
+      onDepositResult(`Submission failed: ${errorMsg}`, "error");
     }
+
+  } finally {
+    setLoading(false);
   }
 };
+
 
 
   

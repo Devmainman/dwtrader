@@ -51,6 +51,7 @@ import BlockedNoticeModal from './components/BlockedNoticeModal';
 
 import PackageUpgradeModal from './components/PackageUpgradeModal';
 import PaymentSystem from './components/subscribe/PaymentSystem';
+import PaymentSystemSignal from "./components/subscribe/PaymentSystemSignal";
 
 // Auth Pages
 import LoginPage from "./desktopcomponents/authpages/loginpage/LoginScreen";
@@ -275,6 +276,7 @@ useEffect(() => {
 
             
               <Route path="/" element={<HomeDashboardMobile />} />
+              <Route path="/signal-payment" element={<PaymentSystemSignal />} />
               <Route path="/settings" element={<SettingsProfileMobile />} />
               <Route path="/trade" element={<TradeUIMobile />} />
               <Route path="/trademain" element={<MarketSection />} />
@@ -318,6 +320,7 @@ useEffect(() => {
           <Route path="/" element={<DesktopLayout />}>
             <Route index element={<HomeDashboardDesktop />} />
             <Route path="/payment" element={<PaymentSystem />} />
+            <Route path="/signal-payment" element={<PaymentSystemSignal />} />
             <Route path="settings" element={<SettingsProfileDesktop />} />
             <Route path="trade" element={<TradeUIDesktop />} />
             <Route path="/trademain" element={<MarketSectionDesktop />} />

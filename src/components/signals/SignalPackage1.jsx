@@ -10,16 +10,27 @@ function SignalPackage1() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const { user, token } = useUserAuth();
+  const { token } = useUserAuth();
   const scrollRef = useRef(null);
   const navigate = useNavigate();
 
-  /* ================= FETCH SIGNAL PACKAGES ================= */
+  // --- NAVIGATION LOGIC ---
+  const handleProceed = () => {
+    if (packages[activeIndex]) {
+      const pkg = packages[activeIndex];
+      const queryAmount = encodeURIComponent(pkg.amount);
+      
+      // CRITICAL FIX: Pass 'type=signal' and 'packageId' so the Payment page 
+      // knows this is NOT a standard account upgrade.
+      navigate(`/signal-payment?packageId=${pkg._id}`);
+    }
+  };
 
+  // --- FETCH LOGIC ---
   useEffect(() => {
     const fetchPackages = async () => {
       try {
+        // Correct endpoint for Signal Packages (Different from AccountUpgrade)
         const response = await axios.get(
           `${API_BASE_URL}/public/signal-packages`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -39,8 +50,7 @@ function SignalPackage1() {
     if (token) fetchPackages();
   }, [token]);
 
-  /* ================= SCROLL CONTROL ================= */
-
+  // --- SCROLL LOGIC (Copied from AccountUpgrade1) ---
   const scrollToCard = (index) => {
     const cardWidth = scrollRef.current?.children[0]?.offsetWidth || 0;
     scrollRef.current.scrollTo({
@@ -65,30 +75,6 @@ function SignalPackage1() {
     }
   }, []);
 
-  /* ================= SUBSCRIBE (CREATE SIGNAL INVOICE) ================= */
-
- const handleSubscribe = async (packageId, amount) => {
-  try {
-    const res = await axios.post(
-      `${API_BASE_URL}/signal-upgrade/upgrade`,
-      { packageId },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    const invoiceId = res.data.invoiceId;
-
-    navigate(`/payment?type=signal&invoiceId=${invoiceId}&amount=${amount}`);
-
-  } catch (err) {
-    console.error(err);
-    alert("Failed to initiate signal upgrade");
-  }
-};
-
-
-
-  /* ================= UI STATES ================= */
-
   if (loading) {
     return (
       <div className="flex pb-30 flex-col items-center w-full h-full p-4">
@@ -96,6 +82,9 @@ function SignalPackage1() {
           <h1 className="text-[16px] font-medium tracking-normal leading-tight">
             Signal Packages
           </h1>
+          <span className="self-stretch px-2 py-1 text-[8px] font-semibold whitespace-nowrap bg-blue-700 rounded-3xl">
+            SIGNAL
+          </span>
         </header>
         <div className="flex justify-center items-center h-64">
           <p className="text-white">Loading signal packages...</p>
@@ -111,6 +100,9 @@ function SignalPackage1() {
           <h1 className="text-[16px] font-medium tracking-normal leading-tight">
             Signal Packages
           </h1>
+          <span className="self-stretch px-2 py-1 text-[8px] font-semibold whitespace-nowrap bg-blue-700 rounded-3xl">
+            SIGNAL
+          </span>
         </header>
         <div className="flex justify-center items-center h-64">
           <p className="text-red-500">{error}</p>
@@ -126,6 +118,9 @@ function SignalPackage1() {
           <h1 className="text-[16px] font-medium tracking-normal leading-tight">
             Signal Packages
           </h1>
+          <span className="self-stretch px-2 py-1 text-[8px] font-semibold whitespace-nowrap bg-blue-700 rounded-3xl">
+            SIGNAL
+          </span>
         </header>
         <div className="flex justify-center items-center h-64">
           <p className="text-white">No signal packages available at the moment.</p>
@@ -133,8 +128,6 @@ function SignalPackage1() {
       </div>
     );
   }
-
-  /* ================= MAIN UI (UNCHANGED STYLE) ================= */
 
   return (
     <div className="flex pb-30 flex-col items-center w-full h-full p-4">
@@ -153,21 +146,18 @@ function SignalPackage1() {
         className="flex h-[550px] pl-6 pr-5 overflow-x-auto items-center space-x-8 snap-x snap-mandatory scrollbar-hide w-full"
         style={{ scrollBehavior: "smooth" }}
       >
-        {packages.map((pkg, index) => (
-          <SignalPackageCard
-            key={pkg._id}
-            title={pkg.name}
-            price={`${pkg.currency} ${pkg.amount.toLocaleString()}`}
-            features={pkg.benefits}
-            isActive={activeIndex === index}
-            icon={pkg.icon}
-            packageId={pkg._id}
-            amount={pkg.amount}
-            currency={pkg.currency}
-          />
+       {packages.map((pkg, index) => (
+  <SignalPackageCard
+    key={pkg._id}
+    title={pkg.name}
+    price={`${pkg.currency} ${pkg.amount.toLocaleString()}`}
+    features={pkg.benefits}
+    isActive={activeIndex === index}
+    icon={pkg.icon}
+    onProceed={handleProceed}   // 👈 THIS IS THE KEY
+  />
+))}
 
-
-        ))}
       </div>
 
       {/* Tabs */}
@@ -187,20 +177,20 @@ function SignalPackage1() {
         ))}
       </nav>
 
-      {/* Proceed Button
-      {packages.length > 0 && (
+      {/* Proceed Button - Navigates with Type: Signal */}
+      {packages.length > 0 && packages[activeIndex] && (
         <button 
-          onClick={() => handleSubscribe(packages[activeIndex]._id)}
+          onClick={() => handleProceed()}
           className="flex overflow-hidden text-white justify-center items-center self-center px-2.5 py-1 mt-5 w-full bg-blue-600 rounded-3xl"
         >
           <div className="flex text-[15px] flex-col justify-center items-center self-stretch my-auto">
-            <span>Proceed with Signal Plan</span>
+            <span>Proceed with Plan</span>
             <strong className="font-bold">
               {packages[activeIndex].currency} {packages[activeIndex].amount.toLocaleString()}
             </strong>
           </div>
         </button>
-      )} */}
+      )}
     </div>
   );
 }

@@ -9,45 +9,34 @@ function TradingPackage() {
   const [packages, setPackages] = useState([]);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [amount, setAmount] = useState("");
+  const [tradeType, setTradeType] = useState("Buy/Long");
   const [loading, setLoading] = useState(false);
   const [fetchingPackages, setFetchingPackages] = useState(true);
-  const [showPackageDropdown, setShowPackageDropdown] = useState(false);
-  const [showBuyDropdown, setShowBuyDropdown] = useState(false);
-
-  const packageDropdownRef = useRef(null);
-  const buyDropdownRef = useRef(null);
+  
+  // Consolidated Dropdown State: 'package', 'tradeType', 'duration', or null
+  const [openDropdown, setOpenDropdown] = useState(null);
+  
+  // Duration options (can be fetched from API or defined here)
+   
+  const [selectedDuration, setSelectedDuration] = useState(null);
+  
+  const containerRef = useRef(null);
 
   // Fetch available packages
   useEffect(() => {
-    if (token) {
-      fetchPackages();
-    }
+    if (token) fetchPackages();
   }, [token]);
 
-useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (
-      packageDropdownRef.current &&
-      !packageDropdownRef.current.contains(event.target)
-    ) {
-      setShowPackageDropdown(false);
-    }
-
-    if (
-      buyDropdownRef.current &&
-      !buyDropdownRef.current.contains(event.target)
-    ) {
-      setShowBuyDropdown(false);
-    }
-  };
-
-  document.addEventListener("click", handleClickOutside);
-  return () => {
-    document.removeEventListener("click", handleClickOutside);
-  };
-}, []);
-
-
+  // Unified Click Outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const fetchPackages = async () => {
     try {
@@ -57,10 +46,14 @@ useEffect(() => {
       });
       
       if (response.data.success) {
-        setPackages(response.data.packages);
-        if (response.data.packages.length > 0) {
-          setSelectedPackage(response.data.packages[0]);
-        }
+        const packagesData = response.data.packages;
+        setPackages(packagesData);
+        
+        
+        
+        // DO NOT auto-select first package - let user choose
+        // setSelectedPackage(packagesData[0]);
+        // setSelectedDuration(packagesData[0]?.duration);
       }
     } catch (error) {
       console.error("Error fetching packages:", error);
@@ -77,50 +70,28 @@ useEffect(() => {
   };
 
   const handleTrade = async () => {
-    if (!selectedPackage) {
-      alert("Please select a package");
-      return;
-    }
-
-    if (!amount || parseFloat(amount) === 0) {
-      alert("Please enter an amount");
+    if (!selectedPackage || !amount || parseFloat(amount) === 0) {
+      alert("Please select a package and enter amount");
       return;
     }
 
     const amountNum = parseFloat(amount);
-    if (amountNum < selectedPackage.minAmount) {
-      alert(`Minimum amount is ${selectedPackage.currency} ${selectedPackage.minAmount}`);
-      return;
-    }
-
-    if (amountNum > selectedPackage.maxAmount) {
-      alert(`Maximum amount is ${selectedPackage.currency} ${selectedPackage.maxAmount}`);
-      return;
-    }
-
-    if (!user?.tradingEnabled) {
-      alert("Trading is not enabled for your account. Please contact support.");
-      return;
-    }
-
-    if (user?.status === 'Inactive') {
-      alert("Your account is inactive. Please contact support.");
+    if (amountNum < selectedPackage.minAmount || amountNum > selectedPackage.maxAmount) {
+      alert(`Amount must be between ${selectedPackage.minAmount} and ${selectedPackage.maxAmount}`);
       return;
     }
 
     setLoading(true);
-    
     try {
       const response = await axios.post(
         `${API_BASE_URL}/user-trades/create`,
         {
           packageId: selectedPackage.id,
           amount: amountNum,
-          duration: selectedPackage.duration
+          duration: selectedDuration || selectedPackage.duration,
+          type: tradeType
         },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.success) {
@@ -128,114 +99,162 @@ useEffect(() => {
         setAmount("");
       }
     } catch (error) {
-      console.error("Trade error:", error);
-      alert(error.response?.data?.message || "Failed to create trade. Please try again.");
+      alert(error.response?.data?.message || "Failed to create trade.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Handle package selection
+  const handlePackageSelect = (pkg) => {
+    setSelectedPackage(pkg);
+    setSelectedDuration(pkg.duration);
+    setOpenDropdown(null);
+  };
+
+  const ICON_DROPDOWN = "https://cdn.builder.io/api/v1/image/assets/TEMP/ca387fb10bcfc33fffcf6905fbc9e1feac1c3e02413c04ee641f2748544d5264?placeholderIfAbsent=true";
+
   return (
-    <section className="overflow-visible px-3.5 py-4 mt-7 w-full rounded-xl bg-black bg-opacity-80 max-w-[480px]">
+    <section ref={containerRef} className="overflow-visible px-3.5 py-4 mt-7 w-full rounded-xl bg-black bg-opacity-80 max-w-[480px] relative border border-white/5">
       <div className="w-full whitespace-nowrap">
-        <h2 className="text-[clamp(11px,2vw,14px)] tracking-normal leading-tight text-zinc-100">
+        <h2 className="text-[clamp(11px,2vw,14px)] tracking-normal leading-tight text-zinc-100 mb-2">
           Package
         </h2>
 
-        {/* First Row: Features & Buy/Long */}
-        <div className="flex gap-3 justify-between items-center mt-1 w-full overflow-x-auto no-scrollbar text-[clamp(10px,2.5vw,13px)] hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
-          {/* PACKAGE DROPDOWN - EXACTLY FROM WORKING CODE */}
-          <div
-    className="flex gap-10 justify-between items-center px-2 py-2.5 rounded-lg border bg-neutral-900 border-neutral-600 cursor-pointer"
-    onClick={(e) => {
-      e.stopPropagation();
-      setShowPackageDropdown(prev => !prev);
-    }}
-  >
-    <div className="text-white w-[90px] truncate">
-      {selectedPackage
-        ? `${selectedPackage.name}`
-        : "Select Package"}
-    </div>
-    <img src="..." className="w-4" />
-  </div>
+        {/* First Row: Package Selection & Trade Type */}
+        <div className="flex gap-3 justify-between items-center w-full text-[clamp(10px,2.5vw,13px)]">
+          
+          {/* PACKAGE DROPDOWN */}
+          <div className="relative flex-1">
+            <div
+              className="flex justify-between items-center px-3 py-2.5 rounded-lg border bg-neutral-900 border-neutral-600 cursor-pointer hover:border-neutral-500 transition-colors"
+              onClick={() => setOpenDropdown(openDropdown === 'package' ? null : 'package')}
+            >
+              <div className="text-white truncate">
+                {selectedPackage ? selectedPackage.name : "Select Package"}
+              </div>
+              <img src={ICON_DROPDOWN} className={`w-4 transition-transform ${openDropdown === 'package' ? 'rotate-180' : ''}`} alt="arrow" />
+            </div>
 
-  {/* DROPDOWN MENU */}
-  {showPackageDropdown && (
-    <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-600 rounded-lg z-50">
-      {packages.map(pkg => (
-        <div
-          key={pkg.id}
-          className="px-3 py-2 text-white hover:bg-neutral-800 cursor-pointer"
-          onClick={() => {
-            setSelectedPackage(pkg);
-            setShowPackageDropdown(false);
-          }}
-        >
-          {pkg.name} min{pkg.minAmount} max{pkg.maxAmount}
-        </div>
-      ))}
-    </div>
-  )}
+            {openDropdown === 'package' && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-600 rounded-lg z-[100] shadow-2xl max-h-48 overflow-y-auto">
+                {packages.length > 0 ? (
+                  packages.map(pkg => (
+                    <div
+                      key={pkg.id}
+                      className="px-3 py-3 text-white hover:bg-neutral-800 cursor-pointer border-b border-neutral-800 last:border-0"
+                      onClick={() => handlePackageSelect(pkg)}
+                    >
+                      <div className="font-medium">{pkg.name}</div>
+                      <div className="text-[10px] text-neutral-400">
+Min: {pkg.minAmount} {user?.currency} | Max: {pkg.maxAmount} {user?.currency}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-3 py-3 text-neutral-400 text-center">
+                    No packages available
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
+          {/* TRADE TYPE DROPDOWN */}
+          <div className="relative min-w-[140px]">
+            <div
+              className="flex gap-2.5 items-center p-2.5 rounded-lg border border-solid bg-neutral-900 border-neutral-600 cursor-pointer hover:border-neutral-500 transition-colors"
+              onClick={() => setOpenDropdown(openDropdown === 'tradeType' ? null : 'tradeType')}
+            >
+              <img src={ICON_DROPDOWN} className="w-3.5 aspect-square" alt="dropdown" />
+              <span className="text-neutral-300">{tradeType}</span>
+            </div>
 
-          {/* BUY/LONG DROPDOWN - EXACTLY FROM WORKING CODE */}
-          <div
-            ref={buyDropdownRef}
-            className="flex gap-2.5 items-center p-2.5 my-auto rounded-lg border border-solid bg-neutral-900 border-neutral-600 min-w-[154px] cursor-pointer relative"
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowBuyDropdown(prev => !prev);
-            }}
-          >
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/ca387fb10bcfc33fffcf6905fbc9e1feac1c3e02413c04ee641f2748544d5264?placeholderIfAbsent=true"
-              className="object-contain w-3.5 aspect-square"
-              alt="dropdown"
-            />
-            <span className="text-neutral-500">Buy/Long</span>
-
-            {showBuyDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-600 rounded-lg z-10">
-                <div className="px-3 py-2 text-white hover:bg-neutral-800" >Buy/Long</div>
-                <div className="px-3 py-2 text-white hover:bg-neutral-800">Sell/Short</div>
+            {openDropdown === 'tradeType' && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-600 rounded-lg z-[100] shadow-2xl">
+                {["Buy/Long", "Sell/Short"].map(type => (
+                  <div 
+                    key={type}
+                    className="px-3 py-2.5 text-white hover:bg-neutral-800 cursor-pointer first:rounded-t-lg last:rounded-b-lg"
+                    onClick={() => {
+                      setTradeType(type);
+                      setOpenDropdown(null);
+                    }}
+                  >
+                    {type}
+                  </div>
+                ))}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Amount + Duration */}
-      <div className="flex gap-4 justify-between items-center mt-5 overflow-x-auto no-scrollbar hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
+      {/* Second Row: Amount + Duration */}
+      <div className="flex gap-4 justify-between items-end mt-5">
         {/* Amount Input */}
-        <div className="min-w-[153px]">
-          <label className="text-[clamp(11px,2vw,13px)] tracking-normal leading-tight text-zinc-100">
-            Amount ({selectedPackage?.currency || "NGN"})
+        <div className="flex-1">
+          <label className="text-[clamp(11px,2vw,13px)] tracking-normal leading-tight text-zinc-100 block mb-1">
+            Amount {selectedPackage ? `(${user?.currency
+})` : ""}
           </label>
           <input
             type="text"
-            placeholder="Amount"
+            placeholder="0.00"
             value={amount}
             onChange={handleAmountChange}
-            className="px-2.5 py-3 mt-1 w-full text-[clamp(10px,2vw,13px)] rounded-lg border border-solid bg-neutral-900 border-neutral-800 text-neutral-300 min-h-[34px]"
+            className="px-3 py-2.5 w-full text-[clamp(10px,2vw,13px)] rounded-lg border border-solid bg-neutral-900 border-neutral-800 text-neutral-300 focus:border-neutral-500 outline-none transition-colors"
             disabled={!selectedPackage}
           />
+          {selectedPackage && (
+            <div className="text-[10px] text-neutral-400 mt-1">
+              Min: {selectedPackage.minAmount} {user?.currency
+} | Max: {selectedPackage.maxAmount} {user?.currency
+}
+            </div>
+          )}
         </div>
 
-        {/* Duration Display */}
-        <div className="min-w-[153px]">
-          <label className="text-[clamp(11px,2vw,13px)] tracking-normal leading-tight text-zinc-100">
+        {/* Duration Dropdown */}
+        <div className="flex-1">
+          <label className="text-[clamp(11px,2vw,13px)] tracking-normal leading-tight text-zinc-100 block mb-1">
             Duration
           </label>
-          <div className="flex gap-2.5 items-center p-2.5 mt-1 w-full text-[clamp(10px,2vw,13px)] rounded-lg border border-solid bg-neutral-900 border-neutral-800 text-neutral-300 min-h-[34px]">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/ca387fb10bcfc33fffcf6905fbc9e1feac1c3e02413c04ee641f2748544d5264?placeholderIfAbsent=true"
-              className="object-contain w-3.5 aspect-square"
-              alt="Duration icon"
-            />
-            <span>
-              {selectedPackage ? `${selectedPackage.duration} hours` : "Select Package"}
-            </span>
+          <div className="relative">
+            <div
+              className="flex gap-2.5 items-center p-2.5 w-full text-[clamp(10px,2vw,13px)] rounded-lg border border-solid bg-neutral-900 border-neutral-800 text-neutral-300 min-h-[38px] cursor-pointer hover:border-neutral-500 transition-colors"
+              onClick={() => selectedPackage && setOpenDropdown(openDropdown === 'duration' ? null : 'duration')}
+              style={{ 
+                cursor: selectedPackage ? 'pointer' : 'not-allowed',
+                opacity: selectedPackage ? 1 : 0.5
+              }}
+            >
+              <img src={ICON_DROPDOWN} className="w-3.5" alt="clock" />
+              <span>
+                {selectedDuration
+                  ? `${selectedDuration} hours`
+                  : selectedPackage
+                  ? `${selectedPackage.duration} hours`
+                  : "---"}
+              </span>
+            </div>
+
+            {openDropdown === 'duration' && selectedPackage && getDurationOptions().length > 1 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-600 rounded-lg z-[100] shadow-2xl">
+                {durations.map(duration => (
+                  <div 
+                    key={duration}
+                    className="px-3 py-2.5 text-white hover:bg-neutral-800 cursor-pointer first:rounded-t-lg last:rounded-b-lg"
+                    onClick={() => {
+                      setSelectedDuration(duration);
+                      setOpenDropdown(null);
+                    }}
+                  >
+                    {duration} hours
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -244,15 +263,15 @@ useEffect(() => {
       <button 
         onClick={handleTrade}
         disabled={loading || !selectedPackage || !amount || fetchingPackages}
-        className={`mt-7 px-2.5 py-3.5 w-full text-[clamp(11px,2vw,14px)] rounded-3xl min-h-[42px] transition-colors ${
+        className={`mt-7 px-2.5 py-3.5 w-full text-[clamp(11px,2vw,14px)] font-bold rounded-3xl min-h-[42px] transition-all active:scale-[0.98] ${
           loading || !selectedPackage || !amount || fetchingPackages
             ? 'bg-blue-800 cursor-not-allowed opacity-70'
-            : 'bg-blue-600 hover:bg-blue-700'
+            : 'bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-900/20'
         }`}
       >
         {loading ? (
           <span className="flex items-center justify-center">
-            <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+            <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
             </svg>

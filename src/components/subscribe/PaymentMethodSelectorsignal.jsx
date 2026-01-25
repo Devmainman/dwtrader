@@ -1,0 +1,68 @@
+
+import { STATIC_BASE_URL } from '../../api/config';
+
+const PaymentMethodSelector = ({ methods, onSelect }) => {
+  console.log('Methods in selector:', methods);
+  console.log('First method details:', methods[0]?.details);
+
+  return (
+    <div className="py-6 mx-5 lg:mx-[0px] lg:w-[1060px]">
+      <h2 className="text-base text-[#C7C7C7] mb-6">Select Payment Method</h2>
+
+      {methods && methods.length > 0 ? (
+        <div className="grid gap-4 text-[#C7C7C7] text-sm sm:grid-cols-2 lg:grid-cols-3">
+          {methods.map((method) => {
+            // Fix icon URL: Use STATIC_BASE_URL and handle /icons prefix
+            const iconUrl = method.icon 
+              ? `${STATIC_BASE_URL}${method.icon.replace(/^\/icons\//, '/icons/')}`
+              : '/icons/default.png';
+            console.log('Rendering method:', method.methodId, 'Icon URL:', iconUrl);
+
+            return (
+              <div
+                key={method._id}
+                onClick={() => {
+                  console.log('Selected method:', method.methodId);
+                  onSelect(method.methodId);
+                }}
+                className="p-4 rounded-xl h-[80px] border border-[#505050] bg-[#242426] hover:bg-gray-700 cursor-pointer transition-colors"
+              >
+                <div className="flex items-center">
+                  <div className="bg-gray-700 p-2 rounded-full">
+                    {method.icon ? (
+                      <img
+                        src={iconUrl}
+                        alt={method.title}
+                        className="h-6 w-6 object-contain"
+                        onError={(e) => {
+                          console.log('Icon load error:', iconUrl);
+                          e.target.onerror = null;
+                          e.target.src = '/icons/default.png';
+                        }}
+                      />
+                    ) : (
+                      <span>💰</span>
+                    )}
+                  </div>
+                  <div className="ml-3">
+                    <p className="font-medium">{method.title}</p>
+                    {method.processingTime && (
+                      <p className="text-xs text-gray-400">{method.processingTime}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="border border-yellow-500 p-4">
+          <p className="text-yellow-500">Debug: Methods array exists but empty</p>
+          <pre className="text-xs mt-2">{JSON.stringify(methods, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PaymentMethodSelector;
