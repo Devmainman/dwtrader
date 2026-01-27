@@ -82,13 +82,19 @@ export default function CopyTrading() {
 
   // Copy a trader
   const handleCopyTrader = async (traderId, amount) => {
-  console.log('handleCopyTrader called with:', { traderId, amount });
-  
+
+  const payload = {
+    traderId: selectedTrader.traderId,   // ✅ ALWAYS use this
+    amount: Number(amount)               // ✅ force number
+  };
+
   try {
     const response = await fetchWithAuth("/copy-trading/copy", {
       method: "POST",
-      data: { traderId, amount }
+
+      data: payload
     });
+
     
     console.log('Backend response:', response);
     
@@ -107,15 +113,15 @@ export default function CopyTrading() {
 };
 
   // Stop copying a trader
-  const handleStopCopying = async (traderId) => {
-  console.log('Stopping copy for traderId:', traderId);
-  
+const handleStopCopying = async (copyTradeId) => {
+  console.log('Stopping copy for copyTradeId:', copyTradeId);
+
   try {
     const response = await fetchWithAuth("/copy-trading/stop", {
       method: "POST",
-      data: { traderId }
+      data: { copyTradeId }   // ✅ correct
     });
-    
+
     if (response?.data?.success) {
       setMessage("Stopped copying trader successfully");
       loadTraders();
@@ -128,6 +134,7 @@ export default function CopyTrading() {
     setMessage("Failed to stop copying. Please try again.");
   }
 };
+
 
   // Filter traders based on active filter and search
   const filteredTraders = traders.filter(trader => {
@@ -428,8 +435,7 @@ const TraderDetailsModal = ({ trader, onClose, userCurrency }) => {
                 setShowCopyModal(true);
               }}
               onStopCopy={() => {
-                const traderId = trader.id || trader.traderId || trader._id;
-                handleStopCopying(traderId);
+                handleStopCopying(trader.copyId); // ✅ safer + future-proof
               }}
               onViewDetails={() => {
                 setSelectedTrader(trader);

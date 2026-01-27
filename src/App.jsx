@@ -20,6 +20,7 @@ import TransactionHistoryMobile from "./components/transactionhistory/Transactio
 import AccountUpgradeMobile from "./components/accountupgrade/AccountUpgrade1";
 import AccountReferralMobile from "./components/referrals/AccountReferral1";
 import CopyTradingMobile from "./components/copytrade/CopyTrading";
+import CopyTradingPositions from "./components/copytrade/CopyTradingPositions";
 import MiningMobile from "./components/mining/Mining";
 
 // Desktop Components
@@ -36,6 +37,7 @@ import AccountUpgradeDesktop from "./desktopcomponents/upgradeaccount/UpgradeAcc
 import AccountReferralDesktop from "./desktopcomponents/referrals/Referrals";
 import OpenSupportDesktop from "./desktopcomponents/support/OpenSupportDesktop";
 import CopyTradingDesktop from "./components/copytrade/CopyTrading";
+import CopyTradingPositionsDesktop from "./components/copytrade/CopyTradingPositions";
 import MiningDesktop from "./components/mining/Mining";
 import SignalPackage1 from "./components/signals/SignalPackage1";
 
@@ -281,6 +283,7 @@ useEffect(() => {
               <Route path="/trade" element={<TradeUIMobile />} />
               <Route path="/trademain" element={<MarketSection />} />
               <Route path="/copytrade" element={<CopyTradingMobile />} />
+              <Route path="/copy-positions" element={<CopyTradingPositions />} />
               <Route path="/mining" element={<MiningMobile />} />
               <Route path="/support" element={<SupportMobile />} />
               <Route path="/opensupport" element={<OpenSupportMobile />} />
@@ -334,6 +337,7 @@ useEffect(() => {
             <Route path="referrals" element={<AccountReferralDesktop />} />
             <Route path="referrals" element={<AccountReferralDesktop />} /> 
             <Route path="/copytrade" element={<CopyTradingDesktop />} />
+            <Route path="copy-positions" element={<CopyTradingPositionsDesktop />} />
             <Route path="/mining" element={<MiningDesktop />} /> 
             <Route path="signal-packages" element={<SignalPackage1 />} />
 
