@@ -57,19 +57,27 @@ function TradeActivities() {
     setActiveTradeIndex(index);
   };
 
-  const baseWrapperClass =
-    "w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 rounded-3xl bg-[#1D1D1F]";
-
-    const formatCurrency = (amount, currency) =>
-  new Intl.NumberFormat(undefined, {
-    style: 'currency',
-    currency
-  }).format(amount);
-
+  const formatCurrency = (amount, currency) => {
+    // Fallback to USD if currency is not provided or invalid
+    const currencyCode = currency && currency.length === 3 ? currency.toUpperCase() : 'USD';
+    
+    try {
+      return new Intl.NumberFormat(undefined, {
+        style: 'currency',
+        currency: currencyCode,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(amount);
+    } catch (err) {
+      // If currency code is still invalid, fall back to a simple format
+      console.error('Currency formatting error:', err);
+      return `${currencyCode} ${parseFloat(amount).toFixed(2)}`;
+    }
+  };
 
   if (loading) {
     return (
-      <section className={baseWrapperClass}>
+      <section className="flex flex-col gap-4 justify-center items-center px-4 py-5 w-full rounded-3xl bg-[#1D1D1F] max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1229px] overflow-hidden">
         <div className="w-full flex flex-col gap-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="w-full px-3 py-3 rounded-xl bg-neutral-800 animate-pulse h-20" />
@@ -81,7 +89,7 @@ function TradeActivities() {
 
   if (error) {
     return (
-      <section className={baseWrapperClass}>
+      <section className="flex flex-col gap-4 justify-center items-center px-4 py-5 w-full rounded-3xl bg-[#1D1D1F] max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1229px] overflow-hidden">
         <div className="text-red-500 text-sm">{error}</div>
       </section>
     );
@@ -89,86 +97,99 @@ function TradeActivities() {
 
   return (
     <section className="flex flex-col gap-4 justify-center items-center px-4 py-5 w-full rounded-3xl bg-[#1D1D1F] max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1229px] overflow-hidden">
-  <div className="w-full flex flex-col">
-    {/* Header */}
-    <div className="flex flex-wrap justify-between items-center w-full gap-4">
-      <h2 className="text-sm md:text-base font-medium tracking-normal leading-tight text-zinc-100">
-        Trade Activities
-      </h2>
-      <div className="flex gap-1.5 items-center text-[10px] text-neutral-400">
-        <p>Show</p>
-        <div className="flex gap-1.5 justify-center items-center px-2 py-1 text-xs bg-blue-600 rounded text-white">
-          <p>{entriesToShow}</p>
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/e926b0db0c5d6dece24ceafbd4b776a9a722214ee95b2291c6a2aaecdc523409?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-            className="object-contain w-3.5 h-3.5"
-            alt="Dropdown arrow"
-          />
-        </div>
-        <p>entries</p>
-      </div>
-    </div>
-
-    {/* Date */}
-    <div className="mt-4">
-      <p className="text-xs text-neutral-400">{formatDate(selectedDate)}</p>
-      <p className="mt-2 text-sm text-stone-300">
-        {selectedDate.toDateString() === new Date().toDateString() ? 'Today' : 'Selected Day'}
-      </p>
-    </div>
-
-    {/* Calendar */}
-    <div className="mt-4 w-full overflow-x-auto">
-      <Calendar 
-        selectedDate={selectedDate} 
-        onDateSelect={handleDateSelect} 
-      />
-    </div>
-
-    {/* Timeline */}
-    {trades.length > 0 ? (
-      <div className="mt-5 flex gap-3 w-full">
-        <div className="flex-shrink-0">
-          <VerticalLineWithCircles 
-            activeIndex={activeTradeIndex} 
-            totalCircles={Math.min(entriesToShow, trades.length)} 
-          />
-        </div>
-        <div className="flex flex-col gap-4 w-full">
-          {trades.slice(0, entriesToShow).map((trade, index) => (
-            <div 
-              key={trade.id} 
-              onClick={() => handleTradeCardClick(index)}
-              className="cursor-pointer"
-            >
-              <TradeCard 
-                status={trade.status}
-                progress={trade.progress}
-                isActive={index === activeTradeIndex}
-                tradeName={trade.name}
-                tradeDate={trade.date}
-                 tradeAmount={formatCurrency(trade.amount, trade.currency)}
-  profitReturns={formatCurrency(trade.profit, trade.currency)}
+      <div className="w-full flex flex-col">
+        {/* Header */}
+        <div className="flex flex-wrap justify-between items-center w-full gap-4">
+          <h2 className="text-sm md:text-base font-medium tracking-normal leading-tight text-zinc-100">
+            Trade Activities
+          </h2>
+          <div className="flex gap-1.5 items-center text-[10px] text-neutral-400">
+            <p>Show</p>
+            <div className="flex gap-1.5 justify-center items-center px-2 py-1 text-xs bg-blue-600 rounded text-white">
+              <p>{entriesToShow}</p>
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/e926b0db0c5d6dece24ceafbd4b776a9a722214ee95b2291c6a2aaecdc523409?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
+                className="object-contain w-3.5 h-3.5"
+                alt="Dropdown arrow"
               />
             </div>
-          ))}
+            <p>entries</p>
+          </div>
         </div>
-      </div>
-    ) : (
-      <div className="mt-4 text-center text-neutral-400 text-sm">
-        No trade activities found
-      </div>
-    )}
 
-    {/* Footer */}
-    {trades.length > entriesToShow && (
-      <p className="mt-4 text-sm text-center text-blue-600">
-        Showing {entriesToShow} of {trades.length} trades
-      </p>
-    )}
-  </div>
-</section>
+        {/* Date */}
+        <div className="mt-4">
+          <p className="text-xs text-neutral-400">{formatDate(selectedDate)}</p>
+          <p className="mt-2 text-sm text-stone-300">
+            {selectedDate.toDateString() === new Date().toDateString() ? 'Today' : 'Selected Day'}
+          </p>
+        </div>
 
+        {/* Calendar */}
+        <div className="mt-4 w-full overflow-x-auto">
+          <Calendar 
+            selectedDate={selectedDate} 
+            onDateSelect={handleDateSelect} 
+          />
+        </div>
+
+        {/* Timeline */}
+        {trades.length > 0 ? (
+          <div className="mt-5 flex gap-3 w-full">
+            <div className="flex-shrink-0">
+              <VerticalLineWithCircles 
+                activeIndex={activeTradeIndex} 
+                totalCircles={Math.min(entriesToShow, trades.length)} 
+              />
+            </div>
+            <div className="flex flex-col gap-4 w-full">
+              {trades.slice(0, entriesToShow).map((trade, index) => {
+                // Ensure trade object has required properties with defaults
+                const safeTrade = {
+                  id: trade.id || `trade-${index}`,
+                  status: trade.status || 'pending',
+                  progress: trade.progress || 0,
+                  name: trade.name || 'Unnamed Trade',
+                  date: trade.date || new Date().toISOString(),
+                  amount: trade.amount || 0,
+                  currency: trade.currency || 'USD',
+                  profit: trade.profit || 0
+                };
+
+                return (
+                  <div 
+                    key={safeTrade.id} 
+                    onClick={() => handleTradeCardClick(index)}
+                    className="cursor-pointer"
+                  >
+                    <TradeCard 
+                      status={safeTrade.status}
+                      progress={safeTrade.progress}
+                      isActive={index === activeTradeIndex}
+                      tradeName={safeTrade.name}
+                      tradeDate={safeTrade.date}
+                      tradeAmount={formatCurrency(safeTrade.amount, safeTrade.currency)}
+                      profitReturns={formatCurrency(safeTrade.profit, safeTrade.currency)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 text-center text-neutral-400 text-sm">
+            No trade activities found
+          </div>
+        )}
+
+        {/* Footer */}
+        {trades.length > entriesToShow && (
+          <p className="mt-4 text-sm text-center text-blue-600">
+            Showing {entriesToShow} of {trades.length} trades
+          </p>
+        )}
+      </div>
+    </section>
   );
 }
 
