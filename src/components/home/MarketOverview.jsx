@@ -188,7 +188,7 @@ function MarketOverview() {
   }, [token, userCurrency]);
 
   return (
-    <section className="overflow-hidden px-4 py-4 mt-6 w-full rounded-xl bg-[#1D1D1F]">
+    <section className="overflow-hidden px-4 py-4 mt-6 w-full rounded-xl bg-[#1D1D1F] lg:mt-0 lg:rounded-2xl lg:p-5 lg:border lg:border-white/5 lg:flex lg:flex-col lg:justify-between">
       <div className="w-full max-w-full">
         {/* Header */}
         <div className="flex items-center w-full text-sm sm:text-base font-medium tracking-normal leading-tight text-zinc-100">

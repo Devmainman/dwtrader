@@ -72,3 +72,32 @@
   inset 0 2px 10px rgba(0, 109, 231, 0.6);
 }
 
+
+/* ---- motion ---- */
+.nav-item { position: relative; width: 52px; transition: transform .25s cubic-bezier(.34,1.56,.64,1); -webkit-tap-highlight-color: transparent; }
+.nav-item:active { transform: scale(.9); }
+.nav-item .nav-icon { opacity: .6; transition: opacity .2s ease, transform .35s cubic-bezier(.34,1.56,.64,1); }
+.nav-item .nav-label { font-size: 10px; margin-top: 2px; color: #8e8e93; transition: color .2s ease; }
+.nav-item.active .nav-icon { opacity: 1; transform: translateY(-2px) scale(1.08); }
+.nav-item.active .nav-label { color: #fff; }
+.nav-dot { position: absolute; bottom: -7px; width: 4px; height: 4px; border-radius: 9999px; background: linear-gradient(45deg, #EB25C6, #0E7BF8); transform: scale(0); transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+.nav-item.active .nav-dot { transform: scale(1); }
+.nav-logo { background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform .35s cubic-bezier(.34,1.56,.64,1); }
+.nav-logo:active { transform: scale(.88); }
+.nav-logo.is-open { transform: rotate(45deg) scale(.95); }
+
+@keyframes qa-fade-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes qa-fade-out { to { opacity: 0 } }
+@keyframes qa-sheet-in { 0% { opacity: 0; transform: translateY(40px) scale(.94) } 60% { opacity: 1; transform: translateY(-4px) scale(1.01) } 100% { transform: none } }
+@keyframes qa-sheet-out { to { opacity: 0; transform: translateY(24px) scale(.96) } }
+@keyframes qa-item { from { opacity: 0; transform: translateY(10px) scale(.8) } to { opacity: 1; transform: none } }
+.qa-fade-in { animation: qa-fade-in .2s ease both }
+.qa-fade-out { animation: qa-fade-out .18s ease both }
+.qa-sheet-in { animation: qa-sheet-in .45s cubic-bezier(.22,1,.36,1) both }
+.qa-sheet-out { animation: qa-sheet-out .18s ease-in both }
+.qa-item { animation: qa-item .4s cubic-bezier(.34,1.56,.64,1) both }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-item, .nav-item .nav-icon, .nav-dot, .nav-logo { transition: none }
+  .qa-fade-in, .qa-fade-out, .qa-sheet-in, .qa-sheet-out, .qa-item { animation: none }
+}

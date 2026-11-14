@@ -58,3 +58,101 @@
   animation: shake 0.4s ease;
 }
 
+
+/* ---- Motion (Apple-style springs). Reduced-motion users get instant transitions. ---- */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sheet-in { from { transform: translateY(24px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes notice-drop {
+  0%   { transform: translateY(-140%) scale(0.92); opacity: 0; }
+  55%  { transform: translateY(8%) scale(1.02);   opacity: 1; }
+  75%  { transform: translateY(-3%) scale(0.995); }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes notice-lift { to { transform: translateY(-140%) scale(0.95); opacity: 0; } }
+@keyframes icon-nudge {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-12deg); }
+  40% { transform: rotate(10deg); }
+  60% { transform: rotate(-6deg); }
+  80% { transform: rotate(3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+}
+
+/* ---- Toasts ---- */
+@keyframes toast-in { from { transform: translateY(18px) scale(0.94); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes toast-out { to { transform: translateY(12px) scale(0.96); opacity: 0; } }
+@keyframes toast-bump { 0% { transform: scale(1); } 40% { transform: scale(1.035); } 100% { transform: scale(1); } }
+
+/* ---- Page translation: hide Google's own toolbar, tooltips and highlights ---- */
+.goog-te-banner-frame, .skiptranslate > iframe, iframe.skiptranslate, #goog-gt-tt, .goog-te-balloon-frame,
+.goog-te-gadget, .goog-logo-link, .VIpgJd-ZVi9od-ORHb-OEVmcd, .VIpgJd-ZVi9od-aZ2wEe-wOHMyf { display: none !important; }
+body { top: 0 !important; position: static !important; }
+.goog-text-highlight, font[style] { background: none !important; box-shadow: none !important; }
+
+/* ---- Trading / mining motion ---- */
+@keyframes rise-in { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes flash-up { 0% { background-color: rgba(16, 185, 129, 0.22); } 100% { background-color: transparent; } }
+@keyframes flash-down { 0% { background-color: rgba(239, 68, 68, 0.22); } 100% { background-color: transparent; } }
+@keyframes pulse-dot { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.8); opacity: 0; } }
+@keyframes claim-pop { 0% { transform: scale(1); } 35% { transform: scale(1.06); } 100% { transform: scale(1); } }
+
+/* ---- page transitions & skeletons ---- */
+@keyframes page-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.page-enter { animation: page-enter 380ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes skeleton-shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0.04) 100%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+/* Gentle press feedback on every tappable control */
+button:not(:disabled), a[role="button"] { transition-property: color, background-color, border-color, opacity, box-shadow, transform; transition-duration: 160ms; }
+@media (prefers-reduced-motion: reduce) {
+  .page-enter, .skeleton { animation: none !important; }
+}
+
+/* ---- assets page ---- */
+@keyframes assets-seg { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.assets-seg { transform-origin: left; animation: assets-seg 700ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes assets-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.assets-rise { animation: assets-rise 500ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes assets-fade { from { opacity: 0; } to { opacity: 1; } }
+.assets-fade { animation: assets-fade 220ms ease both; }
+@media (prefers-reduced-motion: reduce) { .assets-seg, .assets-rise, .assets-fade { animation: none !important; } }
+
+/* ---- welcome splash & onboarding ---- */
+@keyframes wx-logo { 0% { transform: scale(.4) rotate(-25deg); opacity: 0 } 55% { transform: scale(1.08) rotate(4deg); opacity: 1 } 100% { transform: none } }
+@keyframes wx-ring { 0% { transform: scale(1); opacity: .55 } 100% { transform: scale(2.4); opacity: 0 } }
+@keyframes wx-word { from { opacity: 0; transform: translateY(14px); filter: blur(6px) } to { opacity: 1; transform: none; filter: none } }
+@keyframes wx-bar { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+@keyframes wx-glow { 0%, 100% { transform: scale(.9); opacity: .7 } 50% { transform: scale(1.1); opacity: 1 } }
+@keyframes wx-lift { to { opacity: 0; transform: translateY(-3%) scale(1.04); filter: blur(4px) } }
+@keyframes wx-fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes wx-fade-out { to { opacity: 0 } }
+@keyframes wx-sheet { 0% { opacity: 0; transform: translateY(60px) scale(.96) } 60% { opacity: 1; transform: translateY(-4px) scale(1.005) } 100% { transform: none } }
+@keyframes wx-slide-next { from { opacity: 0; transform: translateX(36px) } to { opacity: 1; transform: none } }
+@keyframes wx-slide-prev { from { opacity: 0; transform: translateX(-36px) } to { opacity: 1; transform: none } }
+@keyframes wx-orbit { to { transform: rotate(360deg) } }
+@keyframes wx-counter { to { transform: rotate(-360deg) } }
+@keyframes wx-pop { 0% { transform: scale(.5); opacity: 0 } 60% { transform: scale(1.08); opacity: 1 } 100% { transform: none } }
+.wx-logo { animation: wx-logo 800ms cubic-bezier(.34,1.56,.64,1) both }
+.wx-ring { border: 2px solid rgba(14,123,248,.6); animation: wx-ring 1.6s cubic-bezier(.22,1,.36,1) 300ms infinite both }
+.wx-ring-2 { border-color: rgba(235,37,198,.5); animation-delay: 900ms }
+.wx-word { animation: wx-word 620ms cubic-bezier(.22,1,.36,1) both }
+.wx-bar { transform-origin: left; animation-name: wx-bar; animation-timing-function: cubic-bezier(.45,0,.2,1); animation-fill-mode: both }
+.wx-glow { animation: wx-glow 3s ease-in-out infinite }
+.wx-lift { animation: wx-lift 520ms cubic-bezier(.4,0,.2,1) both }
+.wx-fade { animation: wx-fade 260ms ease both }
+.wx-fade-out { animation: wx-fade-out 260ms ease both }
+.wx-sheet { animation: wx-sheet 560ms cubic-bezier(.22,1,.36,1) both }
+.wx-slide-next { animation: wx-slide-next 420ms cubic-bezier(.22,1,.36,1) both }
+.wx-slide-prev { animation: wx-slide-prev 420ms cubic-bezier(.22,1,.36,1) both }
+.wx-orbit { animation: wx-orbit 24s linear infinite }
+.wx-counter { display: inline-flex; animation: wx-counter 24s linear infinite }
+.wx-pop { animation: wx-pop 620ms cubic-bezier(.34,1.56,.64,1) 80ms both }
+@media (prefers-reduced-motion: reduce) {
+  .wx-logo, .wx-ring, .wx-word, .wx-bar, .wx-glow, .wx-lift, .wx-sheet, .wx-slide-next, .wx-slide-prev, .wx-orbit, .wx-counter, .wx-pop { animation: none !important }
+  .wx-ring { display: none }
+}

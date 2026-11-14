@@ -127,7 +127,7 @@ const PaymentSystem = () => {
   }
 
   return (
-    <div className="min-h-screen lg:w-[1050px] text-white relative">
+    <div className="min-h-screen lg:w-full lg:max-w-[1050px] lg:mx-auto text-white relative">
       {/* Status Modal */}
       {modal.show && (
         <StatusModal 

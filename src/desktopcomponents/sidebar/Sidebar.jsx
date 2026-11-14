@@ -15,8 +15,13 @@ import {
   Bell,
   MessageSquare,
   ChevronDown,
-  ChevronUp
-} from "lucide-react";
+  ChevronUp,
+  PieChart,
+  Building2,
+  Layers,
+  Snowflake,
+  CreditCard,
+  Wallet, Gem } from "lucide-react";
 
 import dashboard from "../../assets/dashboard.svg";
 import deposit from "../../assets/deposit.svg";
@@ -35,9 +40,6 @@ function Sidebar() {
 
   const [tradingGroupOpen, setTradingGroupOpen] = useState(
     ["/trademain", "/mining", "/trade"].includes(location.pathname)
-  );
-  const [copyTradingGroupOpen, setCopyTradingGroupOpen] = useState(
-    ["/copytrade", "/copy-positions"].includes(location.pathname)
   );
 
   const handleLogout = async () => {
@@ -88,7 +90,7 @@ function Sidebar() {
       dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
 
       <div className="">
-        <ul className="mt-12 w-full text-[14px] font-medium tracking-normal leading-tight text-stone-300">
+        <ul className="mt-12 w-full text-[13px] font-medium tracking-normal leading-tight text-stone-300">
           {/* Dashboard */}
           <li>
             <Link
@@ -153,7 +155,7 @@ function Sidebar() {
 
             {/* DROPDOWN ITEMS */}
             {tradingGroupOpen && (
-              <ul className="ml-12 mt-2 space-y-2 text-sm">
+              <ul className="ml-12 mt-2 space-y-2 text-xs">
                 <li>
                   <Link
                     to="/trade"
@@ -205,14 +207,12 @@ function Sidebar() {
             )}
           </li>
 
-          {/* COPY TRADING GROUP */}
+          {/* COPY TRADING - one page with Top Experts / Copying tabs */}
           <li className="mt-2">
-            <button
-              onClick={() => setCopyTradingGroupOpen(!copyTradingGroupOpen)}
+            <Link
+              to="/copytrade"
               className={`flex gap-2.5 items-center px-4 w-full rounded-3xl min-h-[51px] ${
-                ["/copytrade", "/copy-positions"].includes(location.pathname)
-                  ? "bg-black bg-opacity-80 text-white"
-                  : ""
+                ["/copytrade", "/copy-positions"].includes(location.pathname) ? "bg-black bg-opacity-80 text-white" : ""
               }`}
             >
               <div
@@ -222,50 +222,40 @@ function Sidebar() {
                     : "bg-transparent"
                 }`}
               >
-                <UsersIcon className="w-5 h-5" />
+                <UsersIcon className="w-6 h-6" />
               </div>
-
-              <span className="flex-1 text-left">Copy Trading</span>
-              <span className="text-xs">{copyTradingGroupOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</span>
-            </button>
-
-            {/* DROPDOWN ITEMS */}
-            {copyTradingGroupOpen && (
-              <ul className="ml-12 mt-2 space-y-2 text-sm">
-                <li>
-                  <Link
-                    to="/copytrade"
-                    className={`flex gap-2.5 items-center px-4 py-2 rounded-xl ${
-                      location.pathname === "/copytrade"
-                        ? "bg-zinc-800 text-white"
-                        : "text-stone-300 hover:text-white"
-                    }`}
-                  >
-                    <div className="p-1.5 rounded-[50%] flex items-center justify-center w-8 h-8">
-                      <UsersIcon className="w-4 h-4" />
-                    </div>
-                    <span>Browse Traders</span>
-                  </Link>
-                </li>
-
-                <li>
-                  <Link
-                    to="/copy-positions"
-                    className={`flex gap-2.5 items-center px-4 py-2 rounded-xl ${
-                      location.pathname === "/copy-positions"
-                        ? "bg-zinc-800 text-white"
-                        : "text-stone-300 hover:text-white"
-                    }`}
-                  >
-                    <div className="p-1.5 rounded-[50%] flex items-center justify-center w-8 h-8">
-                      <DollarSign className="w-4 h-4" />
-                    </div>
-                    <span>My Copy Positions</span>
-                  </Link>
-                </li>
-              </ul>
-            )}
+              <span>Copy Trading</span>
+            </Link>
           </li>
+
+          {/* Wealth: Investing (stocks + real estate tabs), Real Estate, Staking, protection & spending */}
+          {[
+            { to: "/assets", label: "Assets", Icon: Gem },
+            { to: "/invest", label: "Investing", Icon: PieChart },
+            { to: "/real-estate", label: "Real Estate", Icon: Building2 },
+            { to: "/staking", label: "Staking", Icon: Layers },
+            { to: "/cold-storage", label: "Cold Storage", Icon: Snowflake },
+            { to: "/cards", label: "Cards", Icon: CreditCard },
+            { to: "/wallets", label: "Connect Wallet", Icon: Wallet },
+          ].map(({ to, label, Icon }) => (
+            <li key={`solo-${to}`}>
+              <Link
+                to={to}
+                className={`flex gap-2.5 items-center px-4 w-full rounded-3xl min-h-[51px] ${
+                  location.pathname === to ? "bg-black bg-opacity-80 text-white" : ""
+                }`}
+              >
+                <div
+                  className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
+                    location.pathname === to ? "bg-[linear-gradient(180deg,#EB25C6_0%,#0E7BF8_100%)]" : "bg-transparent"
+                  }`}
+                >
+                  <Icon className="w-6 h-6" />
+                </div>
+                <span>{label}</span>
+              </Link>
+            </li>
+          ))}
 
           {/* Financial Section */}
           <li>
@@ -418,7 +408,7 @@ function Sidebar() {
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="flex gap-2.5 items-center px-4 mt-12 w-full rounded-3xl min-h-[51px] text-sm font-medium tracking-normal leading-tight whitespace-nowrap text-stone-300 hover:bg-black/30 transition-all"
+          className="flex gap-2.5 items-center px-4 mt-12 w-full rounded-3xl min-h-[51px] text-[13px] font-medium tracking-normal leading-tight whitespace-nowrap text-stone-300 hover:bg-black/30 transition-all"
         >
           <div className="p-2 rounded-[50%] flex items-center justify-center w-10 h-10 bg-[linear-gradient(180deg,#EB25C6_0%,#0E7BF8_100%)]">
             <LogoutIcon />

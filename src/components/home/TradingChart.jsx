@@ -123,7 +123,7 @@ function TradingChart() {
   const changeSign = currentPrice.change >= 0 ? '+' : '';
 
   return (
-    <section className="mt-6 w-full">
+    <section className="mt-6 w-full lg:mt-0 lg:bg-[#1D1D1F] lg:rounded-2xl lg:border lg:border-white/5 lg:overflow-hidden">
       <ChartTabs />
       <div className="flex flex-col justify-center p-px w-full bg-gray-800 rounded-sm border-solid border-[0.52px] border-[color:var(--script-viserlab-com-tuna,#363A45)]">
         <div className="flex flex-col justify-center w-full">
@@ -141,7 +141,7 @@ function TradingChart() {
         </div>
         
         {/* Chart Container - Reduced Height */}
-        <div className="relative w-full h-[180px] bg-[#1D1D1F]">
+        <div className="relative w-full h-[180px] lg:h-[420px] bg-[#1D1D1F]">
           {/* TradingView Chart */}
           <div 
             ref={containerRef}

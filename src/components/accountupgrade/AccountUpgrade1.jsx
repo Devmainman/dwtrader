@@ -67,23 +67,11 @@ useEffect(() => {
     }
   }, []);
 
-  const handleSubscribe = async (packageId) => {
-    if (!user || !token) {
-      alert('Please login to subscribe to a package');
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/users/subscribe`,
-        { packageId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert('Subscription successful!');
-    } catch (error) {
-      console.error('Subscription error:', error);
-      alert('Failed to subscribe. Please try again.');
-    }
+  // Subscribing goes through the payment page; the upgrade is applied once the payment is approved.
+  const handleSubscribe = (packageId) => {
+    const pkg = (packages || []).find((p) => p._id === packageId);
+    if (!pkg) return;
+    navigate(`/payment?amount=${encodeURIComponent(pkg.amount)}&packageId=${encodeURIComponent(pkg._id)}`);
   };
 
   if (loading) {

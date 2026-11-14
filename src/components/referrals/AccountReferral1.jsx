@@ -9,7 +9,7 @@ import TradeStats from "../trade/TradeStats";
 
 function AccountReferral1() {
   return (
-    <section className="overflow-hidden px-3 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+    <section className="overflow-hidden px-3 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px] md:max-w-[640px] lg:max-w-[1200px] lg:px-6 lg:py-6 lg:grid lg:grid-cols-[440px_minmax(0,1fr)] lg:gap-6 lg:items-start">
       <div className="flex flex-col justify-center px-2.5 py-5 rounded-3xl bg-[#1D1D1F] min-h-[194px]">
         <div className="flex flex-col justify-center w-full">
           <UserProfileSection
@@ -25,7 +25,7 @@ function AccountReferral1() {
         </div>
       </div>
 
-      <div className="mt-5 w-full">
+      <div className="mt-5 w-full lg:mt-0">
         <ReferralLinkSection />
         <ReferredUsersList />
         <ReferralBenefitsSection />

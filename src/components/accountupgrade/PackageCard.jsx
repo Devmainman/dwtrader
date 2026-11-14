@@ -4,7 +4,7 @@ import checkSVG from "../../assets/lets-icons_check-fill.svg";
 import PaymentMethodSelector from "../../components/subscribe/PaymentMethodSelector";
 import PaymentForm from "../../components/subscribe/PaymentForm";
 import { useUserAuth } from "../../context/UserAuthContext";
-import { API_BASE_URL } from "../../api/config";
+import { API_BASE_URL, STATIC_BASE_URL } from "../../api/config";
 import axios from "axios";
 
 function PackageCard({ title, price, currency, features, isActive, onSubscribe, icon, packageId, amount }) {
@@ -16,7 +16,7 @@ function PackageCard({ title, price, currency, features, isActive, onSubscribe, 
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const iconUrl = icon ? `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}${icon}` : null;
+  const iconUrl = icon ? `${STATIC_BASE_URL}${icon}` : null;
 
   const handleProceed = () => {
   const queryAmount = encodeURIComponent(price);

@@ -38,18 +38,36 @@ import AccountReferralDesktop from "./desktopcomponents/referrals/Referrals";
 import OpenSupportDesktop from "./desktopcomponents/support/OpenSupportDesktop";
 import CopyTradingDesktop from "./components/copytrade/CopyTrading";
 import CopyTradingPositionsDesktop from "./components/copytrade/CopyTradingPositions";
+import TraderProfile from "./components/copytrade/TraderProfile";
 import MiningDesktop from "./components/mining/Mining";
 import SignalPackage1 from "./components/signals/SignalPackage1";
+
+// Trading & mining
+import LiveTrading from "./components/trading/LiveTrading";
+import TradingHub from "./components/trading/TradingHub";
+import MiningPage from "./components/mining/MiningPage";
+
+// Wealth products
+import Investing from "./components/products/Investing";
+import Assets from "./components/products/Assets";
+import Staking from "./components/products/Staking";
+import RealEstate from "./components/products/RealEstate";
+import RealEstateProject from "./components/products/RealEstateProject";
+import ColdStorage from "./components/products/ColdStorage";
+import Cards from "./components/products/Cards";
+import WalletConnect from "./components/products/WalletConnect";
 
 // Layouts
 import DesktopLayout from "./desktopcomponents/DesktopLayout";
 import { SidebarProvider } from "./context/SidebarContext";
 import { UserAuthProvider } from './context/UserAuthContext';
 import { BalanceProvider } from './context/BalanceContext';
+import { NotificationProvider } from './context/NotificationContext';
 import UserPopupHandler from './components/UserPopupHandler';
 import Navbar from "./Navbar";
 import VerificationStatusModal from './components/VerificationStatusModal';
 import BlockedNoticeModal from './components/BlockedNoticeModal';
+import { AccountLimitNotice, LiveNotificationBanner } from './components/notice/AppNotices';
 
 import PackageUpgradeModal from './components/PackageUpgradeModal';
 import PaymentSystem from './components/subscribe/PaymentSystem';
@@ -78,38 +96,7 @@ function AppContent() {
   const { refreshUser } = useUserAuth();
   
 
- const renderThresholdBanner = () => {
-  if (!user?.thresholdInfo) return null;
 
-  const { nearLimit, warning, exhausted, usagePercent, threshold } = user.thresholdInfo;
-  const userName = user?.fullname || user?.name || 'User';
-
-  if (exhausted) {
-    return (
-      <div className="bg-red-600 text-white text-sm p-3 text-center font-semibold">
-        🚫 Dear {userName}, your account has <strong>reached the maximum balance threshold</strong> ({threshold}). A <strong>compulsory account upgrade</strong> is required to proceed with further actions such as withdrawals.
-      </div>
-    );
-  }
-
-  if (warning) {
-    return (
-      <div className="bg-yellow-600 text-white text-sm p-3 text-center font-semibold">
-        ⚠️ Dear {userName}, you have <strong>exceeded 80% of your account threshold</strong> ({usagePercent}%). To avoid interruptions with deposits or withdrawals, kindly upgrade your account promptly.
-      </div>
-    );
-  }
-
-  if (nearLimit) {
-    return (
-      <div className="bg-blue-600 text-white text-sm p-3 text-center font-semibold">
-        ℹ️ Dear {userName}, you’ve used over 60% of your account threshold. Consider upgrading your account to avoid future limitations.
-      </div>
-    );
-  }
-
-  return null;
-};
 
 
 
@@ -245,7 +232,8 @@ useEffect(() => {
       {user?.status === 'Inactive' && (
     <BlockedNoticeModal reason={user?.blockReason || 'Your account has been restricted temporarily.'} />
   )}
-      {renderThresholdBanner()}
+      <AccountLimitNotice info={user?.thresholdInfo} />
+      <LiveNotificationBanner />
       {isMobile ? (
         <>
           <VerificationStatusModal
@@ -271,31 +259,8 @@ useEffect(() => {
           <Navbar />
           <SideBarMobile />
           <TopNavBarMobile />
-          <section className="flex flex-col overflow-y-auto min-h-screen bg-neutral-900">
-            <Routes>
-              <Route path="/payment" element={<PaymentSystem />} />
-
-
-            
-              <Route path="/" element={<HomeDashboardMobile />} />
-              <Route path="/signal-payment" element={<PaymentSystemSignal />} />
-              <Route path="/settings" element={<SettingsProfileMobile />} />
-              <Route path="/trade" element={<TradeUIMobile />} />
-              <Route path="/trademain" element={<MarketSection />} />
-              <Route path="/copytrade" element={<CopyTradingMobile />} />
-              <Route path="/copy-positions" element={<CopyTradingPositions />} />
-              <Route path="/mining" element={<MiningMobile />} />
-              <Route path="/support" element={<SupportMobile />} />
-              <Route path="/opensupport" element={<OpenSupportMobile />} />
-              <Route path="/notification" element={<NotificationMobile />} />
-              <Route path="/deposite" element={<DepositeStageMobile />} />
-              <Route path="/withdraw" element={<WithdrawPage />} />
-              <Route path="/transactionhistory" element={<TransactionHistoryMobile />} />
-              <Route path="/accountupgrade" element={<AccountUpgradeMobile />} />
-              <Route path="/referrals" element={<AccountReferralMobile />} />
-              <Route path="/signal-packages" element={<SignalPackage1 />} />
-
-            </Routes>
+          <section key={location.pathname} className="flex flex-col overflow-y-auto min-h-screen bg-neutral-900 page-enter">
+            <Routes>{appRoutes()}</Routes>
           </section>
         </>
       ) : (
@@ -321,27 +286,7 @@ useEffect(() => {
         <Routes>
           
           <Route path="/" element={<DesktopLayout />}>
-            <Route index element={<HomeDashboardDesktop />} />
-            <Route path="/payment" element={<PaymentSystem />} />
-            <Route path="/signal-payment" element={<PaymentSystemSignal />} />
-            <Route path="settings" element={<SettingsProfileDesktop />} />
-            <Route path="trade" element={<TradeUIDesktop />} />
-            <Route path="/trademain" element={<MarketSectionDesktop />} />
-            <Route path="support" element={<SupportDesktop />} />
-            <Route path="opensupport" element={<OpenSupportDesktop />} />
-            <Route path="notification" element={<NotificationDesktop />} />
-            <Route path="deposite" element={<DepositeStageDesktop />} />
-            <Route path="withdraw" element={<WithdrawDesktop />} />
-            <Route path="transactionhistory" element={<TransactionHistoryDesktop />} />
-            <Route path="accountupgrade" element={<AccountUpgradeDesktop />} />
-            <Route path="referrals" element={<AccountReferralDesktop />} />
-            <Route path="referrals" element={<AccountReferralDesktop />} /> 
-            <Route path="/copytrade" element={<CopyTradingDesktop />} />
-            <Route path="copy-positions" element={<CopyTradingPositionsDesktop />} />
-            <Route path="/mining" element={<MiningDesktop />} /> 
-            <Route path="signal-packages" element={<SignalPackage1 />} />
-
-              
+            {appRoutes()}
           </Route>
         </Routes>
         </>
@@ -350,11 +295,48 @@ useEffect(() => {
   );
 }
 
+// One route list for every screen size: the mobile pages, made responsive.
+function appRoutes() {
+  return (
+    <>
+      <Route index element={<HomeDashboardMobile />} />
+      <Route path="/payment" element={<PaymentSystem />} />
+      <Route path="/signal-payment" element={<PaymentSystemSignal />} />
+      <Route path="/settings" element={<SettingsProfileMobile />} />
+      <Route path="/trade" element={<TradingHub />} />
+      <Route path="/trademain" element={<LiveTrading />} />
+      <Route path="/copytrade" element={<CopyTradingMobile />} />
+      <Route path="/copy-positions" element={<CopyTradingPositions />} />
+      <Route path="/copytrade/trader/:traderId" element={<TraderProfile />} />
+      <Route path="/mining" element={<MiningPage />} />
+      <Route path="/support" element={<SupportMobile />} />
+      <Route path="/opensupport" element={<OpenSupportMobile />} />
+      <Route path="/notification" element={<NotificationMobile />} />
+      <Route path="/deposite" element={<DepositeStageMobile />} />
+      <Route path="/withdraw" element={<WithdrawPage />} />
+      <Route path="/transactionhistory" element={<TransactionHistoryMobile />} />
+      <Route path="/accountupgrade" element={<AccountUpgradeMobile />} />
+      <Route path="/referrals" element={<AccountReferralMobile />} />
+      <Route path="/signal-packages" element={<SignalPackage1 />} />
+      <Route path="/assets" element={<Assets />} />
+      <Route path="/invest" element={<Investing />} />
+      <Route path="/staking" element={<Staking />} />
+      <Route path="/real-estate" element={<RealEstate />} />
+      <Route path="/real-estate/:id" element={<RealEstateProject />} />
+      <Route path="/cold-storage" element={<ColdStorage />} />
+      <Route path="/cards" element={<Cards />} />
+      <Route path="/wallets" element={<WalletConnect />} />
+    </>
+  );
+}
+
 function App() {
   return (
     <UserAuthProvider>
       <BalanceProvider>
-      <AppContent />
+        <NotificationProvider>
+          <AppContent />
+        </NotificationProvider>
       </BalanceProvider>
     </UserAuthProvider>
   );

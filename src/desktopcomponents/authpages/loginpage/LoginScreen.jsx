@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import LanguageSelector from "./LanguageSelector";
 import Logo from "../../../assets/image-2.svg";
-import { toast } from "react-toastify";
+import { toast } from '../../../lib/toast';
+import { playWelcome } from '../../../components/welcome/WelcomeExperience';
 import { API_BASE_URL } from '../../../api/config';
 import { useUserAuth } from '../../../context/UserAuthContext';
 
@@ -50,7 +51,9 @@ const [shake, setShake] = useState(false);
     const success = await login(formData.email, formData.password);
 
     if (success) {
-      toast.success("Login successful!");
+      let name = "";
+      try { name = JSON.parse(localStorage.getItem("user") || "{}").firstName || ""; } catch { /* ignore */ }
+      playWelcome({ kind: "login", name });
       navigate("/");
     }
 

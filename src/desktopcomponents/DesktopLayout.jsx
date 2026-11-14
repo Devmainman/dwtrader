@@ -1,10 +1,11 @@
 // desktopcomponents/DesktopLayout.jsx
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import SideBarDesktop from "./sidebar/Sidebar";
 import TopNavBarDesktop from "./navigation/TopNavBar";
 
 const DesktopLayout = () => {
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {

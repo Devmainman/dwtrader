@@ -5,6 +5,9 @@ import receive from "../../assets/game-icons_receive-money.svg";
 import gift from "../../assets/gift.svg";
 import userAdd from "../../assets/user-add.svg";
 import { API_BASE_URL } from "../../api/config";
+import { AnimatedNumber } from "../products/ui";
+import { toast } from "../../lib/toast";
+import { Search, Check, X } from "lucide-react";
 
 function WalletSection() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -13,6 +16,8 @@ function WalletSection() {
   const [currencies, setCurrencies] = useState([]);
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState("");
+  const [currencyQuery, setCurrencyQuery] = useState("");
+  const [switching, setSwitching] = useState("");
 
   const fetchBalance = async () => {
     try {
@@ -67,33 +72,32 @@ function WalletSection() {
   
 
   const updateCurrency = async (currencyCode) => {
+    if (currencyCode === selectedCurrency) { setShowCurrencyDropdown(false); return; }
+    setSwitching(currencyCode);
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
-  
       const res = await fetch(`${API_BASE_URL}/users/preferences`, {
         method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ currency: currencyCode }),
       });
-  
-      if (!res.ok) throw new Error("Failed to update currency");
-  
-      // Wait for backend to apply change before fetching updated balance
-      await new Promise(resolve => setTimeout(resolve, 300)); // small delay
-  
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.message || "Could not change currency");
+      const from = selectedCurrency;
       setSelectedCurrency(currencyCode);
       setShowCurrencyDropdown(false);
-  
-      await fetchBalance(); // ensure updated currency balance is fetched
+      setCurrencyQuery("");
+      await fetchBalance();
+      toast.success(`Balance now in ${currencyCode}`, {
+        description: json.rate ? `Converted at 1 ${from} = ${Number(json.rate).toLocaleString("en-US", { maximumSignificantDigits: 6 })} ${currencyCode}` : undefined,
+      });
     } catch (err) {
-      console.error("Currency update error:", err);
+      toast.error(err.message || "Could not change currency");
+    } finally {
+      setSwitching("");
     }
   };
-  
 
   const getCurrencySymbol = (currencyCode) => {
     try {
@@ -179,12 +183,11 @@ function WalletSection() {
             {getCurrencySymbol(selectedCurrency)}
             </span>
 
-            <span className="ml-1">
-              {balanceData.balance.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-              })}
-            </span>
+            <AnimatedNumber
+              className="ml-1"
+              value={balanceData.balance}
+              format={(n) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            />
 
               <img
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/70c54a492ef2cc51c02fd96eb404cf1be4a19214c0947459d4589fe00f397e54?placeholderIfAbsent=true"
@@ -193,19 +196,6 @@ function WalletSection() {
               />
             </div>
 
-            {showCurrencyDropdown && (
-              <div className="absolute top-full mt-2 z-10 bg-neutral-900 border border-neutral-800 rounded-md shadow-lg max-h-40 overflow-y-auto w-40">
-                {currencies.map((cur) => (
-                  <button
-                    key={cur.code}
-                    onClick={() => updateCurrency(cur.code)}
-                    className="block w-full text-left px-3 py-1.5 text-sm hover:bg-neutral-700 text-zinc-100"
-                  >
-                    {cur.code} - {cur.title}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
           <Link
@@ -216,6 +206,49 @@ function WalletSection() {
           </Link>
         </div>
       </div>
+      {showCurrencyDropdown && (
+        <div className="fixed inset-0 z-[9000] flex items-end md:items-center justify-center" role="dialog" aria-modal="true">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-[fade-in_200ms_ease_both]" onClick={() => setShowCurrencyDropdown(false)} />
+          <div className="relative w-full md:max-w-sm max-h-[78vh] flex flex-col bg-[#1C1C1E] border border-white/10 rounded-t-[28px] md:rounded-[28px] shadow-2xl animate-[sheet-in_420ms_cubic-bezier(0.22,1,0.36,1)_both]">
+            <div className="mx-auto mt-2 w-9 h-1 rounded-full bg-white/20 md:hidden" />
+            <div className="flex items-center justify-between px-5 pt-3 pb-2">
+              <div>
+                <p className="text-sm font-semibold text-zinc-100">Display currency</p>
+                <p className="text-[11px] text-neutral-500">Your balance converts at today&apos;s market rate.</p>
+              </div>
+              <button type="button" onClick={() => setShowCurrencyDropdown(false)} className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-neutral-400" aria-label="Close"><X className="w-3.5 h-3.5" /></button>
+            </div>
+            <div className="px-5 pb-2">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
+                <input autoFocus value={currencyQuery} onChange={(e) => setCurrencyQuery(e.target.value)} placeholder="Search currency" className="w-full h-9 pl-8 pr-3 rounded-xl bg-white/5 border border-white/10 text-sm text-zinc-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50" />
+              </div>
+            </div>
+            <ul className="overflow-y-auto px-2 pb-[calc(env(safe-area-inset-bottom)+12px)]">
+              {currencies
+                .filter((cur) => !currencyQuery || `${cur.code} ${cur.title}`.toLowerCase().includes(currencyQuery.toLowerCase()))
+                .map((cur, i) => (
+                  <li key={cur.code} style={{ animationDelay: `${Math.min(i, 10) * 18}ms` }} className="animate-[rise-in_300ms_ease_both]">
+                    <button
+                      type="button"
+                      disabled={!!switching}
+                      onClick={() => updateCurrency(cur.code)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition active:scale-[0.98] ${cur.code === selectedCurrency ? "bg-blue-500/10" : "hover:bg-white/5"}`}
+                    >
+                      <span className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-xs font-semibold text-zinc-200">{getCurrencySymbol(cur.code).slice(0, 3)}</span>
+                      <span className="flex-1 min-w-0">
+                        <span className="block text-sm text-zinc-100">{cur.code}</span>
+                        <span className="block text-[11px] text-neutral-500 truncate">{cur.title}</span>
+                      </span>
+                      {switching === cur.code ? <span className="w-4 h-4 rounded-full border-2 border-blue-400 border-t-transparent animate-spin" />
+                        : cur.code === selectedCurrency && <Check className="w-4 h-4 text-blue-400" />}
+                    </button>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

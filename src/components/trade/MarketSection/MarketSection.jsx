@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useUserAuth } from "../../../context/UserAuthContext";
 
 import BalanceCard from "../BalanceCard";
@@ -39,6 +40,7 @@ export default function MarketSection() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAllPairs, setShowAllPairs] = useState(false);
   const [showBalanceModal, setShowBalanceModal] = useState(false);
+  const navigate = useNavigate();
   const [showChart, setShowChart] = useState(false);
   const [chartTimeframe, setChartTimeframe] = useState("60");
   const [chartKey, setChartKey] = useState(Date.now());
@@ -152,7 +154,7 @@ export default function MarketSection() {
       'USD/ZAR': 18.75, 'USD/BRL': 4.95, 'USD/RUB': 90.5,
       'USD/TRY': 32.15, 'USD/PLN': 4.02, 'USD/THB': 35.85,
       'USD/IDR': 15650, 'USD/MYR': 4.72, 'USD/PHP': 56.25,
-      'USD/SAR': 3.75, 'USD/AED': 3.67, 'USD/HKD': 7.82,
+      'USD/SAR': 3.75, 'USD/AED': 3.67,
       'USD/SEK': 10.45, 'USD/NOK': 10.65, 'USD/DKK': 6.88
     };
     
@@ -342,41 +344,16 @@ const placeOrder = async (side) => {
     }
   };
 
-  // Balance management
-  const handleTopupBalance = async (amount) => {
-    try {
-      const result = await fetchWithAuth("/trading/sim/balance/topup", {
-        method: "POST",
-        data: { amount: parseFloat(amount) }
-      });
-      
-      if (result.data?.success) {
-        setMessage(`Successfully topped up ${formatCurrency(amount)}`);
-      } else {
-        setMessage(result.data?.error || "Topup failed");
-      }
-    } catch (err) {
-      console.error('Topup error:', err);
-      setMessage(err.response?.data?.error || "Topup failed. Please try again.");
-    }
+  // Balance changes go through the real deposit / withdrawal flows (reviewed by admins).
+  // The old simulator top-up endpoint let anyone credit their own balance and was removed.
+  const handleTopupBalance = () => {
+    setShowBalanceModal(false);
+    navigate("/deposite");
   };
 
-  const handleDeductBalance = async (amount) => {
-    try {
-      const result = await fetchWithAuth("/trading/sim/balance/deduct", {
-        method: "POST",
-        data: { amount: parseFloat(amount) }
-      });
-      
-      if (result.data?.success) {
-        setMessage(`Successfully deducted ${formatCurrency(amount)}`);
-      } else {
-        setMessage(result.data?.error || "Deduction failed");
-      }
-    } catch (err) {
-      console.error('Deduction error:', err);
-      setMessage(err.response?.data?.error || "Deduction failed. Please try again.");
-    }
+  const handleDeductBalance = () => {
+    setShowBalanceModal(false);
+    navigate("/withdraw");
   };
 
   // Calculate order value

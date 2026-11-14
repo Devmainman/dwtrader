@@ -14,7 +14,14 @@ import {
   Gift, // Add this
   User, // Add for Profile
   Bell, // Add for Notification
-  MessageSquare // Add for Support Ticket
+  MessageSquare, // Add for Support Ticket
+  PieChart,
+  Building2,
+  Layers,
+  Snowflake,
+  CreditCard,
+  Wallet,
+  Gem
 } from "lucide-react";
 
 import dashboard from "../../assets/dashboard.svg";
@@ -35,7 +42,6 @@ function SideBar() {
   const location = useLocation();
   const sidebarRef = useRef(null);
   const [tradingGroupOpen, setTradingGroupOpen] = useState(true);
-  const [copyTradingGroupOpen, setCopyTradingGroupOpen] = useState(true);
 
   // Close sidebar on click outside
   useEffect(() => {
@@ -94,26 +100,19 @@ function SideBar() {
       ]
     },
 
-    // COPY TRADING - Separate Section
-    {
-      name: "Copy Trading",
-      isGroup: true,
-      groupId: "copytrading",
-      isOpen: copyTradingGroupOpen,
-      toggle: () => setCopyTradingGroupOpen(!copyTradingGroupOpen),
-      items: [
-        { 
-          name: "Browse Traders", 
-          path: "/copytrade", 
-          LucideIcon: UsersIcon
-        },
-        { 
-          name: "My Copy Positions", 
-          path: "/copy-positions", 
-          LucideIcon: DollarSign
-        },
-      ]
-    },
+    // COPY TRADING - one page with "Top Experts" and "Copying" tabs
+    { name: "Copy Trading", path: "/copytrade", LucideIcon: UsersIcon, activePaths: ["/copytrade", "/copy-positions"] },
+
+    // Wealth: Investing (stocks + real estate tabs), Real Estate, Staking
+    { name: "Assets", path: "/assets", LucideIcon: Gem },
+    { name: "Investing", path: "/invest", LucideIcon: PieChart },
+    { name: "Real Estate", path: "/real-estate", LucideIcon: Building2 },
+    { name: "Staking", path: "/staking", LucideIcon: Layers },
+
+    // Wealth protection & spending
+    { name: "Cold Storage", path: "/cold-storage", LucideIcon: Snowflake },
+    { name: "Cards", path: "/cards", LucideIcon: CreditCard },
+    { name: "Connect Wallet", path: "/wallets", LucideIcon: Wallet },
 
     // Financial Section
     { name: "Deposit", path: "/deposite", icon: deposit, LucideIcon: DollarSign },
@@ -191,7 +190,7 @@ function SideBar() {
           </button>
         </div>
 
-        <ul className="mt-4 w-full text-sm font-medium tracking-normal leading-tight text-stone-300">
+        <ul className="mt-4 w-full text-[13px] font-medium tracking-normal leading-tight text-stone-300">
           {menuItems.map((item, index) => {
             if (item.isGroup) {
               const isGroupActive = item.items.some(subItem => location.pathname === subItem.path);
@@ -212,13 +211,15 @@ function SideBar() {
                           background: "linear-gradient(80deg,#EB25C6_18.83%,#0E7BF8_103.47%)",
                         }}
                       >
-                        {item.groupId === "copytrading" ? (
+                        {item.GroupIcon ? (
+                          <item.GroupIcon className="w-5 h-5 text-white" />
+                        ) : item.groupId === "copytrading" ? (
                           <UsersIcon className="w-5 h-5 text-white" />
                         ) : (
                           <TrendingUp className="w-5 h-5 text-white" />
                         )}
                       </div>
-                      <span className="text-stone-300 font-medium">{item.name}</span>
+                      <span className="text-[13px] text-stone-300 font-medium">{item.name}</span>
                     </div>
                     <ChevronIcon isOpen={item.isOpen} />
                   </button>
@@ -264,7 +265,7 @@ function SideBar() {
             }
 
             // Regular menu items
-            const isActive = location.pathname === item.path;
+            const isActive = item.activePaths ? item.activePaths.includes(location.pathname) : location.pathname === item.path;
             return (
               <li
                 key={index}

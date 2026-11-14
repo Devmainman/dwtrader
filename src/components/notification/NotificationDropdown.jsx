@@ -1,123 +1,85 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import NotificationCard from "./NotificationCard";
-import NotificationIcon from "../../assets/notification.svg"; // ✅ Import icon here
+// Bell with live unread badge and a compact popover of recent notifications.
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Bell } from 'lucide-react';
+import { useNotificationStore } from '../../context/NotificationContext';
+import { TypeIcon, timeAgo } from './NotificationCenter';
 
-const NotificationDropdown = ({
-  notifications = [],
-  notificationCount = 0,
-  markAsRead,
-  deleteNotification,
-  loading,
-  error,
-  markAllAsRead
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+export default function NotificationDropdown({ className = '' }) {
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotificationStore();
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
   const navigate = useNavigate();
-  const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  // Close dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    if (!open) return undefined;
+    const onDown = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', onDown); document.removeEventListener('keydown', onKey); };
+  }, [open]);
 
-  const handleNotificationClick = async (notification) => {
-    if (!notification.isRead) {
-      try {
-        await markAsRead(notification.id);
-      } catch (err) {
-        console.error("Failed to mark as read:", err);
-      }
-    }
-    setIsOpen(false);
-    navigate("/notification");
+  const openItem = (n) => {
+    if (!n.isRead) markAsRead(n.id);
+    setOpen(false);
+    navigate(n.link || '/notification');
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      <div className="relative cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
-        <img src={NotificationIcon} alt="notifications" />
-
+    <div className={`relative ${className}`} ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="relative w-9 h-9 rounded-full flex items-center justify-center bg-zinc-900 border border-neutral-800 text-zinc-100 hover:bg-neutral-800 transition"
+        aria-label={unreadCount ? `Notifications, ${unreadCount} unread` : 'Notifications'}
+      >
+        <Bell className="w-[18px] h-[18px]" strokeWidth={2} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex items-center justify-center h-4 w-4 text-[8px] font-bold bg-blue-500 text-white rounded-full ring-2 ring-zinc-900">
-            {unreadCount > 99 ? "99+" : unreadCount}
+          <span key={unreadCount} className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-blue-600 text-white text-[9px] font-semibold flex items-center justify-center ring-2 ring-[#1D1D1F] animate-[notice-drop_500ms_cubic-bezier(0.22,1,0.36,1)_both]">
+            {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
-      </div>
+      </button>
 
-      {isOpen && (
-        <div className="fixed top-14 left-0 right-0 bg-[#1D1D1F] shadow-lg z-50 h-[50vh] overflow-y-auto md:absolute md:right-0 md:left-auto md:top-full md:mt-2 md:w-80 md:h-auto md:max-h-96">
-          <div className="p-4 max-w-screen mx-auto md:p-0">
-            <div className="flex justify-between items-center mb-4 p-4 border-b border-neutral-700 md:px-4 md:py-3">
-              <h3 className="text-sm font-medium text-white">Notifications</h3>
-              {notificationCount > 0 && (
-                <button
-                  onClick={async () => {
-                    try {
-                      await markAllAsRead();
-                    } catch (err) {
-                      console.error("Failed to mark all as read:", err);
-                    }
-                  }}
-                  className="text-xs text-blue-400 hover:text-blue-300"
-                >
-                  Mark all as read
-                </button>
-              )}
-            </div>
-
-            {loading ? (
-              <div className="p-4 text-center">Loading...</div>
-            ) : notifications.length > 0 ? (
-              <div className="flex flex-col gap-3 px-4 md:px-0">
-                {[...notifications]
-                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                  .slice(0, 3)
-                  .map((notification) => (
-                    <NotificationCard
-                      key={notification.id}
-                      notification={notification}
-                      onAction={() =>
-                        notification.isRead
-                          ? deleteNotification(notification.id)
-                          : markAsRead(notification.id)
-                      }
-                      actionText={notification.isRead ? "Delete" : "Mark as Read"}
-                      onClick={() => handleNotificationClick(notification)}
-                    />
-                ))}
-              </div>
-            ) : (
-              <div className="p-4 text-center">
-                <p className="text-sm text-neutral-400">No notifications yet</p>
-              </div>
-            )}
-
-            {notifications.length > 3 && (
-              <div className="w-full text-center mt-4 p-4 border-t border-neutral-700">
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    navigate("/notification");
-                  }}
-                  className="bg-blue-500 text-[10px] text-white py-2 px-4 rounded-xl hover:bg-blue-600"
-                >
-                  View all notifications
-                </button>
-              </div>
+      {open && (
+        <div className="fixed left-3 right-3 top-16 md:absolute md:left-auto md:right-0 md:top-11 md:w-[360px] z-[9000] rounded-2xl bg-[#1D1D1F]/95 backdrop-blur-xl border border-white/10 shadow-[0_16px_48px_rgba(0,0,0,0.55)] overflow-hidden animate-[sheet-in_260ms_cubic-bezier(0.32,0.72,0,1)]">
+          <div className="flex items-center justify-between px-4 pt-3 pb-2">
+            <p className="text-sm font-semibold text-zinc-100">Notifications</p>
+            {unreadCount > 0 && (
+              <button type="button" onClick={markAllAsRead} className="text-[11px] font-medium text-blue-400 hover:text-blue-300">Mark all as read</button>
             )}
           </div>
+          {notifications.length === 0 ? (
+            <p className="px-4 pb-5 pt-2 text-xs text-neutral-400">No notifications yet.</p>
+          ) : (
+            <ul className="max-h-[60vh] md:max-h-96 overflow-y-auto divide-y divide-neutral-800 [scrollbar-width:thin] [scrollbar-color:#3f3f46_transparent]">
+              {notifications.slice(0, 8).map((n) => (
+                <li key={n.id}>
+                  <button type="button" onClick={() => openItem(n)} className="w-full flex items-start gap-3 px-4 py-2.5 text-left hover:bg-white/[0.03]">
+                    <TypeIcon type={n.type} size="sm" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2">
+                        <p className={`flex-1 text-[13px] truncate ${n.isRead ? 'text-neutral-300' : 'font-semibold text-zinc-100'}`}>{n.title}</p>
+                        <span className="text-[10px] text-neutral-500 shrink-0">{timeAgo(n.createdAt)}</span>
+                      </div>
+                      {n.content && <p className="text-[11px] text-neutral-400 line-clamp-1 mt-0.5">{n.content}</p>}
+                    </div>
+                    {!n.isRead && <span className="mt-1.5 w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          <button
+            type="button"
+            onClick={() => { setOpen(false); navigate('/notification'); }}
+            className="w-full py-2.5 text-[12px] font-medium text-blue-400 hover:text-blue-300 border-t border-neutral-800"
+          >
+            See all notifications
+          </button>
         </div>
       )}
     </div>
   );
-};
-
-export default NotificationDropdown;
+}

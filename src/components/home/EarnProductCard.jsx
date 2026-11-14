@@ -3,7 +3,7 @@ import React from "react";
 
 function EarnProductCard({ product }) {
   return (
-    <div className="flex overflow-hidden flex-col items-start self-stretch py-3 pr-9 pl-4 my-auto rounded-xl bg-[#1D1D1F] w-full">
+    <div className="flex overflow-hidden flex-col items-start self-stretch py-3 pr-9 pl-4 my-auto rounded-xl bg-[#1D1D1F] w-full lg:bg-black/40 lg:border lg:border-white/5">
       <div className="flex gap-2 items-center">
         <img
           src={product.image}

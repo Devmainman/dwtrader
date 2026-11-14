@@ -52,7 +52,7 @@ function CryptoList() {
   ];
 
   return (
-    <section className="mt-8 w-full overflow-x-auto whitespace-nowrap max-w-[480px] hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
+    <section className="mt-8 w-full overflow-x-auto whitespace-nowrap max-w-[480px] lg:mt-0 lg:max-w-none hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
      <div className="flex overflow-x-auto whitespace-nowrap gap-2 items-center w-full text-[10px] text-stone-300 hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
   <div className="flex w-max flex-nowrap gap-2">
     <button className="flex gap-1.5 items-center px-2.5 py-2 my-auto rounded-3xl border-2 border-solid border-neutral-800 min-h-[29px]">

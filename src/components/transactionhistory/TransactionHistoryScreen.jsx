@@ -6,7 +6,7 @@ import TransactionList from "./TransactionList";
 
 function TransactionHistoryScreen() {
   return (
-    <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
+    <section className="overflow-hidden px-5 py-3 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px] md:max-w-[640px] lg:max-w-[1100px] lg:px-8 lg:py-6">
       <BalanceDisplay />
       <SearchBar />
       <TransactionList />

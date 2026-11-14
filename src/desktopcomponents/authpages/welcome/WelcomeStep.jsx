@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../../context/UserAuthContext';
 import { completeProfile } from '../../../api/verification';
-import { toast } from 'react-toastify';
+import { toast } from '../../../lib/toast';
 import { API_BASE_URL } from '../../../api/config';
 
 export default function WelcomeStep({ onContinue, initialData = {} }) {

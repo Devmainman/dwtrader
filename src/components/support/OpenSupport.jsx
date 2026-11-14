@@ -1,15 +1,19 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ticketsApi, apiMessage } from "../../api/tickets";
+import { toast } from "../../lib/toast";
 
 
-function UploadAttachment({ onFileSelect }) {
+function UploadAttachment({ onFileSelect, file }) {
   const fileInputRef = React.useRef(null);
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
-    if (file && file.size <= 2 * 1024 * 1024) {
+    if (!file) return;
+    if (file.size <= 2 * 1024 * 1024) {
       onFileSelect(file);
     } else {
-      alert("File size exceeds 2MB limit");
+      toast.error("File size exceeds 2MB limit");
       e.target.value = null;
     }
   };
@@ -28,7 +32,7 @@ function UploadAttachment({ onFileSelect }) {
             alt="Upload icon"
           />
           <h3 className="mt-2 text-xs font-medium text-zinc-100">Upload Image</h3>
-          <p className="text-[8px] text-neutral-400">Image size must be less than 2MB</p>
+          <p className="text-[8px] text-neutral-400">{file ? `Selected: ${file.name}` : "Image size must be less than 2MB"}</p>
 
           <input
             type="file"
@@ -51,13 +55,14 @@ function UploadAttachment({ onFileSelect }) {
   );
 }
 
-function SubmitButton() {
+function SubmitButton({ busy }) {
   return (
     <button
       type="submit"
-      className="mt-6 w-full py-3 text-xs bg-blue-600 rounded-3xl text-zinc-100"
+      disabled={busy}
+      className="mt-6 w-full py-3 text-xs bg-blue-600 rounded-3xl text-zinc-100 disabled:opacity-60"
     >
-      Submit
+      {busy ? "Submitting…" : "Submit"}
     </button>
   );
 }
@@ -104,7 +109,9 @@ function FormField({ label, type, name, value, onChange, options, placeholder })
 
 
 
-function Support3() {
+function Support3({ onCreated }) {
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
   const [formData, setFormData] = useState({
     subject: "",
     priority: "",
@@ -119,15 +126,30 @@ function Support3() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    if (!formData.subject.trim()) return toast.error("Add a subject");
+    if (!formData.priority) return toast.error("Choose a priority");
+    if (!formData.message.trim()) return toast.error("Describe the issue in the message");
+    setBusy(true);
+    try {
+      await ticketsApi.create(formData);
+      toast.success("Ticket submitted", { description: "Our team will reply here and notify you." });
+      setFormData({ subject: "", priority: "", message: "", attachment: null });
+      if (onCreated) onCreated();
+      else navigate("/support");
+    } catch (err) {
+      toast.error(apiMessage(err));
+    } finally {
+      setBusy(false);
+    }
+    return undefined;
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col pt-2 pb-6 mx-auto w-full max-w-[480px] rounded-3xl bg-neutral-900"
+      className="flex flex-col pt-2 pb-6 mx-auto w-full max-w-[480px] md:max-w-[640px] lg:max-w-[820px] lg:px-6 rounded-3xl bg-neutral-900"
     >
       <h2 className="text-[14px] font-medium text-white">Create Ticket</h2>
 
@@ -151,7 +173,7 @@ function Support3() {
           name="priority"
           value={formData.priority}
           onChange={(value) => handleChange("priority", value)}
-          options={[{ value: "", label: "--Select--" }]}
+          options={[{ value: "", label: "--Select--" }, { value: "Low", label: "Low" }, { value: "Medium", label: "Medium" }, { value: "High", label: "High" }]}
         />
         </div>
         
@@ -160,6 +182,7 @@ function Support3() {
   
   <textarea
     placeholder="Message"
+    maxLength={4000}
     className="w-[243px] h-[102px] px-2.5 py-3 rounded-md bg-[#1D1D1F] text-neutral-400 resize-none outline-none"
     value={formData.message}
     onChange={(e) => handleChange("message", e.target.value)}
@@ -170,9 +193,9 @@ function Support3() {
 
       </div>
 
-      <UploadAttachment onFileSelect={(file) => handleChange("attachment", file)} />
+      <UploadAttachment file={formData.attachment} onFileSelect={(file) => handleChange("attachment", file)} />
 
-      <SubmitButton />
+      <SubmitButton busy={busy} />
     </form>
   );
 }

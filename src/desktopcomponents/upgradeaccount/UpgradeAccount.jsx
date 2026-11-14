@@ -8,6 +8,7 @@ import PackageCard from "../../components/accountupgrade/PackageCard";
 import axios from "axios";
 import { API_BASE_URL } from "../../api/config";
 import { useUserAuth } from "../../context/UserAuthContext";
+import { useNavigate } from "react-router-dom";
 
 function UpgradeAccount() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -16,6 +17,7 @@ function UpgradeAccount() {
   const [error, setError] = useState(null);
   const { user, token } = useUserAuth();
   const scrollRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -70,27 +72,11 @@ function UpgradeAccount() {
     }
   }, []);
 
-  const handleSubscribe = async (packageId) => {
-    if (!user || !token) {
-      alert("Please login to subscribe to a package");
-      return;
-    }
-
-    try {
-      await axios.post(
-        `${API_BASE_URL}/users/subscribe`,
-        { packageId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      alert("Subscription successful!");
-    } catch (err) {
-      console.error("Subscription error:", err);
-      alert("Failed to subscribe. Please try again.");
-    }
+  // Subscribing goes through the payment page; the upgrade is applied once the payment is approved.
+  const handleSubscribe = (packageId) => {
+    const pkg = (packages || []).find((p) => p._id === packageId);
+    if (!pkg) return;
+    navigate(`/payment?amount=${encodeURIComponent(pkg.amount)}&packageId=${encodeURIComponent(pkg._id)}`);
   };
 
   return (

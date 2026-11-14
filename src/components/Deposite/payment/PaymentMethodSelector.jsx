@@ -56,9 +56,9 @@ const PaymentMethodSelector = ({ methods, onSelect }) => {
           })}
         </div>
       ) : (
-        <div className="border border-yellow-500 p-4">
-          <p className="text-yellow-500">Debug: Methods array exists but empty</p>
-          <pre className="text-xs mt-2">{JSON.stringify(methods, null, 2)}</pre>
+        <div className="rounded-xl bg-[#1D1D1F] border border-neutral-800 px-4 py-8 text-center">
+          <p className="text-sm text-zinc-100">No deposit methods yet</p>
+          <p className="text-xs text-neutral-500 mt-1">Deposit options will appear here once support adds them.</p>
         </div>
       )}
     </div>

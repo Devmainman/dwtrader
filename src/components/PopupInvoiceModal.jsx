@@ -3,7 +3,7 @@ export default function PopupInvoiceModal({ popup, onComplete }) {
       try {
         // Process payment
         await axios.post(
-          `${API_BASE_URL}/user/popup-invoices/${popup.itemId}/pay`,
+          `${API_BASE_URL}/users/popup-invoices/${popup.itemId}/pay`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );

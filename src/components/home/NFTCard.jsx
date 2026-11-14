@@ -3,8 +3,8 @@ import React from "react";
 
 function NFTCard({ nft }) {
   return (
-    <div className="flex flex-col w-[218px] h-auto bg-[#1D1D1F] rounded-xl p-4">
-  <div className="flex gap-2 text-[12px] w-[218px] font-semibold tracking-normal leading-4 text-zinc-100">
+    <div className="flex flex-col w-[218px] h-auto bg-[#1D1D1F] rounded-xl p-4 lg:w-auto lg:bg-black/40 lg:border lg:border-white/5">
+  <div className="flex gap-2 text-[12px] w-[218px] lg:w-auto font-semibold tracking-normal leading-4 text-zinc-100">
     <img
       src={nft.image}
       className="object-contain flex-none w-[33px] h-auto"

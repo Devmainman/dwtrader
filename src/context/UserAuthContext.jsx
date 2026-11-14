@@ -279,11 +279,7 @@ export function UserAuthProvider({ children }) {
     return () => { isMounted.current = false; };
   }, []); 
 
-  useEffect(() => {
-    if (token && user && !websocketRef.current) {
-      connectWebSocket();
-    }
-  }, [token, user, connectWebSocket]);
+  // Live notifications (the WebSocket) are handled by NotificationProvider in context/NotificationContext.jsx.
   
   
 

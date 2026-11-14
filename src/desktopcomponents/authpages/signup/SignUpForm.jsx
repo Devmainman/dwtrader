@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from '../../../lib/toast';
+import { playWelcome, queueOnboarding } from '../../../components/welcome/WelcomeExperience';
 import LanguageSelector from "../loginpage/LanguageSelector";
 import Logo from "../../../assets/image-2.svg";
 import FormInput from "./FormInput";
@@ -90,7 +91,8 @@ const SignUpForm = () => {
       const loginSuccess = await login(formData.email, formData.password);
       
       if (loginSuccess) {
-        toast.success("Account created successfully!");
+        queueOnboarding(formData.email);
+        playWelcome({ kind: "new" });
         navigate("/welcome", { state: { email: formData.email } });
       }
     } catch (error) {

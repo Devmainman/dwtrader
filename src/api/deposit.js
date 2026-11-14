@@ -4,7 +4,7 @@ import { API_BASE_URL } from './config';
 // In deposit.js
 export const getPaymentMethods = async (token) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/payments/methods`, {
+      const response = await axios.get(`${API_BASE_URL}/payments/methods`, {
         headers: { 
           'Authorization': `Bearer ${token}`
         }

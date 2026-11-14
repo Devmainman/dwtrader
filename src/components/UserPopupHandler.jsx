@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useUserAuth } from '../context/UserAuthContext';
 import axios from 'axios';
 import { API_BASE_URL } from '../api/config';
-import { toast } from 'react-toastify';
+import { toast } from '../lib/toast';
 
 export default function UserPopupHandler() {
   const { token, fetchWithAuth } = useUserAuth();

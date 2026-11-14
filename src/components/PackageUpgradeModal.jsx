@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useUserAuth } from '../context/UserAuthContext';
 import { useBalance } from '../context/BalanceContext';
 import axios from 'axios';
-import { API_BASE_URL } from '../api/config';
+import { API_BASE_URL, STATIC_BASE_URL } from '../api/config';
 import PaymentMethodSelector from './upgrade/PaymentMethodSelector';
 import PaymentForm from './upgrade/PaymentForm';
 
@@ -51,7 +51,7 @@ const PackageUpgradeModal = ({ show, onClose }) => {
   if (!show || !pending) return null;
 
   const iconUrl = pending.icon
-    ? `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}${pending.icon}`
+    ? `${STATIC_BASE_URL}${pending.icon}`
     : null;
 
     

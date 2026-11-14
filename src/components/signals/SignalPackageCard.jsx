@@ -1,3 +1,4 @@
+import { STATIC_BASE_URL } from '../../api/config';
 import checkSVG from "../../assets/lets-icons_check-fill.svg";
 
 function SignalPackageCard({
@@ -9,7 +10,7 @@ function SignalPackageCard({
   onProceed   // 👈 receive from parent
 }) {
   const iconUrl = icon
-    ? `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}${icon}`
+    ? `${STATIC_BASE_URL}${icon}`
     : null;
 
   return (

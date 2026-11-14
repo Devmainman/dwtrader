@@ -115,7 +115,7 @@ function TradingPackage() {
   const ICON_DROPDOWN = "https://cdn.builder.io/api/v1/image/assets/TEMP/ca387fb10bcfc33fffcf6905fbc9e1feac1c3e02413c04ee641f2748544d5264?placeholderIfAbsent=true";
 
   return (
-    <section ref={containerRef} className="overflow-visible px-3.5 py-4 mt-7 w-full rounded-xl bg-black bg-opacity-80 max-w-[480px] relative border border-white/5">
+    <section ref={containerRef} className="overflow-visible px-3.5 py-4 mt-7 w-full rounded-xl bg-black bg-opacity-80 max-w-[480px] relative border border-white/5 lg:mt-0 lg:max-w-none lg:rounded-2xl lg:p-5">
       <div className="w-full whitespace-nowrap">
         <h2 className="text-[clamp(11px,2vw,14px)] tracking-normal leading-tight text-zinc-100 mb-2">
           Package
