@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { COUNTRIES } from '../../../lib/countries';
 import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../../context/UserAuthContext';
 import { completeProfile } from '../../../api/verification';
@@ -69,42 +70,8 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
     setIsFormValid(isValid);
   }, [formData]);
 
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,idd');
-        
-        if (!res.ok) {
-          throw new Error(`API request failed with status ${res.status}`);
-        }
-        
-        const data = await res.json();
-        
-        if (!Array.isArray(data)) {
-          throw new Error('Unexpected response format - expected array');
-        }
-        
-        const countryList = data
-          .map((c) => ({
-            name: c.name?.common || 'Unknown',
-            code: c.cca2 || '',
-            dialCode: c.idd?.root && c.idd?.suffixes?.length
-              ? c.idd.root + c.idd.suffixes[0]
-              : null,
-          }))
-          .filter((c) => c.code && c.dialCode && c.name)
-          .sort((a, b) => a.name.localeCompare(b.name)); // ✅ sort alphabetically
-
-          
-        
-        setCountries(countryList);
-      } catch (err) {
-        console.error('Error fetching countries:', err);
-      }
-    };
-    
-    fetchCountries();
-  }, []);
+  // Countries ship with the app (no third-party request that can fail).
+  useEffect(() => { setCountries(COUNTRIES); }, []);
   
 
   const handleChange = (e) => {

@@ -46,33 +46,8 @@ function ProfileForm() {
     fetchData();
   }, [fetchWithAuth]);
 
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const res = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2,idd');
-        if (!res.ok) throw new Error(`API failed: ${res.status}`);
-  
-        const data = await res.json();
-  
-        const formattedCountries = data
-          .map((c) => ({
-            name: c.name?.common || 'Unknown',
-            code: c.cca2 || '',
-            dialCode: c.idd?.root && c.idd?.suffixes?.length
-              ? c.idd.root + c.idd.suffixes[0]
-              : null,
-          }))
-          .filter((c) => c.code && c.dialCode && c.name)
-          .sort((a, b) => a.name.localeCompare(b.name)); 
-  
-        setCountries(formattedCountries);
-      } catch (err) {
-        console.error("Failed to fetch countries:", err);
-      }
-    };
-  
-    fetchCountries();
-  }, []);
+  // Countries ship with the app (no third-party request that can fail).
+  useEffect(() => { setCountries(COUNTRIES); }, []);
   
 
   const handleSubmit = async (e) => {
