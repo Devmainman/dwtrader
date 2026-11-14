@@ -14,7 +14,7 @@ const CurrencyIcon = ({ type }) => {
       return (
         <div
           dangerouslySetInnerHTML={{
-            __html: `<svg id="14:2072" width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" class="balance-icon" style="width: 34px; height: 34px"> <rect width="34" height="34" rx="17" fill="#EFEFEF"></rect> <path d="M26.6103 23.1544L28.54 21.1546M6.21001 14.8737L10.3392 10.609M13.8679 6.79014L13.8717 6.9333M21.4458 28.5069L21.3568 28.4519M6.57119 21.8552L6.59957 21.8258M9.52846 26.1314L13.459 22.0726M10.4304 17.8556L20.972 6.91583M14.1178 28.731L28.377 13.953M17.2899 18.1024L25.4907 9.60321" stroke="#006DE7" stroke-width="1.71224" stroke-miterlimit="3" stroke-linecap="round"></path> </svg>`,
+            __html: `<svg id="14:2072" width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" class="balance-icon" style="width: 34px; height: 34px"> <rect width="34" height="34" rx="17" fill="#EFEFEF"></rect> <path d="M26.6103 23.1544L28.54 21.1546M6.21001 14.8737L10.3392 10.609M13.8679 6.79014L13.8717 6.9333M21.4458 28.5069L21.3568 28.4519M6.57119 21.8552L6.59957 21.8258M9.52846 26.1314L13.459 22.0726M10.4304 17.8556L20.972 6.91583M14.1178 28.731L28.377 13.953M17.2899 18.1024L25.4907 9.60321" stroke="#E8742A" stroke-width="1.71224" stroke-miterlimit="3" stroke-linecap="round"></path> </svg>`,
           }}
         />
       );

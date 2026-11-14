@@ -630,7 +630,7 @@ export default function UserPopupHandler() {
                 <button
                   onClick={handleMessageAck}
                   disabled={submitting}
-                  className="inline-flex text-right gap-1.5 px-5 py-3 rounded-full bg-[#2563EB] min-w-auto border-neutral-800 text-[12px]"
+                  className="inline-flex text-right gap-1.5 px-5 py-3 rounded-full bg-[#E8742A] min-w-auto border-neutral-800 text-[12px]"
                 >
                   {submitting ? 'Acknowledging...' : 'Acknowledge'}
                 </button>

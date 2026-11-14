@@ -75,6 +75,7 @@ import PaymentSystemSignal from "./components/subscribe/PaymentSystemSignal";
 
 // Auth Pages
 import LoginPage from "./desktopcomponents/authpages/loginpage/LoginScreen";
+import Landing from "./landing/Landing";
 import SignupPage from "./desktopcomponents/authpages/signup/SignUpForm";
 import WelcomePage from "./desktopcomponents/authpages/welcome/InputDesign";
 
@@ -84,7 +85,8 @@ function AppContent() {
     emailRequested: false,
     phoneRequested: false
   });
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  // One shell for every screen size: the mobile layout (the desktop shell is retired).
+  const [isMobile, setIsMobile] = useState(true);
   const [showPackagePopup, setShowPackagePopup] = useState(false);
 
   const location = useLocation();
@@ -136,7 +138,7 @@ function AppContent() {
   }, [location.pathname]);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    const handleResize = () => setIsMobile(true);
     window.addEventListener("resize", handleResize);
 
     if (user?.verification) {
@@ -207,6 +209,11 @@ useEffect(() => {
   }
   
 
+  // Public landing at "/" for everyone (and "/landing"); the dashboard lives at /dashboard.
+  if (location.pathname === '/' || location.pathname === '/landing') {
+    return <Landing />;
+  }
+
   if (!token && !isAuthRoute && !loggingOut) {
     return <Navigate to="/auth" replace />;
   }
@@ -214,7 +221,7 @@ useEffect(() => {
   
 
   if (token && isAuthRoute && !isSignupRoute && !isWelcomeRoute) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   if (isAuthRoute) {
@@ -299,7 +306,7 @@ useEffect(() => {
 function appRoutes() {
   return (
     <>
-      <Route index element={<HomeDashboardMobile />} />
+      <Route path="/dashboard" element={<HomeDashboardMobile />} />
       <Route path="/payment" element={<PaymentSystem />} />
       <Route path="/signal-payment" element={<PaymentSystemSignal />} />
       <Route path="/settings" element={<SettingsProfileMobile />} />

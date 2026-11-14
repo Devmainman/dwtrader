@@ -76,7 +76,7 @@ export default function IDVerificationStep3({ onBack, onContinue }) {
           <button
             onClick={handleSubmit}
             disabled={!document || loading}
-            className="w-full bg-[#2563EB] text-white text-[12px] rounded-full py-3 font-regular"
+            className="w-full bg-[#E8742A] text-white text-[12px] rounded-full py-3 font-regular"
           >
             {loading ? 'Uploading...' : 'Continue'}
           </button>

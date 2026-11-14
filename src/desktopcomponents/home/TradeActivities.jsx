@@ -109,7 +109,7 @@ function TradeActivityItem({ status }) {
         <div className="w-5 h-5 rounded-full border border-[color:var(--Linear-color,#EB25C6)]" />
 
         {/* Top Line */}
-        <div className="w-[2px] flex-1 bg-[linear-gradient(180deg,#EB25C6_0%,#0E7BF8_100%)]" />
+        <div className="w-[2px] flex-1 bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" />
       
     </div>
 

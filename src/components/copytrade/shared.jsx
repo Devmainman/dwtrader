@@ -40,7 +40,7 @@ export function Avatar({ src, name, size = 44, badge }) {
       {url && !failed ? (
         <img src={url} alt="" onError={() => setFailed(true)} style={{ width: size, height: size }} className="rounded-full object-cover bg-neutral-800 ring-2 ring-white/10" />
       ) : (
-        <div style={{ width: size, height: size }} className="rounded-full flex items-center justify-center font-semibold text-sm text-white bg-[linear-gradient(135deg,#EB25C6_0%,#0E7BF8_100%)] ring-2 ring-white/10">
+        <div style={{ width: size, height: size }} className="rounded-full flex items-center justify-center font-semibold text-sm text-white bg-[linear-gradient(135deg,#EB25C6_0%,#F5852F_100%)] ring-2 ring-white/10">
           {initials || '?'}
         </div>
       )}

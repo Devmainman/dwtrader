@@ -5,7 +5,7 @@ import { X, Loader2 } from 'lucide-react';
 import { toast } from '../../lib/toast';
 import { apiError } from '../../api/products';
 
-export const GRADIENT = 'bg-[linear-gradient(80deg,#EB25C6_0%,#0E7BF8_100%)]';
+export const GRADIENT = 'bg-[linear-gradient(80deg,#EB25C6_0%,#F5852F_100%)]';
 
 export const formatMoney = (value, currency = 'USD') => {
   const n = Number(value) || 0;
@@ -359,7 +359,7 @@ export function AnimatedNumber({ value, format = (n) => n.toFixed(2), className 
 }
 
 /** Circular progress ring (0–100). */
-export function ProgressRing({ value = 0, size = 44, stroke = 4, color = '#3b82f6', children }) {
+export function ProgressRing({ value = 0, size = 44, stroke = 4, color = '#F5852F', children }) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const v = Math.max(0, Math.min(100, value));

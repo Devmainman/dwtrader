@@ -42,7 +42,7 @@ const WALLETS = [
 
 const NETWORK_LABEL = { evm: 'Ethereum / EVM', bitcoin: 'Bitcoin', solana: 'Solana', tron: 'Tron' };
 const CHAIN_NAMES = { 1: 'Ethereum', 10: 'Optimism', 56: 'BNB Chain', 137: 'Polygon', 8453: 'Base', 42161: 'Arbitrum' };
-const COLORS = ['#EB25C6', '#0E7BF8', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#f97316'];
+const COLORS = ['#EB25C6', '#F5852F', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#f97316'];
 
 const walletById = (id) => WALLETS.find((w) => w.id === id);
 const short = (a) => (a && a.length > 16 ? `${a.slice(0, 6)}…${a.slice(-4)}` : a);

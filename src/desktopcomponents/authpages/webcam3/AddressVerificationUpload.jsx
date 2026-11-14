@@ -50,7 +50,7 @@ function AddressVerificationUpload() {
               </div>
 
               <div className="flex gap-4 items-center mt-8 text-xs tracking-normal leading-none whitespace-nowrap text-zinc-100">
-                <button className="overflow-hidden gap-2.5 self-stretch px-2.5 py-3.5 my-auto rounded-3xl border border-solid bg-zinc-900 border-[color:var(--Primary-Blue,#2563EB)] min-h-[42px] w-[167px]">
+                <button className="overflow-hidden gap-2.5 self-stretch px-2.5 py-3.5 my-auto rounded-3xl border border-solid bg-zinc-900 border-[color:var(--Primary-Blue,#E8742A)] min-h-[42px] w-[167px]">
                   Back
                 </button>
                 <button className="overflow-hidden gap-2.5 self-stretch px-2.5 py-3.5 my-auto bg-blue-600 rounded-3xl min-h-[42px] w-[167px]">

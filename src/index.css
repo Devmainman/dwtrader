@@ -2,6 +2,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Warm touch. Dark mode stays: page backgrounds (900/950, black, #171717) are
+   untouched. Only the surface greys, borders and muted text get a faint
+   espresso/amber cast. Everything for this tone lives in this block.
+   --------------------------------------------------------------------------- */
+@theme {
+  --color-neutral-100: #f5f1ed; --color-zinc-100: #f5f1ed; --color-gray-100: #f5f1ed;
+  --color-neutral-200: #e8e2dc; --color-zinc-200: #e8e2dc; --color-gray-200: #e8e2dc;
+  --color-neutral-300: #d2cac3; --color-zinc-300: #d2cac3; --color-gray-300: #d2cac3;
+  --color-neutral-400: #a69c94; --color-zinc-400: #a69c94; --color-gray-400: #a69c94;
+  --color-neutral-500: #7b7067; --color-zinc-500: #7b7067; --color-gray-500: #7b7067;
+  --color-neutral-600: #544840; --color-zinc-600: #544840; --color-gray-600: #544840;
+  --color-neutral-700: #3b322b; --color-zinc-700: #3b322b; --color-gray-700: #3b322b;
+  --color-neutral-800: #29221d; --color-zinc-800: #29221d; --color-gray-800: #29221d;
+
+  /* Accent: every blue becomes a warm amber-orange. */
+  --color-blue-50: #fff7ed;  --color-sky-50: #fff7ed;  --color-indigo-50: #fff7ed;
+  --color-blue-100: #ffedd5; --color-sky-100: #ffedd5; --color-indigo-100: #ffedd5;
+  --color-blue-200: #fed7aa; --color-sky-200: #fed7aa; --color-indigo-200: #fed7aa;
+  --color-blue-300: #fdba74; --color-sky-300: #fdba74; --color-indigo-300: #fdba74;
+  --color-blue-400: #fb9b4b; --color-sky-400: #fb9b4b; --color-indigo-400: #fb9b4b;
+  --color-blue-500: #f5852f; --color-sky-500: #f5852f; --color-indigo-500: #f5852f;
+  --color-blue-600: #e8742a; --color-sky-600: #e8742a; --color-indigo-600: #e8742a;
+  --color-blue-700: #c75d1f; --color-sky-700: #c75d1f; --color-indigo-700: #c75d1f;
+  --color-blue-800: #9a4719; --color-sky-800: #9a4719; --color-indigo-800: #9a4719;
+  --color-blue-900: #7a3816; --color-sky-900: #7a3816; --color-indigo-900: #7a3816;
+  --color-blue-950: #431c08; --color-sky-950: #431c08; --color-indigo-950: #431c08;
+}
+/* Fixed-hex card surfaces used across the app, warmed to match. */
+[class~="bg-[#1D1D1F]"], [class~="bg-[#1C1C1E]"] { background-color: #221c18; }
+[class~="bg-[#242426]"] { background-color: #2a231e; }
+[class~="bg-[#2A2A2A]"], [class~="bg-[#2C2C2E]"], [class~="bg-[#2A2A2D]"], [class~="bg-[#282F36]"] { background-color: #2e2620; }
+[class~="bg-[#3A3A3C]"] { background-color: #3b322b; }
+
 /* Hide scrollbar for Webkit-based browsers (Chrome, Safari) */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
@@ -138,7 +172,7 @@ button:not(:disabled), a[role="button"] { transition-property: color, background
 @keyframes wx-counter { to { transform: rotate(-360deg) } }
 @keyframes wx-pop { 0% { transform: scale(.5); opacity: 0 } 60% { transform: scale(1.08); opacity: 1 } 100% { transform: none } }
 .wx-logo { animation: wx-logo 800ms cubic-bezier(.34,1.56,.64,1) both }
-.wx-ring { border: 2px solid rgba(14,123,248,.6); animation: wx-ring 1.6s cubic-bezier(.22,1,.36,1) 300ms infinite both }
+.wx-ring { border: 2px solid rgba(245,133,47,.6); animation: wx-ring 1.6s cubic-bezier(.22,1,.36,1) 300ms infinite both }
 .wx-ring-2 { border-color: rgba(235,37,198,.5); animation-delay: 900ms }
 .wx-word { animation: wx-word 620ms cubic-bezier(.22,1,.36,1) both }
 .wx-bar { transform-origin: left; animation-name: wx-bar; animation-timing-function: cubic-bezier(.45,0,.2,1); animation-fill-mode: both }

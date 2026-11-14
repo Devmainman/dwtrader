@@ -79,7 +79,7 @@ function TradeCard({ t, now, onCancel, i }) {
   const earned = running ? Math.max(t.earned, Math.round(t.amount * (t.rate / 100) * done * 100) / 100) : t.status === 'completed' ? t.profit : 0;
   return (
     <li {...stagger(i)} className={`${stagger(i).className} flex items-center gap-3 py-3`}>
-      <ProgressRing value={progress} size={46} color={t.status === 'completed' ? '#10b981' : t.status === 'terminated' ? '#525252' : '#3b82f6'}>
+      <ProgressRing value={progress} size={46} color={t.status === 'completed' ? '#10b981' : t.status === 'terminated' ? '#525252' : '#F5852F'}>
         <span className="text-[10px] font-semibold tabular-nums">{Math.round(progress)}%</span>
       </ProgressRing>
       <div className="flex-1 min-w-0">

@@ -30,14 +30,14 @@ function SubscriptionCard({ variant, features, iconSrc }) {
 function SubscribeButton({ variant }) {
   if (variant === "simple") {
     return (
-      <button className="overflow-hidden gap-2 self-stretch py-2.5 pr-2 mt-6 text-xs tracking-normal leading-none whitespace-nowrap rounded-2xl border-solid border-[0.85px] border-[color:var(--Primary-Blue,#2563EB)] min-h-[30px] text-zinc-100">
+      <button className="overflow-hidden gap-2 self-stretch py-2.5 pr-2 mt-6 text-xs tracking-normal leading-none whitespace-nowrap rounded-2xl border-solid border-[0.85px] border-[color:var(--Primary-Blue,#E8742A)] min-h-[30px] text-zinc-100">
         Subscribe
       </button>
     );
   }
 
   return (
-    <button className="overflow-hidden gap-2.5 self-stretch p-2.5 mt-5 text-xs tracking-normal leading-none whitespace-nowrap rounded-3xl border border-solid border-[color:var(--Primary-Blue,#2563EB)] min-h-[35px] text-zinc-100">
+    <button className="overflow-hidden gap-2.5 self-stretch p-2.5 mt-5 text-xs tracking-normal leading-none whitespace-nowrap rounded-3xl border border-solid border-[color:var(--Primary-Blue,#E8742A)] min-h-[35px] text-zinc-100">
       Subscribe
     </button>
   );

@@ -70,7 +70,7 @@ function SideBar() {
   };
 
   const menuItems = [
-    { name: "Dashboard", path: "/", icon: dashboard, LucideIcon: Activity },
+    { name: "Dashboard", path: "/dashboard", icon: dashboard, LucideIcon: Activity },
     { name: "Profile", path: "/settings", icon: profile, LucideIcon: User },
     
     // Trading Group - Only Live Trading and Mining
@@ -208,7 +208,7 @@ function SideBar() {
                       <div
                         className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
                         style={{
-                          background: "linear-gradient(80deg,#EB25C6_18.83%,#0E7BF8_103.47%)",
+                          background: "linear-gradient(80deg,#EB25C6_18.83%,#F5852F_103.47%)",
                         }}
                       >
                         {item.GroupIcon ? (
@@ -240,7 +240,7 @@ function SideBar() {
                               className="flex items-center justify-center rounded-full w-[30px] h-[30px]"
                               style={{
                                 background: isActive 
-                                  ? "linear-gradient(80deg,#EB25C6_18.83%,#0E7BF8_103.47%)"
+                                  ? "linear-gradient(80deg,#EB25C6_18.83%,#F5852F_103.47%)"
                                   : "rgba(255,255,255,0.1)",
                               }}
                             >
@@ -277,7 +277,7 @@ function SideBar() {
                   className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
                   style={{
                     background: isActive 
-                      ? "linear-gradient(80deg,#EB25C6_18.83%,#0E7BF8_103.47%)"
+                      ? "linear-gradient(80deg,#EB25C6_18.83%,#F5852F_103.47%)"
                       : "rgba(255,255,255,0.1)",
                   }}
                 >
@@ -304,7 +304,7 @@ function SideBar() {
           <div
             className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
             style={{
-              background: "linear-gradient(80deg,#EB25C6_18.83%,#0E7BF8_103.47%)",
+              background: "linear-gradient(80deg,#EB25C6_18.83%,#F5852F_103.47%)",
             }}
           >
              <LogoutIcon />

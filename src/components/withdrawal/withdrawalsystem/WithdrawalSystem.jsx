@@ -202,7 +202,7 @@ const WithdrawalForm = ({ method, onBack }) => {
           <button
           onClick={handleSubmit}
           disabled={loading || success}
-          className={`w-full ${success ? 'bg-green-500' : 'bg-[#2563EB]'} text-white py-4 rounded-full font-medium text-[12px] my-5 disabled:opacity-50`}
+          className={`w-full ${success ? 'bg-green-500' : 'bg-[#E8742A]'} text-white py-4 rounded-full font-medium text-[12px] my-5 disabled:opacity-50`}
         >
           {loading ? 'Processing...' : success ? 'Success!' : 'Submit'}
         </button>

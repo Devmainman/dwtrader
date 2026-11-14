@@ -15,7 +15,7 @@ const units = (n) => formatNumber(n, 8);
 function AssetIcon({ pool, size = 48 }) {
   if (pool.icon) return <img src={pool.icon} alt="" style={{ width: size, height: size }} className="rounded-full bg-white object-contain" />;
   return (
-    <div style={{ width: size, height: size }} className="rounded-full flex items-center justify-center text-xs font-semibold text-white bg-[linear-gradient(135deg,#EB25C6_0%,#0E7BF8_100%)]">
+    <div style={{ width: size, height: size }} className="rounded-full flex items-center justify-center text-xs font-semibold text-white bg-[linear-gradient(135deg,#EB25C6_0%,#F5852F_100%)]">
       {pool.asset.slice(0, 4)}
     </div>
   );

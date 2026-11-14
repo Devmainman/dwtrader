@@ -54,7 +54,7 @@ const [shake, setShake] = useState(false);
       let name = "";
       try { name = JSON.parse(localStorage.getItem("user") || "{}").firstName || ""; } catch { /* ignore */ }
       playWelcome({ kind: "login", name });
-      navigate("/");
+      navigate("/dashboard");
     }
 
 } catch (err) {

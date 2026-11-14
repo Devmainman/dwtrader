@@ -8,7 +8,7 @@ import {
 
 const CARD_BG = {
   midnight: 'bg-[linear-gradient(135deg,#1f2937_0%,#0b0f19_100%)]',
-  aurora: 'bg-[linear-gradient(135deg,#EB25C6_0%,#0E7BF8_100%)]',
+  aurora: 'bg-[linear-gradient(135deg,#EB25C6_0%,#F5852F_100%)]',
   gold: 'bg-[linear-gradient(135deg,#d4a017_0%,#7a5c00_100%)]',
   rose: 'bg-[linear-gradient(135deg,#fb7185_0%,#9f1239_100%)]'
 };

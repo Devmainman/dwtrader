@@ -15,7 +15,7 @@ import walletIcon from "./assets/empty-wallet.svg";
 import profileIcon from "./assets/profile.svg";
 
 const TABS = [
-  { to: "/", label: "Home", active: homeActive, inactive: homeInactive },
+  { to: "/dashboard", label: "Home", active: homeActive, inactive: homeInactive },
   { to: "/trademain", label: "Trade", active: tradeActive, inactive: tradeInactive },
   null, // centre action button
   { to: "/support", label: "Support", active: walletIcon, inactive: walletIcon },
@@ -23,18 +23,18 @@ const TABS = [
 ];
 
 const ACTIONS = [
-  { to: "/deposite", label: "Deposit", icon: ArrowDownToLine, tint: "bg-emerald-500/15 text-emerald-400" },
-  { to: "/withdraw", label: "Withdraw", icon: ArrowUpFromLine, tint: "bg-orange-500/15 text-orange-400" },
-  { to: "/assets", label: "Assets", icon: PieChart, tint: "bg-fuchsia-500/15 text-fuchsia-300" },
-  { to: "/trade", label: "Bots", icon: Bot, tint: "bg-indigo-500/15 text-indigo-300" },
-  { to: "/copytrade", label: "Copy", icon: Copy, tint: "bg-pink-500/15 text-pink-400" },
-  { to: "/staking", label: "Stake", icon: Coins, tint: "bg-amber-500/15 text-amber-400" },
-  { to: "/invest", label: "Stocks", icon: LineChart, tint: "bg-sky-500/15 text-sky-400" },
-  { to: "/real-estate", label: "Real estate", icon: Building2, tint: "bg-teal-500/15 text-teal-300" },
-  { to: "/mining", label: "Mining", icon: Cpu, tint: "bg-lime-500/15 text-lime-300" },
-  { to: "/cards", label: "Cards", icon: CreditCard, tint: "bg-violet-500/15 text-violet-300" },
-  { to: "/wallets", label: "Wallets", icon: Wallet, tint: "bg-rose-500/15 text-rose-300" },
-  { to: "/cold-storage", label: "Vault", icon: Lock, tint: "bg-cyan-500/15 text-cyan-300" }
+  { to: "/deposite", label: "Deposit", icon: ArrowDownToLine },
+  { to: "/withdraw", label: "Withdraw", icon: ArrowUpFromLine },
+  { to: "/assets", label: "Assets", icon: PieChart },
+  { to: "/trade", label: "Bots", icon: Bot },
+  { to: "/copytrade", label: "Copy", icon: Copy },
+  { to: "/staking", label: "Stake", icon: Coins },
+  { to: "/invest", label: "Stocks", icon: LineChart },
+  { to: "/real-estate", label: "Real estate", icon: Building2 },
+  { to: "/mining", label: "Mining", icon: Cpu },
+  { to: "/cards", label: "Cards", icon: CreditCard },
+  { to: "/wallets", label: "Wallets", icon: Wallet },
+  { to: "/cold-storage", label: "Vault", icon: Lock }
 ];
 
 function QuickActions({ onClose }) {
@@ -53,17 +53,17 @@ function QuickActions({ onClose }) {
   return (
     <div className="fixed inset-0 z-[1100]" role="dialog" aria-modal="true" aria-label="Quick actions">
       <div className={`absolute inset-0 bg-black/60 backdrop-blur-sm ${leaving ? "qa-fade-out" : "qa-fade-in"}`} onClick={() => close()} />
-      <div className={`absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+124px)] mx-auto max-w-[360px] rounded-[28px] bg-[#1C1C1E]/95 border border-white/10 shadow-2xl p-4 ${leaving ? "qa-sheet-out" : "qa-sheet-in"}`}>
+      <div className={`absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+112px)] mx-auto max-w-[360px] rounded-[28px] bg-[#1C1C1E] shadow-2xl p-5 ${leaving ? "qa-sheet-out" : "qa-sheet-in"}`}>
         <div className="flex items-center justify-between mb-3 px-1">
-          <p className="text-sm font-semibold text-zinc-100">Quick actions</p>
-          <button type="button" onClick={() => close()} className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-neutral-400" aria-label="Close"><X className="w-3.5 h-3.5" /></button>
+          <p className="text-[17px] font-semibold text-white">Quick actions</p>
+          <button type="button" onClick={() => close()} className="w-[30px] h-[30px] rounded-full bg-[#2C2C2E] flex items-center justify-center text-[#8E8E93]" aria-label="Close"><X className="w-3.5 h-3.5" /></button>
         </div>
         <div className="grid grid-cols-4 gap-y-4 gap-x-2">
           {ACTIONS.map((a, i) => (
             <button key={a.to + a.label} type="button" onClick={() => close(a.to)}
               className="flex flex-col items-center gap-1.5 qa-item active:scale-90 transition-transform" style={{ animationDelay: `${60 + i * 22}ms` }}>
-              <span className={`w-12 h-12 rounded-2xl flex items-center justify-center ${a.tint}`}><a.icon className="w-5 h-5" strokeWidth={2} /></span>
-              <span className="text-[10px] text-neutral-300">{a.label}</span>
+              <span className="w-[52px] h-[52px] rounded-[16px] flex items-center justify-center bg-[#2C2C2E] text-white"><a.icon className="w-[22px] h-[22px]" strokeWidth={1.8} /></span>
+              <span className="text-[11px] text-[#EBEBF5]/70">{a.label}</span>
             </button>
           ))}
         </div>

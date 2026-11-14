@@ -16,7 +16,7 @@ export default function VerificationCompleteStep() {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          navigate('/');
+          navigate('/dashboard');
           return 0;
         }
         return prev - 1;

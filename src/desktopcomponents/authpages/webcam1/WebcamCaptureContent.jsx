@@ -34,7 +34,7 @@ function WebcamCaptureContent() {
             <button className="overflow-hidden grow shrink gap-2.5 self-stretch px-2.5 py-3.5 bg-blue-600 rounded-3xl min-h-[42px] min-w-60 w-[294px]">
               Upload
             </button>
-            <button className="overflow-hidden grow shrink gap-2.5 self-stretch px-2.5 py-3.5 rounded-3xl border border-solid bg-zinc-900 border-[color:var(--Primary-Blue,#2563EB)] min-h-[42px] w-[125px]">
+            <button className="overflow-hidden grow shrink gap-2.5 self-stretch px-2.5 py-3.5 rounded-3xl border border-solid bg-zinc-900 border-[color:var(--Primary-Blue,#E8742A)] min-h-[42px] w-[125px]">
               Retake
             </button>
             <button className="overflow-hidden grow shrink gap-2.5 self-stretch px-2.5 py-3.5 bg-red-600 rounded-3xl min-h-[42px] w-[125px]">

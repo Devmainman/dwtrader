@@ -58,12 +58,12 @@ function Splash({ detail, onDone }) {
       onClick={finish}
       className={`fixed inset-0 z-[12000] flex items-center justify-center bg-[#0b0b0c] overflow-hidden cursor-pointer ${leaving ? 'wx-lift' : ''}`}
     >
-      <div className="absolute w-[520px] h-[520px] rounded-full wx-glow bg-[radial-gradient(closest-side,rgba(235,37,198,0.28),rgba(14,123,248,0.18)_55%,transparent)]" />
+      <div className="absolute w-[520px] h-[520px] rounded-full wx-glow bg-[radial-gradient(closest-side,rgba(235,37,198,0.28),rgba(245,133,47,0.18)_55%,transparent)]" />
       <div className="relative flex flex-col items-center text-center px-6">
         <div className="relative w-20 h-20 mb-7">
           <span className="absolute inset-0 rounded-full wx-ring" />
           <span className="absolute inset-0 rounded-full wx-ring wx-ring-2" />
-          <div className="relative w-20 h-20 rounded-full bg-white flex items-center justify-center wx-logo shadow-[0_8px_50px_rgba(0,109,231,0.55)]">
+          <div className="relative w-20 h-20 rounded-full bg-white flex items-center justify-center wx-logo shadow-[0_8px_50px_rgba(232,116,42,0.55)]">
             <img src={logo} alt="" className="w-12 h-12" />
           </div>
         </div>
@@ -74,7 +74,7 @@ function Splash({ detail, onDone }) {
         </h1>
         <p className="mt-2 text-sm text-neutral-400 wx-word" style={{ animationDelay: `${520 + line.split(' ').length * 90}ms` }}>{sub}</p>
         <div className="mt-8 h-[3px] w-40 rounded-full bg-white/10 overflow-hidden">
-          <div className="h-full rounded-full bg-[linear-gradient(90deg,#EB25C6,#0E7BF8)] wx-bar" style={{ animationDuration: isNew ? '2.1s' : '1.7s' }} />
+          <div className="h-full rounded-full bg-[linear-gradient(90deg,#EB25C6,#F5852F)] wx-bar" style={{ animationDuration: isNew ? '2.1s' : '1.7s' }} />
         </div>
       </div>
     </div>
@@ -114,7 +114,7 @@ const SLIDES = [
     icon: ShieldCheck,
     orbit: [Lock, ShieldCheck, Sparkles],
     tint: 'from-sky-400 to-cyan-400',
-    cta: { label: 'Get started', to: '/' }
+    cta: { label: 'Get started', to: '/dashboard' }
   }
 ];
 
@@ -192,7 +192,7 @@ function Onboarding({ onClose }) {
 
         <div className="flex gap-2 px-6 pb-[calc(env(safe-area-inset-bottom)+24px)]">
           {last ? (
-            <button type="button" onClick={() => close(s.cta.to)} className="flex-1 h-11 rounded-full bg-[linear-gradient(80deg,#EB25C6,#0E7BF8)] text-white text-sm font-semibold active:scale-[0.97] transition">
+            <button type="button" onClick={() => close(s.cta.to)} className="flex-1 h-11 rounded-full bg-[linear-gradient(80deg,#EB25C6,#F5852F)] text-white text-sm font-semibold active:scale-[0.97] transition">
               {s.cta.label}
             </button>
           ) : (
