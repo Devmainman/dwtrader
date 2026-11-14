@@ -152,7 +152,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="w-full bg-[#E8742A] text-[12px] text-white rounded-full py-4 font-medium"
+              className="w-full bg-[var(--color-blue-600)] text-[12px] text-white rounded-full py-4 font-medium"
             >
               {loading ? 'Verifying...' : 'Next'}
             </button>
@@ -171,7 +171,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="w-full bg-[#E8742A] text-[12px] text-white rounded-full py-4 font-medium"
+              className="w-full bg-[var(--color-blue-600)] text-[12px] text-white rounded-full py-4 font-medium"
             >
               {loading ? 'Verifying...' : 'Next'}
             </button>

@@ -41,7 +41,7 @@ export default function CopyModal({ trader, currency, balance, onClose, onCopied
         <div className="min-w-0"><TraderName trader={trader} /><p className="text-xs text-neutral-400">{compact(trader.followers)} followers · {trader.copiers} copiers</p></div>
       </div>
 
-      <div className="rounded-xl border border-[#EB25C6]/30 bg-[#EB25C6]/10 px-3 py-2 mb-4 text-sm flex justify-between">
+      <div className="rounded-xl border border-[var(--color-blue-700)]/30 bg-[var(--color-blue-700)]/10 px-3 py-2 mb-4 text-sm flex justify-between">
         <span className="text-neutral-300">Minimum to copy</span>
         <span className="font-semibold">{formatMoney(min, currency)}</span>
       </div>
@@ -64,7 +64,7 @@ export default function CopyModal({ trader, currency, balance, onClose, onCopied
         </Field>
       </div>
       <label className="flex items-start gap-3 text-sm mb-4 cursor-pointer">
-        <input type="checkbox" className="mt-1 accent-[#EB25C6]" checked={copyOpen} onChange={(e) => setCopyOpen(e.target.checked)} />
+        <input type="checkbox" className="mt-1 accent-[var(--color-blue-700)]" checked={copyOpen} onChange={(e) => setCopyOpen(e.target.checked)} />
         <span>
           <span className="text-white">Also copy trades that are already open</span>
           <span className="block text-xs text-neutral-400">They're joined at the current price, not the trader's entry price.</span>

@@ -6,7 +6,8 @@ import { Wallet, Search, Plus, ShieldAlert, CheckCircle2, Star, Trash2, Link2, C
 import { toast } from '../../lib/toast';
 import { walletsApi, apiError } from '../../api/products';
 import {
-  Page, Panel, Button, Badge, Modal, Field, inputClass, Loading, ErrorState, useLoader, useAction
+  Page, Panel, Button, Badge, Modal, Field, inputClass, Loading, ErrorState, useLoader, useAction,
+  HowItWorksButton
 } from './ui';
 
 // evm: can connect through an injected browser provider (window.ethereum).
@@ -42,7 +43,7 @@ const WALLETS = [
 
 const NETWORK_LABEL = { evm: 'Ethereum / EVM', bitcoin: 'Bitcoin', solana: 'Solana', tron: 'Tron' };
 const CHAIN_NAMES = { 1: 'Ethereum', 10: 'Optimism', 56: 'BNB Chain', 137: 'Polygon', 8453: 'Base', 42161: 'Arbitrum' };
-const COLORS = ['#EB25C6', '#F5852F', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#f97316'];
+const COLORS = ['var(--color-blue-700)', 'var(--color-blue-500)', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#f97316'];
 
 const walletById = (id) => WALLETS.find((w) => w.id === id);
 const short = (a) => (a && a.length > 16 ? `${a.slice(0, 6)}…${a.slice(-4)}` : a);
@@ -155,7 +156,7 @@ export default function WalletConnect() {
   const linked = data?.wallets || [];
 
   return (
-    <Page title="Connect your wallet" subtitle="Link the crypto wallets you use to your account." icon={Wallet}>
+    <Page title="Connect your wallet" subtitle="Link the crypto wallets you use to your account." icon={Wallet} actions={<HowItWorksButton steps={[['Pick your wallet', 'Choose the wallet app you use.'], ['Sign a message', 'This proves the wallet is yours. We never ask for a seed phrase.'], ['Done', 'The wallet is linked to your account.']]} />}>
       {loading && !data ? <Loading /> : error ? <ErrorState message={error} onRetry={reload} /> : linked.length > 0 && (
         <Panel title="Your wallets" className="mb-5">
           <ul className="divide-y divide-neutral-800">

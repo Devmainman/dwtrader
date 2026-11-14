@@ -3,12 +3,13 @@ import { CreditCard, Plus, Snowflake, Sun, ArrowDownToLine, ArrowUpFromLine, Gau
 import { cardsApi } from '../../api/products';
 import {
   Page, Panel, Button, Badge, Modal, Field, inputClass, AmountModal,
-  Loading, ErrorState, Empty, useLoader, useAction, formatMoney
+  Loading, ErrorState, Empty, useLoader, useAction, formatMoney,
+  HowItWorksButton
 } from './ui';
 
 const CARD_BG = {
   midnight: 'bg-[linear-gradient(135deg,#1f2937_0%,#0b0f19_100%)]',
-  aurora: 'bg-[linear-gradient(135deg,#EB25C6_0%,#F5852F_100%)]',
+  aurora: 'bg-[linear-gradient(135deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]',
   gold: 'bg-[linear-gradient(135deg,#d4a017_0%,#7a5c00_100%)]',
   rose: 'bg-[linear-gradient(135deg,#fb7185_0%,#9f1239_100%)]'
 };
@@ -78,7 +79,7 @@ function RequestCardModal({ open, onClose, config, currency, suggestedName, onDo
             key={t}
             type="button"
             onClick={() => setForm((f) => ({ ...f, type: t }))}
-            className={`rounded-xl border px-3 py-3 text-left ${form.type === t ? 'border-[#EB25C6] bg-neutral-800/60' : 'border-neutral-800'}`}
+            className={`rounded-xl border px-3 py-3 text-left ${form.type === t ? 'border-[var(--color-blue-700)] bg-neutral-800/60' : 'border-neutral-800'}`}
           >
             <p className="font-medium capitalize">{t}</p>
             <p className="text-xs text-neutral-400">{formatMoney(t === 'physical' ? config?.physicalFee : config?.virtualFee, currency)} issuance fee</p>
@@ -137,7 +138,7 @@ export default function Cards() {
       title="Cards"
       subtitle="Spend from your balance with virtual and physical debit cards."
       icon={CreditCard}
-      actions={canRequest && <Button onClick={() => setRequestOpen(true)}><Plus className="w-4 h-4" />New card</Button>}
+      actions={<><HowItWorksButton steps={[['Request a card', 'Choose virtual or physical.'], ['Top it up', 'Move money onto the card from your balance.'], ['Spend', 'Use it like any debit card. Freeze it any time.']]} />{canRequest && <Button onClick={() => setRequestOpen(true)}><Plus className="w-4 h-4" />New card</Button>}</>}
     >
       {cards.length === 0 ? (
         <Panel>

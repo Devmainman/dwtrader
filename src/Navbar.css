@@ -6,7 +6,7 @@
   transform: translateX(-50%);
   width: min(342px, calc(100vw - 32px));
   height: 66px;
-  background-color: rgba(38, 30, 25, 0.84);
+  background-color: var(--nav-bg, rgba(38, 30, 25, 0.84));
   -webkit-backdrop-filter: saturate(180%) blur(24px);
   backdrop-filter: saturate(180%) blur(24px);
   border-radius: 9999px;

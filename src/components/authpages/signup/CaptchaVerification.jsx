@@ -9,7 +9,7 @@ function CaptchaVerification() {
       <div className="flex flex-col justify-center items-center w-full">
         <p className="text-yellow-700">Confirm you are not a robot</p>
         <div className="flex gap-2.5 items-start mt-2.5">
-          <div className="overflow-hidden px-5 py-3 rounded-lg border border-solid border-[color:var(--Primary-Blue,#E8742A)] min-h-[39px] text-neutral-400 w-[168px]">
+          <div className="overflow-hidden px-5 py-3 rounded-lg border border-solid border-[color:var(--Primary-Blue,var(--color-blue-600))] min-h-[39px] text-neutral-400 w-[168px]">
             18 +9
           </div>
           <input

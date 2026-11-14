@@ -6,8 +6,10 @@ import { BrowserRouter } from "react-router-dom";
 import Toaster from "./components/toast/Toaster";
 import WelcomeExperience from "./components/welcome/WelcomeExperience";
 import { initLanguage } from "./lib/i18n";
+import { initTheme } from "./lib/theme";
 
 initLanguage();
+initTheme();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>

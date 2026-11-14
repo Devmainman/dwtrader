@@ -1,0 +1,116 @@
+/* ---------------------------------------------------------------------------
+   Dashboard tones. The admin picks one (Settings → Appearance); main.jsx puts it
+   on <html data-theme="…">. Amber is the default and is defined in index.css.
+
+   Every tone only swaps three things:
+     · the accent scale   (Tailwind blue/sky/indigo, used for buttons, links, tabs)
+     · the surface greys  (Tailwind neutral/zinc/gray 100–800: cards, borders, muted text)
+     · a few fixed tokens (--surface-*, --nav-bg, --on-accent, logo tint)
+   Page backgrounds (900/950, black, #171717) are never touched: dark mode stays.
+   --------------------------------------------------------------------------- */
+
+/* ---------- Simple blue (the original look) ---------- */
+:root[data-theme="classic-blue"] {
+  --color-neutral-100: #f5f5f5; --color-neutral-200: #e5e5e5; --color-neutral-300: #d4d4d4; --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373; --color-neutral-600: #525252; --color-neutral-700: #404040; --color-neutral-800: #262626;
+  --color-zinc-100: #f4f4f5; --color-zinc-200: #e4e4e7; --color-zinc-300: #d4d4d8; --color-zinc-400: #a1a1aa;
+  --color-zinc-500: #71717a; --color-zinc-600: #52525b; --color-zinc-700: #3f3f46; --color-zinc-800: #27272a;
+  --color-gray-100: #f3f4f6; --color-gray-200: #e5e7eb; --color-gray-300: #d1d5db; --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280; --color-gray-600: #4b5563; --color-gray-700: #374151; --color-gray-800: #1f2937;
+
+  --color-blue-50: #eff6ff; --color-blue-100: #dbeafe; --color-blue-200: #bfdbfe; --color-blue-300: #93c5fd; --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6; --color-blue-600: #2563eb; --color-blue-700: #1d4ed8; --color-blue-800: #1e40af; --color-blue-900: #1e3a8a; --color-blue-950: #172554;
+  --color-sky-400: #38bdf8; --color-sky-500: #0ea5e9; --color-sky-600: #0284c7;
+  --color-indigo-400: #818cf8; --color-indigo-500: #6366f1; --color-indigo-600: #4f46e5; --color-indigo-700: #4338ca;
+
+  --surface-1: #1d1d1f; --surface-2: #242426; --surface-3: #2c2c2e; --surface-4: #3a3a3c;
+  --nav-bg: rgba(28, 28, 30, .82);
+  --logo-filter: hue-rotate(190deg) saturate(1.15);
+}
+
+/* ---------- Navy ---------- */
+:root[data-theme="navy"] {
+  --color-neutral-100: #e9edf6; --color-neutral-200: #cfd6e8; --color-neutral-300: #aab4d0; --color-neutral-400: #8591b5;
+  --color-neutral-500: #5f6d96; --color-neutral-600: #34446f; --color-neutral-700: #22315c; --color-neutral-800: #152245;
+  --color-zinc-100: #e9edf6; --color-zinc-200: #cfd6e8; --color-zinc-300: #aab4d0; --color-zinc-400: #8591b5;
+  --color-zinc-500: #5f6d96; --color-zinc-600: #34446f; --color-zinc-700: #22315c; --color-zinc-800: #152245;
+  --color-gray-100: #e9edf6; --color-gray-200: #cfd6e8; --color-gray-300: #aab4d0; --color-gray-400: #8591b5;
+  --color-gray-500: #5f6d96; --color-gray-600: #34446f; --color-gray-700: #22315c; --color-gray-800: #152245;
+
+  --color-blue-50: #eef4ff; --color-blue-100: #dbe7ff; --color-blue-200: #bcd3ff; --color-blue-300: #8fb6ff; --color-blue-400: #5e93ff;
+  --color-blue-500: #3d78ff; --color-blue-600: #2f63f0; --color-blue-700: #244fcc; --color-blue-800: #1f3f9e; --color-blue-900: #1c357d; --color-blue-950: #111f4a;
+  --color-sky-400: #5e93ff; --color-sky-500: #3d78ff; --color-sky-600: #2f63f0;
+  --color-indigo-400: #5e93ff; --color-indigo-500: #3d78ff; --color-indigo-600: #2f63f0; --color-indigo-700: #244fcc;
+
+  --surface-1: #101b3a; --surface-2: #142145; --surface-3: #1a2850; --surface-4: #22315c;
+  --nav-bg: rgba(14, 24, 54, .84);
+  --logo-filter: hue-rotate(195deg) saturate(1.2) brightness(1.05);
+}
+
+/* ---------- Gold ---------- */
+:root[data-theme="gold"] {
+  --color-neutral-100: #f6f2e6; --color-neutral-200: #e9e1cb; --color-neutral-300: #d3c8a8; --color-neutral-400: #aa9f80;
+  --color-neutral-500: #7f7559; --color-neutral-600: #564e38; --color-neutral-700: #3c3626; --color-neutral-800: #29251a;
+  --color-zinc-100: #f6f2e6; --color-zinc-200: #e9e1cb; --color-zinc-300: #d3c8a8; --color-zinc-400: #aa9f80;
+  --color-zinc-500: #7f7559; --color-zinc-600: #564e38; --color-zinc-700: #3c3626; --color-zinc-800: #29251a;
+  --color-gray-100: #f6f2e6; --color-gray-200: #e9e1cb; --color-gray-300: #d3c8a8; --color-gray-400: #aa9f80;
+  --color-gray-500: #7f7559; --color-gray-600: #564e38; --color-gray-700: #3c3626; --color-gray-800: #29251a;
+
+  --color-blue-50: #fdf9ec; --color-blue-100: #faf0cf; --color-blue-200: #f4e1a1; --color-blue-300: #ecce72; --color-blue-400: #e3bd52;
+  --color-blue-500: #d6a93a; --color-blue-600: #c4952c; --color-blue-700: #a27824; --color-blue-800: #7f5d20; --color-blue-900: #634a1d; --color-blue-950: #36270c;
+  --color-sky-400: #e3bd52; --color-sky-500: #d6a93a; --color-sky-600: #c4952c;
+  --color-indigo-400: #e3bd52; --color-indigo-500: #d6a93a; --color-indigo-600: #c4952c; --color-indigo-700: #a27824;
+
+  --surface-1: #211d14; --surface-2: #272218; --surface-3: #2d281c; --surface-4: #3c3626;
+  --nav-bg: rgba(36, 31, 21, .86);
+  --on-accent: #1d1607;
+  --accent-sheen: linear-gradient(180deg, #f6e3a3 0%, #e0bd5a 46%, #c79a33 54%, #e8cd78 100%);
+  --logo-filter: hue-rotate(14deg) saturate(.85) brightness(1.15);
+}
+
+/* ---------- Silver (brushed metal on graphite) ---------- */
+:root[data-theme="silver"] {
+  --color-neutral-100: #f2f4f6; --color-neutral-200: #e2e5e9; --color-neutral-300: #c9cdd3; --color-neutral-400: #a4a9b2;
+  --color-neutral-500: #7b818b; --color-neutral-600: #50555d; --color-neutral-700: #383b41; --color-neutral-800: #24262a;
+  --color-zinc-100: #f2f4f6; --color-zinc-200: #e2e5e9; --color-zinc-300: #c9cdd3; --color-zinc-400: #a4a9b2;
+  --color-zinc-500: #7b818b; --color-zinc-600: #50555d; --color-zinc-700: #383b41; --color-zinc-800: #24262a;
+  --color-gray-100: #f2f4f6; --color-gray-200: #e2e5e9; --color-gray-300: #c9cdd3; --color-gray-400: #a4a9b2;
+  --color-gray-500: #7b818b; --color-gray-600: #50555d; --color-gray-700: #383b41; --color-gray-800: #24262a;
+
+  --color-blue-50: #f7f8fa; --color-blue-100: #eef0f3; --color-blue-200: #e1e4e9; --color-blue-300: #d3d7dd; --color-blue-400: #c2c7cf;
+  --color-blue-500: #b1b7c0; --color-blue-600: #a0a6b0; --color-blue-700: #858b95; --color-blue-800: #646972; --color-blue-900: #484c53; --color-blue-950: #2b2d31;
+  --color-sky-400: #c2c7cf; --color-sky-500: #b1b7c0; --color-sky-600: #a0a6b0;
+  --color-indigo-400: #c2c7cf; --color-indigo-500: #b1b7c0; --color-indigo-600: #a0a6b0; --color-indigo-700: #858b95;
+
+  --surface-1: #1d1f22; --surface-2: #222428; --surface-3: #2a2c31; --surface-4: #383b41;
+  --nav-bg: rgba(30, 32, 36, .84);
+  --on-accent: #111214;
+  --accent-sheen: linear-gradient(180deg, #fbfcfd 0%, #dfe2e7 44%, #b9bec6 52%, #d9dce1 78%, #eef0f3 100%);
+  --logo-filter: grayscale(1) brightness(1.55) contrast(1.05);
+}
+
+/* ---------- shared wiring ---------- */
+/* Fixed-hex card surfaces used across the app follow the tone. */
+[class~="bg-[#1D1D1F]"], [class~="bg-[#1C1C1E]"] { background-color: var(--surface-1, #221c18); }
+[class~="bg-[#242426]"] { background-color: var(--surface-2, #2a231e); }
+[class~="bg-[#2A2A2A]"], [class~="bg-[#2C2C2E]"], [class~="bg-[#2A2A2D]"], [class~="bg-[#282F36]"] { background-color: var(--surface-3, #2e2620); }
+[class~="bg-[#3A3A3C]"] { background-color: var(--surface-4, #3b322b); }
+
+/* Metal tones: solid accent fills get a sheen and dark text, so labels stay readable. */
+:root:is([data-theme="silver"], [data-theme="gold"]) :is(
+  [class~="bg-blue-500"], [class~="bg-blue-600"], [class~="bg-blue-700"],
+  [class~="bg-indigo-500"], [class~="bg-indigo-600"], [class~="bg-sky-500"], [class~="bg-sky-600"],
+  [class*="bg-[var(--color-blue-6"], [class*="bg-[var(--color-blue-5"]
+):not(.ld *) {
+  background-image: var(--accent-sheen);
+  color: var(--on-accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .65), inset 0 -1px 0 rgba(0, 0, 0, .18), 0 6px 18px -8px rgba(0, 0, 0, .7);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .35);
+}
+:root:is([data-theme="silver"], [data-theme="gold"]) :is(
+  [class~="bg-blue-500"], [class~="bg-blue-600"], [class~="bg-blue-700"],
+  [class~="bg-indigo-500"], [class~="bg-indigo-600"], [class~="bg-sky-500"], [class~="bg-sky-600"]
+):not(.ld *) :is(svg, span, p, div) { color: inherit; }
+
+/* Logo and the active nav icons are amber images; tint them to the tone. */
+:root[data-theme] img.brand-logo { filter: var(--logo-filter, none) !important; }

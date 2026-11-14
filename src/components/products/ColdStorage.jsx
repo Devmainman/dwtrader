@@ -3,7 +3,8 @@ import { ShieldCheck, Lock, Unlock, Plus, Clock, Snowflake, ArrowDownToLine } fr
 import { coldStorageApi } from '../../api/products';
 import {
   Page, Panel, Stat, Button, Badge, Modal, Field, inputClass, AmountModal,
-  Loading, ErrorState, Empty, useLoader, useAction, formatMoney, formatDate
+  Loading, ErrorState, Empty, useLoader, useAction, formatMoney, formatDate,
+  HowItWorksButton
 } from './ui';
 
 const statusBadge = (v) => {
@@ -75,7 +76,7 @@ export default function ColdStorage() {
       title="Cold Storage"
       subtitle="Move funds out of your spendable balance. Withdrawals from a vault go through a security delay."
       icon={Snowflake}
-      actions={<Button onClick={() => setCreateOpen(true)}><Plus className="w-4 h-4" />New vault</Button>}
+      actions={<><HowItWorksButton steps={[['Create a vault', 'Give it a name and pick its currency.'], ['Move money in', 'Funds leave your spendable balance.'], ['Ask to unlock', 'Unlocking starts a security delay.'], ['Funds come back', 'After the delay the money returns to your balance.']]} /><Button onClick={() => setCreateOpen(true)}><Plus className="w-4 h-4" />New vault</Button></>}
     >
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <Stat label="Secured in vaults" value={formatMoney(totalSecured, currency)} />

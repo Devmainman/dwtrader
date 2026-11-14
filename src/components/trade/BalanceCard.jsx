@@ -45,7 +45,7 @@ function BalanceCard() {
   }
 
   return (
-    <div className="p-[1px] rounded-3xl bg-gradient-to-r from-[#EB25C6] via-purple-500 to-[#FB9B4B]">
+    <div className="p-[1px] rounded-3xl bg-gradient-to-r from-[var(--color-blue-700)] via-purple-500 to-[var(--color-blue-400)]">
       <article className="flex overflow-hidden flex-col justify-center px-4 py-5 w-full rounded-3xl bg-[#1D1D1F]">
         <p className="self-start text-xs sm:text-base tracking-normal leading-none text-zinc-100">
           Current Balance

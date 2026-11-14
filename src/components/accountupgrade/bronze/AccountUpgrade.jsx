@@ -40,7 +40,7 @@ const AccountUpgrade = () => {
           <SubscriptionTier
             features={proFeatures}
             className="flex overflow-hidden flex-col items-start self-stretch py-5 pr-1.5 my-auto rounded-2xl border border-solid bg-zinc-900 border-neutral-600 w-[243px] max-md:hidden"
-            buttonClassName="overflow-hidden gap-2 self-stretch py-2.5 pr-2 mt-6 text-xs tracking-normal leading-none whitespace-nowrap rounded-2xl border-solid border-[0.85px] border-[color:var(--Primary-Blue,#E8742A)] min-h-[30px] text-zinc-100"
+            buttonClassName="overflow-hidden gap-2 self-stretch py-2.5 pr-2 mt-6 text-xs tracking-normal leading-none whitespace-nowrap rounded-2xl border-solid border-[0.85px] border-[color:var(--Primary-Blue,var(--color-blue-600))] min-h-[30px] text-zinc-100"
             showIcons={false}
           />
 
@@ -48,7 +48,7 @@ const AccountUpgrade = () => {
           <SubscriptionTier
             features={basicFeatures}
             className="overflow-hidden self-stretch px-6 py-6 my-auto rounded-3xl border border-solid bg-zinc-900 border-neutral-600 min-w-60 w-[286px] max-md:px-5"
-            buttonClassName="overflow-hidden gap-2.5 self-stretch p-2.5 mt-5 text-xs tracking-normal leading-none whitespace-nowrap rounded-3xl border border-solid border-[color:var(--Primary-Blue,#E8742A)] min-h-[35px] text-zinc-100"
+            buttonClassName="overflow-hidden gap-2.5 self-stretch p-2.5 mt-5 text-xs tracking-normal leading-none whitespace-nowrap rounded-3xl border border-solid border-[color:var(--Primary-Blue,var(--color-blue-600))] min-h-[35px] text-zinc-100"
             showIcons={true}
             showImage={true}
           />
@@ -67,7 +67,7 @@ const AccountUpgrade = () => {
                 </div>
               ))}
             </div>
-            <button className="overflow-hidden gap-2.5 self-stretch py-2.5 pl-2.5 mt-6 text-xs tracking-normal leading-none whitespace-nowrap rounded-2xl border-solid border-[0.853px] border-[color:var(--Primary-Blue,#E8742A)] min-h-[30px] text-zinc-100">
+            <button className="overflow-hidden gap-2.5 self-stretch py-2.5 pl-2.5 mt-6 text-xs tracking-normal leading-none whitespace-nowrap rounded-2xl border-solid border-[0.853px] border-[color:var(--Primary-Blue,var(--color-blue-600))] min-h-[30px] text-zinc-100">
               Subscribe
             </button>
           </div>

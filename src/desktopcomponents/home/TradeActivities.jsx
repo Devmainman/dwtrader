@@ -106,10 +106,10 @@ function TradeActivityItem({ status }) {
     <div className="flex gap-0 mt-2.5 w-[313px] h-[103px]">
       <div className="flex  gap-1 flex-col items-center h-full">
         {/* Top Circle */}
-        <div className="w-5 h-5 rounded-full border border-[color:var(--Linear-color,#EB25C6)]" />
+        <div className="w-5 h-5 rounded-full border border-[color:var(--Linear-color,var(--color-blue-700))]" />
 
         {/* Top Line */}
-        <div className="w-[2px] flex-1 bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" />
+        <div className="w-[2px] flex-1 bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" />
       
     </div>
 

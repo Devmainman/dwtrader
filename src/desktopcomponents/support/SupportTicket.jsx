@@ -113,7 +113,7 @@ function SupportTicket() {
         <div className="p-6 flex flex-col text-[#F3F3F3] bg-[#242426] rounded-lg">
           <div className="flex justify-between items-center mb-3">
             <p className="text-sm">Priority:</p>
-            <div className="text-xs rounded px-2 py-0.5 bg-[#E8742A] text-white">
+            <div className="text-xs rounded px-2 py-0.5 bg-[var(--color-blue-600)] text-white">
               {selectedTicketData?.status}
             </div>
           </div>

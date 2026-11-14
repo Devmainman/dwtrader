@@ -15,7 +15,7 @@ const units = (n) => formatNumber(n, 8);
 function AssetIcon({ pool, size = 48 }) {
   if (pool.icon) return <img src={pool.icon} alt="" style={{ width: size, height: size }} className="rounded-full bg-white object-contain" />;
   return (
-    <div style={{ width: size, height: size }} className="rounded-full flex items-center justify-center text-xs font-semibold text-white bg-[linear-gradient(135deg,#EB25C6_0%,#F5852F_100%)]">
+    <div style={{ width: size, height: size }} className="rounded-full flex items-center justify-center text-xs font-semibold text-white bg-[linear-gradient(135deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]">
       {pool.asset.slice(0, 4)}
     </div>
   );
@@ -172,7 +172,7 @@ export default function Staking() {
 
   return (
     <Page title="Stake" subtitle="Stake crypto and earn rewards every cycle." icon={Layers}>
-      <Tabs value={tab} onChange={setTab} tabs={[{ value: 'pools', label: 'Pools' }, { value: 'history', label: activeCount ? `Your history (${activeCount} active)` : 'Your history' }]} />
+      <Tabs value={tab} onChange={setTab} how={[['Pick a pool', 'Each coin shows its rate and lock term.'], ['Stake an amount', 'The coins stay locked for the term.'], ['Earn every day', 'Rewards build up daily while staked.'], ['Get it back', 'At the end of the term your stake and rewards return to your balance.']]} tabs={[{ value: 'pools', label: 'Pools' }, { value: 'history', label: activeCount ? `Your history (${activeCount} active)` : 'Your history' }]} />
 
       {tab === 'pools' && (pools.loading && !pools.data ? <Loading /> : pools.error ? <ErrorState message={pools.error} onRetry={pools.reload} /> : (
         pools.data.pools.length === 0 ? <Panel><Empty icon={Layers} title="No pools available" text="Check back soon." /></Panel> : (

@@ -102,7 +102,7 @@ export function StocksPanel({ onChange }) {
         <Stat label="Cash available" value={formatMoney(p?.availableBalance, currency)} />
       </div>
 
-      <Tabs value={tab} onChange={setTab} tabs={[{ value: 'market', label: 'Market' }, { value: 'holdings', label: 'My holdings' }, { value: 'orders', label: 'Orders' }]} />
+      <Tabs value={tab} onChange={setTab} how={[['Find a stock', 'Browse the Market tab.'], ['Buy', 'Pay from your balance. Shares appear in My holdings.'], ['Sell when ready', 'Sell from My holdings and the proceeds return to your balance.']]} tabs={[{ value: 'market', label: 'Market' }, { value: 'holdings', label: 'My holdings' }, { value: 'orders', label: 'Orders' }]} />
 
       {tab === 'market' && (
         <Panel>

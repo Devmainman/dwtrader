@@ -8,12 +8,12 @@ function TopNavBar() {
     <header className="flex overflow-hidden flex-wrap gap-5 justify-between px-2 py-3.5 pr-6 w-full h-[86px] border-b border-solid bg-neutral-900 border-b-[color:var(--Rational,#EBD425)] max-md:pr-5 max-md:max-w-full">
       <div className="flex gap-5 items-center my-auto">
         
-      <div className="flex items-center justify-center self-stretch my-auto w-10 h-10 rounded-3xl border border-solid bg-zinc-900 border-[color:var(--Linear-color,#EB25C6)] min-h-10">
+      <div className="flex items-center justify-center self-stretch my-auto w-10 h-10 rounded-3xl border border-solid bg-zinc-900 border-[color:var(--Linear-color,var(--color-blue-700))] min-h-10">
   <img src={head} alt="Head Icon" className="w-5 h-5" />
 </div>
 
       </div>
-      <div className="flex gap-5 justify-between items-center px-8 border border-solid bg-black bg-opacity-80 border-[color:var(--Linear-color,#EB25C6)] min-h-[60px] rounded-[30px] max-md:px-5 max-md:max-w-full">
+      <div className="flex gap-5 justify-between items-center px-8 border border-solid bg-black bg-opacity-80 border-[color:var(--Linear-color,var(--color-blue-700))] min-h-[60px] rounded-[30px] max-md:px-5 max-md:max-w-full">
         <LanguageDropdown variant="wide" />
         <div className="flex gap-4 items-center self-stretch my-auto">
           <div className="flex gap-4 items-center self-stretch my-auto">

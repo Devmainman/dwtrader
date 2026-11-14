@@ -61,7 +61,7 @@ export default function RealEstateProject() {
             <div className="absolute top-3 left-3">{p.status === 'open' ? <Badge tone="success">Open</Badge> : <Badge>Closed</Badge>}</div>
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-semibold">{p.title}</h1>
+          <h1 className="text-xl sm:text-xl font-semibold">{p.title}</h1>
           {p.summary && <p className="text-neutral-300 mt-2">{p.summary}</p>}
           {(p.location?.city || p.location?.country) && (
             <p className="text-sm text-neutral-500 flex items-center gap-1 mt-2"><MapPin className="w-3.5 h-3.5" />{[p.location?.address, p.location?.city, p.location?.country].filter(Boolean).join(', ')}</p>

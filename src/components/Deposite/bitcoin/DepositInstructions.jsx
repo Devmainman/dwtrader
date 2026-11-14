@@ -33,7 +33,7 @@ const DepositInstructions = () => {
                 fillRule="evenodd"
                 clipRule="evenodd"
                 d="M12.0454 9.00006L7.70966 13.3358L6.91429 12.5404L10.4547 9.00006L6.91429 5.46081L7.70966 4.66431L12.0454 9.00006Z"
-                fill="#E8742A"
+                fill="var(--color-blue-600)"
               />
             </svg>
           </button>

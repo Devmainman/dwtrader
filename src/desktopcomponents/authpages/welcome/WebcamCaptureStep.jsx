@@ -109,7 +109,7 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-48 h-48 border-2 border-[#E8742A] rounded-[20px] shadow-md opacity-80" />
+              <div className="w-48 h-48 border-2 border-[var(--color-blue-600)] rounded-[20px] shadow-md opacity-80" />
             </div>
           </>
         ) : (
@@ -129,7 +129,7 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
         {!isCaptured ? (
           <button
             onClick={capture}
-            className="w-full bg-[#E8742A] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center gap-2"
+            className="w-full bg-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center gap-2"
           >
             Capture Photo
           </button>
@@ -148,7 +148,7 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
             <>
               <button
                 onClick={switchCamera}
-                className="w-1/2 border border-[#E8742A] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+                className="w-1/2 border border-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
               >
                 Switch Camera
               </button>
@@ -163,7 +163,7 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
             <>
               <button
                 onClick={retake}
-                className="w-1/2 border border-[#E8742A] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+                className="w-1/2 border border-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
               >
                 Retake
               </button>

@@ -90,6 +90,7 @@ export default function CopyTrading({ initialTab = 'experts' }) {
       <Tabs
         value={tab}
         onChange={setTab}
+        how={[['Pick a trader', 'Compare return, risk and history in Top Experts.'], ['Set an amount', 'Choose how much of your balance follows them.'], ['Trades are mirrored', 'Each position they open is copied into your account.'], ['Stop any time', 'End copying from the Copying tab whenever you like.']]}
         tabs={[{ value: 'experts', label: 'Top Experts' }, { value: 'copying', label: copyingCount ? `Copying (${copyingCount})` : 'Copying' }]}
       />
 

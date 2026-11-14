@@ -86,7 +86,7 @@ const Navbar = ({ style = {} }) => {
             if (!t) {
               return (
                 <button key="action" type="button" className={`nav-logo action-item ${open ? "is-open" : ""}`} onClick={() => setOpen((v) => !v)} aria-label="Quick actions" aria-expanded={open}>
-                  <img src={logo} alt="" className="nav-icon action-icon" />
+                  <img src={logo} alt="" className="nav-icon action-icon brand-logo" />
                 </button>
               );
             }

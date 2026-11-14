@@ -500,7 +500,7 @@ export default function Mining() {
       <div className="w-full flex flex-col">
         <div className="flex justify-between items-center mb-2.5">
           <div>
-            <h2 className="text-[28px] font-medium tracking-wide leading-tight text-zinc-100">
+            <h2 className="text-[26px] font-medium tracking-wide leading-tight text-zinc-100">
               Mining Dashboard
             </h2>
             <p className="text-[10px] text-stone-300 mt-1">

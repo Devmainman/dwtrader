@@ -101,7 +101,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <Activity className="w-6 h-6" />
@@ -120,7 +120,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/settings" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/settings" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <User className="w-6 h-6" />
@@ -142,7 +142,7 @@ function Sidebar() {
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
                   ["/trademain", "/mining", "/trade"].includes(location.pathname)
-                    ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]"
+                    ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]"
                     : "bg-transparent"
                 }`}
               >
@@ -218,7 +218,7 @@ function Sidebar() {
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
                   ["/copytrade", "/copy-positions"].includes(location.pathname)
-                    ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]"
+                    ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]"
                     : "bg-transparent"
                 }`}
               >
@@ -247,7 +247,7 @@ function Sidebar() {
               >
                 <div
                   className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                    location.pathname === to ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                    location.pathname === to ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                   }`}
                 >
                   <Icon className="w-6 h-6" />
@@ -267,7 +267,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/deposite" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/deposite" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <DollarSign className="w-6 h-6" />
@@ -285,7 +285,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/withdraw" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/withdraw" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <DollarSign className="w-6 h-6" />
@@ -303,7 +303,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/transactionhistory" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/transactionhistory" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <BarChart3 className="w-6 h-6" />
@@ -322,7 +322,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/accountupgrade" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/accountupgrade" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <Activity className="w-6 h-6" />
@@ -340,7 +340,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/signal-packages" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/signal-packages" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <Activity className="w-6 h-6" />
@@ -359,7 +359,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/notification" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/notification" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <Bell className="w-6 h-6" />
@@ -377,7 +377,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/support" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/support" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <MessageSquare className="w-6 h-6" />
@@ -395,7 +395,7 @@ function Sidebar() {
             >
               <div
                 className={`p-2 rounded-[50%] flex items-center justify-center w-10 h-10 ${
-                  location.pathname === "/referrals" ? "bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]" : "bg-transparent"
+                  location.pathname === "/referrals" ? "bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" : "bg-transparent"
                 }`}
               >
                 <Gift className="w-6 h-6" />
@@ -410,7 +410,7 @@ function Sidebar() {
           onClick={handleLogout}
           className="flex gap-2.5 items-center px-4 mt-12 w-full rounded-3xl min-h-[51px] text-[13px] font-medium tracking-normal leading-tight whitespace-nowrap text-stone-300 hover:bg-black/30 transition-all"
         >
-          <div className="p-2 rounded-[50%] flex items-center justify-center w-10 h-10 bg-[linear-gradient(180deg,#EB25C6_0%,#F5852F_100%)]">
+          <div className="p-2 rounded-[50%] flex items-center justify-center w-10 h-10 bg-[linear-gradient(180deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]">
             <LogoutIcon />
           </div>
           <span>Logout</span>

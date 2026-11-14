@@ -1,11 +1,11 @@
 // Shared building blocks for the cold storage, cards, wallet, investing,
 // staking and real-estate pages. Matches the app's dark + pink/blue gradient look.
 import { useCallback, useEffect, useState } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import { X, Loader2, CircleHelp } from 'lucide-react';
 import { toast } from '../../lib/toast';
 import { apiError } from '../../api/products';
 
-export const GRADIENT = 'bg-[linear-gradient(80deg,#EB25C6_0%,#F5852F_100%)]';
+export const GRADIENT = 'bg-[linear-gradient(80deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]';
 
 export const formatMoney = (value, currency = 'USD') => {
   const n = Number(value) || 0;
@@ -83,8 +83,8 @@ export function Page({ title, subtitle, icon: Icon, actions, children }) {
             </div>
           )}
           <div className="min-w-0">
-            <h1 className="text-base lg:text-2xl font-semibold tracking-tight leading-tight">{title}</h1>
-            {subtitle && <p className="text-xs lg:text-sm text-neutral-400 mt-0.5">{subtitle}</p>}
+            <h1 className="text-[17px] lg:text-xl font-semibold tracking-tight leading-tight">{title}</h1>
+            {subtitle && <p className="text-xs lg:text-[13px] text-neutral-400 mt-0.5">{subtitle}</p>}
           </div>
         </div>
         {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
@@ -292,36 +292,62 @@ export function Progress({ value }) {
 }
 
 /** Segmented control (default) or underlined sub-tabs. */
-export function Tabs({ tabs, value, onChange, variant = 'pill' }) {
-  if (variant === 'underline') {
-    return (
-      <div className="flex gap-5 border-b border-neutral-800 mb-4 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+/** Full-round pill tabs. Pass `how` (a few short steps) to add a "How it works" pill. */
+export function Tabs({ tabs, value, onChange, how }) {
+  const [showHow, setShowHow] = useState(false);
+  return (
+    <>
+      <div className="flex w-full sm:w-auto sm:inline-flex items-center gap-0.5 rounded-full bg-neutral-800/80 p-1 mb-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {tabs.map((t) => (
           <button
             key={t.value}
             type="button"
             onClick={() => onChange(t.value)}
-            className={`pb-2 text-xs whitespace-nowrap border-b-2 transition ${value === t.value ? 'border-blue-500 text-zinc-100 font-semibold' : 'border-transparent text-neutral-400 hover:text-zinc-200'}`}
+            className={`flex-1 sm:flex-none px-4 h-8 rounded-full text-xs font-medium whitespace-nowrap transition ${value === t.value ? 'bg-neutral-600 text-white shadow-sm' : 'text-neutral-400 hover:text-zinc-200'}`}
           >
             {t.label}
           </button>
         ))}
+        {how && (
+          <button type="button" onClick={() => setShowHow(true)} className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 h-8 rounded-full text-xs font-medium whitespace-nowrap text-blue-400 hover:text-blue-300 transition">
+            <CircleHelp className="w-3.5 h-3.5" />How it works
+          </button>
+        )}
       </div>
-    );
-  }
+      {how && <HowItWorks open={showHow} steps={how} onClose={() => setShowHow(false)} />}
+    </>
+  );
+}
+
+/** A short numbered explainer in a sheet. */
+export function HowItWorks({ open, steps, onClose, title = 'How it works' }) {
   return (
-    <div className="flex w-full sm:w-auto sm:inline-flex rounded-xl bg-neutral-800/80 p-0.5 mb-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      {tabs.map((t) => (
-        <button
-          key={t.value}
-          type="button"
-          onClick={() => onChange(t.value)}
-          className={`flex-1 sm:flex-none px-4 h-8 rounded-[10px] text-xs font-medium whitespace-nowrap transition ${value === t.value ? 'bg-neutral-600 text-white shadow-sm' : 'text-neutral-400 hover:text-zinc-200'}`}
-        >
-          {t.label}
-        </button>
-      ))}
-    </div>
+    <Modal open={open} title={title} onClose={onClose}>
+      <ol className="space-y-4 pb-2">
+        {steps.map((step, i) => (
+          <li key={i} className="flex gap-3">
+            <span className="w-6 h-6 rounded-full bg-blue-600/15 text-blue-400 text-[11px] font-semibold flex items-center justify-center shrink-0">{i + 1}</span>
+            <div className="min-w-0 pt-0.5">
+              <p className="text-[13px] font-semibold text-zinc-100">{step[0]}</p>
+              <p className="text-xs text-neutral-400 mt-0.5 leading-relaxed">{step[1]}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </Modal>
+  );
+}
+
+/** "How it works" pill for pages without tabs (goes in Page actions). */
+export function HowItWorksButton({ steps }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)} className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full bg-neutral-800 text-xs font-medium text-blue-400 hover:text-blue-300 transition">
+        <CircleHelp className="w-3.5 h-3.5" />How it works
+      </button>
+      <HowItWorks open={open} steps={steps} onClose={() => setOpen(false)} />
+    </>
   );
 }
 
@@ -359,7 +385,7 @@ export function AnimatedNumber({ value, format = (n) => n.toFixed(2), className 
 }
 
 /** Circular progress ring (0–100). */
-export function ProgressRing({ value = 0, size = 44, stroke = 4, color = '#F5852F', children }) {
+export function ProgressRing({ value = 0, size = 44, stroke = 4, color = 'var(--color-blue-500)', children }) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const v = Math.max(0, Math.min(100, value));

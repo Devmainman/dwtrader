@@ -146,7 +146,7 @@ export default function MiningPage() {
         <div className="rounded-xl bg-[#1D1D1F] border border-neutral-800 px-3 py-2.5"><p className="text-[10px] text-neutral-500">Run time</p><p className="text-sm font-semibold tabular-nums">{hm(stats.activeTime)}</p></div>
       </div>
 
-      <Tabs value={tab} onChange={setTab} tabs={[
+      <Tabs value={tab} onChange={setTab} how={[['Rent a machine', 'Pick a rig in Machines and start it.'], ['Boost it', 'Boosters raise its output for a while.'], ['Join a pool', 'Pools share mining power for steadier payouts.'], ['Get paid', 'Output is added to your balance. See History.']]} tabs={[
         { value: 'machines', label: 'Machines' }, { value: 'boosters', label: 'Boosters' }, { value: 'pools', label: 'Pools' }, { value: 'history', label: 'History' }
       ]} />
 

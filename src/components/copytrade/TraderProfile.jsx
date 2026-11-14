@@ -107,7 +107,7 @@ function StatsTab({ data }) {
                 <li key={x.symbol} className="flex items-center gap-3">
                   <span className="w-24 font-medium shrink-0 truncate">{x.symbol}</span>
                   <div className="flex-1 h-2 rounded-full bg-neutral-800/60 overflow-hidden">
-                    <div className="h-full bg-[linear-gradient(80deg,#EB25C6_0%,#F5852F_100%)]" style={{ width: `${x.sharePercent}%` }} />
+                    <div className="h-full bg-[linear-gradient(80deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]" style={{ width: `${x.sharePercent}%` }} />
                   </div>
                   <span className="w-20 text-right text-neutral-400 shrink-0">{x.count} trades</span>
                 </li>

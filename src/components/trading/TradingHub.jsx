@@ -79,7 +79,7 @@ function TradeCard({ t, now, onCancel, i }) {
   const earned = running ? Math.max(t.earned, Math.round(t.amount * (t.rate / 100) * done * 100) / 100) : t.status === 'completed' ? t.profit : 0;
   return (
     <li {...stagger(i)} className={`${stagger(i).className} flex items-center gap-3 py-3`}>
-      <ProgressRing value={progress} size={46} color={t.status === 'completed' ? '#10b981' : t.status === 'terminated' ? '#525252' : '#F5852F'}>
+      <ProgressRing value={progress} size={46} color={t.status === 'completed' ? '#10b981' : t.status === 'terminated' ? '#525252' : 'var(--color-blue-500)'}>
         <span className="text-[10px] font-semibold tabular-nums">{Math.round(progress)}%</span>
       </ProgressRing>
       <div className="flex-1 min-w-0">
@@ -156,7 +156,7 @@ export default function TradingHub() {
       )}
 
       <Panel>
-        <Tabs variant="underline" value={tab} onChange={setTab} tabs={[{ value: 'active', label: running.length ? `Running (${running.length})` : 'Running' }, { value: 'history', label: 'History' }]} />
+        <Tabs value={tab} onChange={setTab} how={[['Choose a package', 'Each package shows its term and expected return.'], ['Fund it', 'Set the amount to put to work from your balance.'], ['It trades for you', 'Follow progress under Running.'], ['Paid at the end', 'Your stake and profit return to your balance when the term ends.']]} tabs={[{ value: 'active', label: running.length ? `Running (${running.length})` : 'Running' }, { value: 'history', label: 'History' }]} />
         {activity.loading && !activity.data ? <Loading /> : !list.length ? (
           <Empty icon={Bot} title={tab === 'active' ? 'No running trades' : 'No finished trades yet'} text={tab === 'active' ? 'Start a package above to begin.' : undefined} />
         ) : (

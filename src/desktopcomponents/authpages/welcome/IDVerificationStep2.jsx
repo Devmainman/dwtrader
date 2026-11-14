@@ -90,7 +90,7 @@ export default function IDVerificationStep2({ onBack, onContinue }) {
             <button
               onClick={handleSubmit}
               disabled={!frontImage || loading}
-              className="w-full bg-[#E8742A] text-white text-[12px] rounded-full py-3 font-regular"
+              className="w-full bg-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-regular"
             >
               {loading ? 'Uploading...' : 'Continue'}
             </button>
@@ -122,7 +122,7 @@ export default function IDVerificationStep2({ onBack, onContinue }) {
             <button
               onClick={handleSubmit}
               disabled={!frontImage || loading}
-              className="w-full bg-[#E8742A] text-white text-[12px] rounded-full py-3 font-regular"
+              className="w-full bg-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-regular"
             >
               {loading ? 'Uploading...' : 'Continue'}
             </button>

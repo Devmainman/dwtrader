@@ -1,13 +1,15 @@
 /* Import font and Tailwind CSS */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
+@import "./themes.css";
 
 /* ---------------------------------------------------------------------------
-   Warm touch. Dark mode stays: page backgrounds (900/950, black, #171717) are
-   untouched. Only the surface greys, borders and muted text get a faint
-   espresso/amber cast. Everything for this tone lives in this block.
+   Default tone: amber. Dark mode stays: page backgrounds (900/950, black,
+   #171717) are untouched; only surface greys, borders, muted text and the
+   accent change. Other tones (set by the admin) live in themes.css.
+   `static` makes every variable exist, so tones can override them all.
    --------------------------------------------------------------------------- */
-@theme {
+@theme static {
   --color-neutral-100: #f5f1ed; --color-zinc-100: #f5f1ed; --color-gray-100: #f5f1ed;
   --color-neutral-200: #e8e2dc; --color-zinc-200: #e8e2dc; --color-gray-200: #e8e2dc;
   --color-neutral-300: #d2cac3; --color-zinc-300: #d2cac3; --color-gray-300: #d2cac3;
@@ -30,11 +32,11 @@
   --color-blue-900: #7a3816; --color-sky-900: #7a3816; --color-indigo-900: #7a3816;
   --color-blue-950: #431c08; --color-sky-950: #431c08; --color-indigo-950: #431c08;
 }
-/* Fixed-hex card surfaces used across the app, warmed to match. */
-[class~="bg-[#1D1D1F]"], [class~="bg-[#1C1C1E]"] { background-color: #221c18; }
-[class~="bg-[#242426]"] { background-color: #2a231e; }
-[class~="bg-[#2A2A2A]"], [class~="bg-[#2C2C2E]"], [class~="bg-[#2A2A2D]"], [class~="bg-[#282F36]"] { background-color: #2e2620; }
-[class~="bg-[#3A3A3C]"] { background-color: #3b322b; }
+:root {
+  --surface-1: #221c18; --surface-2: #2a231e; --surface-3: #2e2620; --surface-4: #3b322b;
+  --nav-bg: rgba(38, 30, 25, .84);
+  --on-accent: #ffffff;
+}
 
 /* Hide scrollbar for Webkit-based browsers (Chrome, Safari) */
 .scrollbar-hide::-webkit-scrollbar {
@@ -156,37 +158,33 @@ button:not(:disabled), a[role="button"] { transition-property: color, background
 .assets-fade { animation: assets-fade 220ms ease both; }
 @media (prefers-reduced-motion: reduce) { .assets-seg, .assets-rise, .assets-fade { animation: none !important; } }
 
-/* ---- welcome splash & onboarding ---- */
-@keyframes wx-logo { 0% { transform: scale(.4) rotate(-25deg); opacity: 0 } 55% { transform: scale(1.08) rotate(4deg); opacity: 1 } 100% { transform: none } }
-@keyframes wx-ring { 0% { transform: scale(1); opacity: .55 } 100% { transform: scale(2.4); opacity: 0 } }
-@keyframes wx-word { from { opacity: 0; transform: translateY(14px); filter: blur(6px) } to { opacity: 1; transform: none; filter: none } }
+/* ---- welcome splash & onboarding ----
+   Calm and quick: the logo is unveiled, the greeting wipes in line by line,
+   a hairline fills, then the whole screen lifts away like a curtain. */
+@keyframes wx-unveil { from { clip-path: inset(0 0 100% 0); transform: translateY(10px) } to { clip-path: inset(0 0 0 0); transform: none } }
+@keyframes wx-line { from { clip-path: inset(0 0 100% 0); transform: translateY(.45em) } to { clip-path: inset(0 0 -10% 0); transform: none } }
+@keyframes wx-soft { from { opacity: 0 } to { opacity: 1 } }
 @keyframes wx-bar { from { transform: scaleX(0) } to { transform: scaleX(1) } }
-@keyframes wx-glow { 0%, 100% { transform: scale(.9); opacity: .7 } 50% { transform: scale(1.1); opacity: 1 } }
-@keyframes wx-lift { to { opacity: 0; transform: translateY(-3%) scale(1.04); filter: blur(4px) } }
+@keyframes wx-curtain { to { clip-path: inset(0 0 100% 0) } }
 @keyframes wx-fade { from { opacity: 0 } to { opacity: 1 } }
 @keyframes wx-fade-out { to { opacity: 0 } }
-@keyframes wx-sheet { 0% { opacity: 0; transform: translateY(60px) scale(.96) } 60% { opacity: 1; transform: translateY(-4px) scale(1.005) } 100% { transform: none } }
-@keyframes wx-slide-next { from { opacity: 0; transform: translateX(36px) } to { opacity: 1; transform: none } }
-@keyframes wx-slide-prev { from { opacity: 0; transform: translateX(-36px) } to { opacity: 1; transform: none } }
-@keyframes wx-orbit { to { transform: rotate(360deg) } }
-@keyframes wx-counter { to { transform: rotate(-360deg) } }
-@keyframes wx-pop { 0% { transform: scale(.5); opacity: 0 } 60% { transform: scale(1.08); opacity: 1 } 100% { transform: none } }
-.wx-logo { animation: wx-logo 800ms cubic-bezier(.34,1.56,.64,1) both }
-.wx-ring { border: 2px solid rgba(245,133,47,.6); animation: wx-ring 1.6s cubic-bezier(.22,1,.36,1) 300ms infinite both }
-.wx-ring-2 { border-color: rgba(235,37,198,.5); animation-delay: 900ms }
-.wx-word { animation: wx-word 620ms cubic-bezier(.22,1,.36,1) both }
-.wx-bar { transform-origin: left; animation-name: wx-bar; animation-timing-function: cubic-bezier(.45,0,.2,1); animation-fill-mode: both }
-.wx-glow { animation: wx-glow 3s ease-in-out infinite }
-.wx-lift { animation: wx-lift 520ms cubic-bezier(.4,0,.2,1) both }
+@keyframes wx-sheet { from { opacity: 0; transform: translateY(40px) } to { opacity: 1; transform: none } }
+@keyframes wx-pan { from { transform: translateY(0) scale(1.04) } to { transform: translateY(-14%) scale(1.04) } }
+@keyframes wx-swap { from { opacity: 0; transform: scale(1.03) } to { opacity: 1; transform: none } }
+@keyframes wx-text { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+@keyframes wx-seg { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+.wx-unveil { animation: wx-unveil 900ms cubic-bezier(.7,0,.2,1) both }
+.wx-line { display: block; animation: wx-line 800ms cubic-bezier(.7,0,.2,1) both }
+.wx-soft { animation: wx-soft 700ms ease both }
+.wx-bar { transform-origin: left; animation-name: wx-bar; animation-timing-function: cubic-bezier(.65,0,.35,1); animation-fill-mode: both }
+.wx-curtain { animation: wx-curtain 700ms cubic-bezier(.7,0,.2,1) both }
 .wx-fade { animation: wx-fade 260ms ease both }
 .wx-fade-out { animation: wx-fade-out 260ms ease both }
-.wx-sheet { animation: wx-sheet 560ms cubic-bezier(.22,1,.36,1) both }
-.wx-slide-next { animation: wx-slide-next 420ms cubic-bezier(.22,1,.36,1) both }
-.wx-slide-prev { animation: wx-slide-prev 420ms cubic-bezier(.22,1,.36,1) both }
-.wx-orbit { animation: wx-orbit 24s linear infinite }
-.wx-counter { display: inline-flex; animation: wx-counter 24s linear infinite }
-.wx-pop { animation: wx-pop 620ms cubic-bezier(.34,1.56,.64,1) 80ms both }
+.wx-sheet { animation: wx-sheet 520ms cubic-bezier(.22,1,.36,1) both }
+.wx-pan { animation: wx-pan 7s cubic-bezier(.45,0,.55,1) both }
+.wx-swap { animation: wx-swap 600ms cubic-bezier(.22,1,.36,1) both }
+.wx-text { animation: wx-text 520ms cubic-bezier(.22,1,.36,1) 120ms both }
+.wx-seg { transform-origin: left; animation: wx-seg linear both }
 @media (prefers-reduced-motion: reduce) {
-  .wx-logo, .wx-ring, .wx-word, .wx-bar, .wx-glow, .wx-lift, .wx-sheet, .wx-slide-next, .wx-slide-prev, .wx-orbit, .wx-counter, .wx-pop { animation: none !important }
-  .wx-ring { display: none }
+  .wx-unveil, .wx-line, .wx-soft, .wx-bar, .wx-curtain, .wx-sheet, .wx-pan, .wx-swap, .wx-text, .wx-seg { animation: none !important }
 }

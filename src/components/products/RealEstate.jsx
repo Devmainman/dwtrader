@@ -172,9 +172,9 @@ export function RealEstateSection() {
   return (
     <>
       <Tabs
-        variant="underline"
         value={tab}
         onChange={setTab}
+        how={[['Choose a project', 'Read the details, target return and term.'], ['Invest from the minimum', 'The amount comes from your balance.'], ['Collect returns', 'Payouts are added to your balance as the project pays.'], ['Follow it', 'See every investment under Your investments.']]}
         tabs={[{ value: 'open', label: 'Open' }, { value: 'closed', label: 'Closed' }, { value: 'mine', label: count ? `Your investments (${count})` : 'Your investments' }]}
       />
       {tab === 'mine'

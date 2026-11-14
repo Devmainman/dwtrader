@@ -40,7 +40,7 @@ export function Avatar({ src, name, size = 44, badge }) {
       {url && !failed ? (
         <img src={url} alt="" onError={() => setFailed(true)} style={{ width: size, height: size }} className="rounded-full object-cover bg-neutral-800 ring-2 ring-white/10" />
       ) : (
-        <div style={{ width: size, height: size }} className="rounded-full flex items-center justify-center font-semibold text-sm text-white bg-[linear-gradient(135deg,#EB25C6_0%,#F5852F_100%)] ring-2 ring-white/10">
+        <div style={{ width: size, height: size }} className="rounded-full flex items-center justify-center font-semibold text-sm text-white bg-[linear-gradient(135deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)] ring-2 ring-white/10">
           {initials || '?'}
         </div>
       )}
@@ -106,7 +106,7 @@ export function FollowButton({ trader, onChange, size = 'sm' }) {
       type="button"
       onClick={toggle}
       disabled={busy}
-      className={`inline-flex items-center gap-1.5 rounded-xl border transition disabled:opacity-50 ${size === 'sm' ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} ${following ? 'border-white/15 text-neutral-300 hover:bg-neutral-800/60' : 'border-[#EB25C6]/60 text-white hover:bg-[#EB25C6]/10'}`}
+      className={`inline-flex items-center gap-1.5 rounded-xl border transition disabled:opacity-50 ${size === 'sm' ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm'} ${following ? 'border-white/15 text-neutral-300 hover:bg-neutral-800/60' : 'border-[var(--color-blue-700)]/60 text-white hover:bg-[var(--color-blue-700)]/10'}`}
     >
       <Icon className="w-3.5 h-3.5" />{following ? 'Following' : 'Follow'}
     </button>

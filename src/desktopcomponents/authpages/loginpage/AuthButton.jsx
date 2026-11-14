@@ -15,7 +15,7 @@ function AuthButton({ type, text, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="overflow-hidden gap-2.5 self-stretch px-2.5 py-3.5 w-full tracking-normal rounded-3xl border border-solid border-[#E8742A] min-h-[42px] text-zinc-100 text-xs"
+      className="overflow-hidden gap-2.5 self-stretch px-2.5 py-3.5 w-full tracking-normal rounded-3xl border border-solid border-[var(--color-blue-600)] min-h-[42px] text-zinc-100 text-xs"
     >
       {text}
     </button>

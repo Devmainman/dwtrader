@@ -84,7 +84,7 @@ export default function Assets() {
           <div className="flex flex-col gap-7 lg:sticky lg:top-4">
             <div className="px-1 assets-rise">
               <p className="text-[13px] text-neutral-500">Net worth</p>
-              <AnimatedNumber value={data.total} format={(n) => formatMoney(n, cur)} className="block text-[40px] leading-[1.1] font-semibold tracking-[-0.02em] text-white mt-1" />
+              <AnimatedNumber value={data.total} format={(n) => formatMoney(n, cur)} className="block text-[30px] leading-[1.1] font-semibold tracking-[-0.02em] text-white mt-1" />
               {data.invested.cost > 0 && (
                 <p className="mt-2 text-[13px] text-neutral-400">
                   <span className={up ? 'text-[#30D158]' : 'text-[#FF453A]'}>

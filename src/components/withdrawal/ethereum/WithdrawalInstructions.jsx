@@ -51,7 +51,7 @@ function WithdrawalInstructions() {
                 fillRule="evenodd"
                 clipRule="evenodd"
                 d="M12.0454 8.99981L7.70966 13.3356L6.91429 12.5402L10.4547 8.99981L6.91429 5.46056L7.70966 4.66406L12.0454 8.99981Z"
-                fill="#E8742A"
+                fill="var(--color-blue-600)"
               />
             </svg>
           </button>

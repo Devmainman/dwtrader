@@ -179,7 +179,7 @@ function SideBar() {
         className="fixed top-0 left-0 z-[9999] px-1 pt-9 pb-3.5 bg-black/90 max-w-[258px] h-full max-h-screen overflow-y-auto transition-transform duration-300 ease-in-out
         [&::-webkit-scrollbar]:w-[1px]
         [&::-webkit-scrollbar-track]:bg-transparent
-        [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#EB25C6]
+        [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[var(--color-blue-700)]
         dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
       >
         <div className="absolute top-2 right-2">
@@ -208,7 +208,7 @@ function SideBar() {
                       <div
                         className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
                         style={{
-                          background: "linear-gradient(80deg,#EB25C6_18.83%,#F5852F_103.47%)",
+                          background: "linear-gradient(80deg,var(--color-blue-700)_18.83%,var(--color-blue-500)_103.47%)",
                         }}
                       >
                         {item.GroupIcon ? (
@@ -240,7 +240,7 @@ function SideBar() {
                               className="flex items-center justify-center rounded-full w-[30px] h-[30px]"
                               style={{
                                 background: isActive 
-                                  ? "linear-gradient(80deg,#EB25C6_18.83%,#F5852F_103.47%)"
+                                  ? "linear-gradient(80deg,var(--color-blue-700)_18.83%,var(--color-blue-500)_103.47%)"
                                   : "rgba(255,255,255,0.1)",
                               }}
                             >
@@ -277,7 +277,7 @@ function SideBar() {
                   className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
                   style={{
                     background: isActive 
-                      ? "linear-gradient(80deg,#EB25C6_18.83%,#F5852F_103.47%)"
+                      ? "linear-gradient(80deg,var(--color-blue-700)_18.83%,var(--color-blue-500)_103.47%)"
                       : "rgba(255,255,255,0.1)",
                   }}
                 >
@@ -304,7 +304,7 @@ function SideBar() {
           <div
             className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
             style={{
-              background: "linear-gradient(80deg,#EB25C6_18.83%,#F5852F_103.47%)",
+              background: "linear-gradient(80deg,var(--color-blue-700)_18.83%,var(--color-blue-500)_103.47%)",
             }}
           >
              <LogoutIcon />

@@ -5,7 +5,7 @@
 // Both respect prefers-reduced-motion and can be skipped with a tap or Escape.
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { PieChart, TrendingUp, Building2, Coins, ShieldCheck, Lock, Bot, Copy, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import logo from '../../assets/Group.svg';
 
 const EVENT = 'app:welcome';
@@ -37,17 +37,18 @@ function Splash({ detail, onDone }) {
   const first = String(detail.name || '').trim().split(/\s+/)[0];
   const line = isNew ? 'Welcome aboard' : first ? `Welcome back, ${first}` : 'Welcome back';
   const sub = isNew ? "Let's set up your account in a minute." : hello();
+  const hold = reduced() ? 900 : isNew ? 2200 : 1800;
 
   const finish = useCallback(() => setLeaving(true), []);
   useEffect(() => {
-    const t = setTimeout(finish, reduced() ? 900 : isNew ? 2300 : 1900);
+    const t = setTimeout(finish, hold);
     const onKey = (e) => e.key === 'Escape' && finish();
     window.addEventListener('keydown', onKey);
     return () => { clearTimeout(t); window.removeEventListener('keydown', onKey); };
-  }, [finish, isNew]);
+  }, [finish, hold]);
   useEffect(() => {
     if (!leaving) return undefined;
-    const t = setTimeout(onDone, 520);
+    const t = setTimeout(onDone, reduced() ? 0 : 700);
     return () => clearTimeout(t);
   }, [leaving, onDone]);
 
@@ -56,25 +57,16 @@ function Splash({ detail, onDone }) {
       role="status"
       aria-live="polite"
       onClick={finish}
-      className={`fixed inset-0 z-[12000] flex items-center justify-center bg-[#0b0b0c] overflow-hidden cursor-pointer ${leaving ? 'wx-lift' : ''}`}
+      className={`fixed inset-0 z-[12000] flex items-center justify-center bg-[#0b0b0c] cursor-pointer ${leaving ? 'wx-curtain' : ''}`}
     >
-      <div className="absolute w-[520px] h-[520px] rounded-full wx-glow bg-[radial-gradient(closest-side,rgba(235,37,198,0.28),rgba(245,133,47,0.18)_55%,transparent)]" />
-      <div className="relative flex flex-col items-center text-center px-6">
-        <div className="relative w-20 h-20 mb-7">
-          <span className="absolute inset-0 rounded-full wx-ring" />
-          <span className="absolute inset-0 rounded-full wx-ring wx-ring-2" />
-          <div className="relative w-20 h-20 rounded-full bg-white flex items-center justify-center wx-logo shadow-[0_8px_50px_rgba(232,116,42,0.55)]">
-            <img src={logo} alt="" className="w-12 h-12" />
-          </div>
-        </div>
-        <h1 className="text-[28px] md:text-4xl font-semibold tracking-tight text-white" aria-label={line}>
-          {line.split(' ').map((w, i) => (
-            <span key={`${w}-${i}`} className="inline-block wx-word" style={{ animationDelay: `${380 + i * 90}ms` }}>{w}&nbsp;</span>
-          ))}
+      <div className="flex flex-col items-center text-center px-6">
+        <img src={logo} alt="" className="w-11 h-11 mb-8 brand-logo wx-unveil" />
+        <h1 className="text-[24px] md:text-[28px] font-medium tracking-tight text-white leading-tight" aria-label={line}>
+          <span className="wx-line" style={{ animationDelay: '260ms' }}>{line}</span>
         </h1>
-        <p className="mt-2 text-sm text-neutral-400 wx-word" style={{ animationDelay: `${520 + line.split(' ').length * 90}ms` }}>{sub}</p>
-        <div className="mt-8 h-[3px] w-40 rounded-full bg-white/10 overflow-hidden">
-          <div className="h-full rounded-full bg-[linear-gradient(90deg,#EB25C6,#F5852F)] wx-bar" style={{ animationDuration: isNew ? '2.1s' : '1.7s' }} />
+        <p className="mt-2 text-[13px] text-neutral-400 wx-soft" style={{ animationDelay: '700ms' }}>{sub}</p>
+        <div className="mt-9 h-px w-28 bg-white/10 overflow-hidden">
+          <div className="h-full bg-blue-500 wx-bar" style={{ animationDuration: `${hold}ms` }} />
         </div>
       </div>
     </div>
@@ -83,46 +75,20 @@ function Splash({ detail, onDone }) {
 
 /* ------------------------------------------------------------------ onboarding */
 
+// Each slide shows the real screen it talks about.
 const SLIDES = [
-  {
-    title: 'Everything in one place',
-    text: 'Your cash, investments, stakes and vaults add up on the Assets page, in your own currency.',
-    icon: PieChart,
-    orbit: [Coins, Building2, Lock],
-    tint: 'from-fuchsia-500 to-blue-500',
-    cta: { label: 'Open Assets', to: '/assets' }
-  },
-  {
-    title: 'Grow your money',
-    text: 'Buy stocks, own a share of real-estate projects, or stake crypto and earn every cycle.',
-    icon: TrendingUp,
-    orbit: [Building2, Coins, PieChart],
-    tint: 'from-emerald-400 to-teal-500',
-    cta: { label: 'Explore investing', to: '/invest' }
-  },
-  {
-    title: 'Trade your way',
-    text: 'Live crypto and forex markets, automated bots, or copy the experts you trust.',
-    icon: Bot,
-    orbit: [TrendingUp, Copy, Sparkles],
-    tint: 'from-indigo-400 to-violet-500',
-    cta: { label: 'See markets', to: '/trademain' }
-  },
-  {
-    title: 'Protected by design',
-    text: 'Verify your identity once, keep long-term savings in cold storage and turn on notifications for every move.',
-    icon: ShieldCheck,
-    orbit: [Lock, ShieldCheck, Sparkles],
-    tint: 'from-sky-400 to-cyan-400',
-    cta: { label: 'Get started', to: '/dashboard' }
-  }
+  { title: 'Everything in one place', text: 'Cash, investments, stakes and vaults add up on the Assets page, in your own currency.', shot: '/landing/assets.webp', cta: { label: 'Open Assets', to: '/assets' } },
+  { title: 'Grow your money', text: 'Stake crypto and earn every day, or own a share of real-estate projects.', shot: '/landing/staking.webp', cta: { label: 'Explore staking', to: '/staking' } },
+  { title: 'Trade your way', text: 'Live crypto and forex markets, with take-profit and stop-loss set before you enter.', shot: '/landing/trade.webp', cta: { label: 'See markets', to: '/trademain' } },
+  { title: 'Protected by design', text: 'Keep savings in cold storage behind a waiting period, and get notified of every move.', shot: '/landing/vault.webp', cta: { label: 'Get started', to: '/dashboard' } },
 ];
+const SLIDE_MS = 7000;
 
 function Onboarding({ onClose }) {
   const navigate = useNavigate();
   const [i, setI] = useState(0);
-  const [dir, setDir] = useState(1);
   const [leaving, setLeaving] = useState(false);
+  const [paused, setPaused] = useState(false);
   const [touchX, setTouchX] = useState(null);
   const s = SLIDES[i];
   const last = i === SLIDES.length - 1;
@@ -131,11 +97,14 @@ function Onboarding({ onClose }) {
     setLeaving(true);
     setTimeout(() => { onClose(); if (to) navigate(to); }, 260);
   }, [navigate, onClose]);
-  const go = useCallback((n) => {
-    if (n < 0 || n >= SLIDES.length) return;
-    setDir(n > i ? 1 : -1);
-    setI(n);
-  }, [i]);
+  const go = useCallback((n) => { if (n >= 0 && n < SLIDES.length) setI(n); }, []);
+
+  // Advance on its own like a story; holding a finger on it pauses.
+  useEffect(() => {
+    if (paused || last || reduced()) return undefined;
+    const t = setTimeout(() => setI((n) => Math.min(n + 1, SLIDES.length - 1)), SLIDE_MS);
+    return () => clearTimeout(t);
+  }, [i, paused, last]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -147,12 +116,14 @@ function Onboarding({ onClose }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [close, go, i]);
 
-  const Icon = s.icon;
   return (
     <div className={`fixed inset-0 z-[11000] flex items-end md:items-center justify-center ${leaving ? 'wx-fade-out' : ''}`} role="dialog" aria-modal="true" aria-label="Welcome tour">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-md wx-fade" onClick={() => close()} />
+      <div className="absolute inset-0 bg-black/75 wx-fade" onClick={() => close()} />
       <div
-        className="relative w-full md:max-w-[420px] bg-[#161617] border border-white/10 rounded-t-[32px] md:rounded-[32px] shadow-2xl overflow-hidden wx-sheet"
+        className="relative w-full md:max-w-[400px] bg-[#141414] rounded-t-[28px] md:rounded-[28px] shadow-2xl overflow-hidden wx-sheet"
+        onPointerDown={() => setPaused(true)}
+        onPointerUp={() => setPaused(false)}
+        onPointerLeave={() => setPaused(false)}
         onTouchStart={(e) => setTouchX(e.touches[0].clientX)}
         onTouchEnd={(e) => {
           if (touchX == null) return;
@@ -162,37 +133,33 @@ function Onboarding({ onClose }) {
           setTouchX(null);
         }}
       >
-        <button type="button" onClick={() => close()} className="absolute top-4 right-4 z-10 text-xs text-neutral-400 hover:text-white px-2 py-1">Skip</button>
-
-        <div key={i} className={`px-7 pt-10 pb-6 ${dir > 0 ? 'wx-slide-next' : 'wx-slide-prev'}`}>
-          <div className="relative mx-auto w-44 h-44 mb-6">
-            <div className={`absolute inset-6 rounded-full bg-gradient-to-br ${s.tint} opacity-25 blur-2xl`} />
-            <div className="absolute inset-0 wx-orbit">
-              {s.orbit.map((O, k) => (
-                <span key={k} className="absolute w-10 h-10 rounded-2xl bg-white/5 border border-white/10 backdrop-blur flex items-center justify-center text-neutral-200"
-                  style={{ top: `${50 - 44 * Math.cos((k * 2 * Math.PI) / 3)}%`, left: `${50 + 44 * Math.sin((k * 2 * Math.PI) / 3)}%`, transform: 'translate(-50%,-50%)' }}>
-                  <span className="wx-counter"><O className="w-4 h-4" /></span>
-                </span>
-              ))}
-            </div>
-            <div className={`absolute inset-[30%] rounded-[28px] bg-gradient-to-br ${s.tint} flex items-center justify-center shadow-xl wx-pop`}>
-              <Icon className="w-9 h-9 text-white" strokeWidth={1.8} />
-            </div>
-          </div>
-          <h2 className="text-xl font-semibold text-white text-center tracking-tight">{s.title}</h2>
-          <p className="text-sm text-neutral-400 text-center mt-2 leading-relaxed">{s.text}</p>
-        </div>
-
-        <div className="flex justify-center gap-1.5 pb-5">
+        {/* progress, story style */}
+        <div className="absolute top-3 inset-x-4 z-10 flex gap-1">
           {SLIDES.map((_, k) => (
-            <button key={k} type="button" onClick={() => go(k)} aria-label={`Slide ${k + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 ${k === i ? 'w-6 bg-white' : 'w-1.5 bg-white/25'}`} />
+            <button key={k} type="button" onClick={() => go(k)} aria-label={`Slide ${k + 1}`} className="flex-1 h-[3px] rounded-full bg-white/20 overflow-hidden">
+              {k < i && <span className="block h-full bg-white" />}
+              {k === i && <span key={`${i}-${paused}`} className="block h-full bg-white wx-seg" style={{ animationDuration: `${SLIDE_MS}ms`, animationPlayState: paused || last ? 'paused' : 'running', transform: last ? 'none' : undefined }} />}
+            </button>
           ))}
         </div>
+        <button type="button" onClick={() => close()} className="absolute top-7 right-4 z-10 text-xs text-neutral-300 hover:text-white px-2 py-1">Skip</button>
 
-        <div className="flex gap-2 px-6 pb-[calc(env(safe-area-inset-bottom)+24px)]">
+        {/* the real screen, slowly panning */}
+        <div className="relative h-[300px] md:h-[320px] overflow-hidden bg-[#0b0b0c]">
+          <div key={i} className="absolute inset-x-10 top-12 bottom-0 rounded-t-[22px] overflow-hidden ring-1 ring-white/10 wx-swap">
+            <img src={s.shot} alt="" className="w-full wx-pan" draggable="false" />
+          </div>
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#141414] to-transparent" />
+        </div>
+
+        <div key={`t-${i}`} className="px-7 pt-5 pb-5 wx-text">
+          <h2 className="text-lg font-semibold text-white tracking-tight">{s.title}</h2>
+          <p className="text-[13px] text-neutral-400 mt-1.5 leading-relaxed">{s.text}</p>
+        </div>
+
+        <div className="flex gap-2 px-6 pb-[calc(env(safe-area-inset-bottom)+22px)]">
           {last ? (
-            <button type="button" onClick={() => close(s.cta.to)} className="flex-1 h-11 rounded-full bg-[linear-gradient(80deg,#EB25C6,#F5852F)] text-white text-sm font-semibold active:scale-[0.97] transition">
+            <button type="button" onClick={() => close(s.cta.to)} className="flex-1 h-11 rounded-full bg-blue-600 text-white text-sm font-semibold active:scale-[0.97] transition">
               {s.cta.label}
             </button>
           ) : (
