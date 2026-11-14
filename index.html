@@ -3,7 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script>
+      // iPhone/iPad Safari zooms in when a field with text under 16px is tapped, and stays zoomed.
+      // maximum-scale=1 stops that auto-zoom; iOS still lets people pinch to zoom.
+      // Android does not auto-zoom, so it keeps the plain tag (and full pinch zoom).
+      (function () {
+        var ua = navigator.userAgent;
+        var iOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        if (iOS) document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover');
+      })();
+    </script>
+    <meta name="theme-color" content="#171717" />
     <title>Invest · Trade · Earn</title>
   </head>
   <body>

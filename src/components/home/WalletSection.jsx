@@ -1,16 +1,80 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
+import { Link, useNavigate } from "react-router-dom";
 import receive from "../../assets/game-icons_receive-money.svg";
 import gift from "../../assets/gift.svg";
 import userAdd from "../../assets/user-add.svg";
 import { API_BASE_URL } from "../../api/config";
 import { AnimatedNumber } from "../products/ui";
 import { toast } from "../../lib/toast";
-import { Search, Check, X } from "lucide-react";
+import { Search, Check, X, ChevronRight, PieChart, ArrowDownToLine, ArrowUpFromLine, History, Wallet, Layers, Cpu, Users } from "lucide-react";
+
+// Quick sheets opened by the My Wallet and Reward pills.
+const SHEETS = {
+  wallet: {
+    title: "My wallet",
+    note: "Everything about your money, one tap away.",
+    items: [
+      { to: "/assets", icon: PieChart, label: "Assets", text: "Everything you own, valued together" },
+      { to: "/deposite", icon: ArrowDownToLine, label: "Deposit", text: "Add money to your balance" },
+      { to: "/withdraw", icon: ArrowUpFromLine, label: "Withdraw", text: "Send money out" },
+      { to: "/transactionhistory", icon: History, label: "Transaction history", text: "Every deposit, withdrawal and payout" },
+      { to: "/wallets", icon: Wallet, label: "Connected wallets", text: "Crypto wallets linked to your account" },
+    ],
+  },
+  reward: {
+    title: "Rewards",
+    note: "Ways your balance earns more.",
+    items: [
+      { to: "/staking", icon: Layers, label: "Staking rewards", text: "Earn daily on locked coins" },
+      { to: "/mining", icon: Cpu, label: "Mining output", text: "Rigs pay into your balance" },
+      { to: "/referrals", icon: Users, label: "Referral bonus", text: "Earn when friends join" },
+    ],
+  },
+};
+
+function QuickSheet({ sheet, onClose, onGo }) {
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return createPortal(
+    <div className="fixed inset-0 z-[9000] flex items-end md:items-center justify-center" role="dialog" aria-modal="true" aria-label={sheet.title}>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-[fade-in_200ms_ease_both]" onClick={onClose} />
+      <div className="relative w-full md:max-w-sm bg-[#1C1C1E] border border-white/10 rounded-t-[28px] md:rounded-[28px] shadow-2xl animate-[sheet-in_420ms_cubic-bezier(0.22,1,0.36,1)_both]">
+        <div className="mx-auto mt-2 w-9 h-1 rounded-full bg-white/20 md:hidden" />
+        <div className="flex items-center justify-between px-5 pt-3 pb-2">
+          <div>
+            <p className="text-sm font-semibold text-zinc-100">{sheet.title}</p>
+            <p className="text-[11px] text-neutral-500">{sheet.note}</p>
+          </div>
+          <button type="button" onClick={onClose} className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center text-neutral-400" aria-label="Close"><X className="w-3.5 h-3.5" /></button>
+        </div>
+        <ul className="px-2 pb-[calc(env(safe-area-inset-bottom)+14px)]">
+          {sheet.items.map((it, i) => (
+            <li key={it.to} style={{ animationDelay: `${i * 30}ms` }} className="animate-[rise-in_300ms_ease_both]">
+              <button type="button" onClick={() => onGo(it.to)} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left hover:bg-white/5 active:scale-[0.98] transition">
+                <span className="w-9 h-9 rounded-full bg-blue-600/15 text-blue-400 flex items-center justify-center shrink-0"><it.icon className="w-4 h-4" strokeWidth={1.9} /></span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-sm text-zinc-100">{it.label}</span>
+                  <span className="block text-[11px] text-neutral-500 truncate">{it.text}</span>
+                </span>
+                <ChevronRight className="w-4 h-4 text-neutral-500" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>,
+    document.body
+  );
+}
 
 function WalletSection() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const navigate = useNavigate();
+  const [sheet, setSheet] = useState(null); // "wallet" | "reward" | null
   const [balanceData, setBalanceData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currencies, setCurrencies] = useState([]);
@@ -141,11 +205,12 @@ function WalletSection() {
       : balanceData?.balance ?? 0;
   
 
+  // My Wallet and Reward open a quick sheet; Refer2Earn and Receive go straight to their page.
   const buttons = [
-    { title: "My Wallet", icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/dcd09ccda7422eb1961e4dd5192988764591da463acc92bc3c2a51b77bbf01b0?placeholderIfAbsent=true" },
-    { title: "Reward", icon: gift },
-    { title: "Refer2Earn", icon: userAdd },
-    { title: "Receive", icon: receive },
+    { title: "My Wallet", icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/dcd09ccda7422eb1961e4dd5192988764591da463acc92bc3c2a51b77bbf01b0?placeholderIfAbsent=true", sheet: "wallet" },
+    { title: "Reward", icon: gift, sheet: "reward" },
+    { title: "Refer2Earn", icon: userAdd, to: "/referrals" },
+    { title: "Receive", icon: receive, to: "/deposite" },
   ];
 
   return (
@@ -154,19 +219,17 @@ function WalletSection() {
         {buttons.map((btn, index) => (
           <button
             key={index}
-            onClick={() => setActiveIndex(index)}
-            className={`flex items-center gap-1 px-2 py-1 flex-shrink-0 whitespace-nowrap rounded-3xl border-2 border-solid 
-              ${activeIndex === index ? "border-[#242426]" : "border-neutral-800"} 
-              ${activeIndex === index ? "min-w- md:min-w-[160px]" : "sm:min-w-full md:min-w-"} 
-              transition-all duration-300 ease-in-out max-w-fit`}
+            type="button"
+            onClick={() => (btn.sheet ? setSheet(btn.sheet) : navigate(btn.to))}
+            className={`flex items-center gap-1 px-2 py-1 flex-shrink-0 whitespace-nowrap rounded-full border-2 border-solid transition-all duration-200 active:scale-95 hover:border-neutral-600 ${sheet && sheet === btn.sheet ? "border-blue-500/60" : "border-neutral-800"}`}
           >
             <img src={btn.icon} className="object-contain w-4 h-4 rounded-full" alt={`${btn.title} icon`} />
             <span className="text-center">{btn.title}</span>
-            {activeIndex === index && (
+            {btn.sheet && (
               <img
                 src="https://cdn.builder.io/api/v1/image/assets/TEMP/b709d68c4907d194d0fea4be3a83f2b9ab9df95150216f7881181d4183b92cca?placeholderIfAbsent=true"
                 className="object-contain w-3.5 h-3.5"
-                alt="Dropdown arrow"
+                alt=""
               />
             )}
           </button>
@@ -206,10 +269,11 @@ function WalletSection() {
           </Link>
         </div>
       </div>
-      {showCurrencyDropdown && (
+      {sheet && <QuickSheet sheet={SHEETS[sheet]} onClose={() => setSheet(null)} onGo={(to) => { setSheet(null); navigate(to); }} />}
+      {showCurrencyDropdown && createPortal(
         <div className="fixed inset-0 z-[9000] flex items-end md:items-center justify-center" role="dialog" aria-modal="true">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-[fade-in_200ms_ease_both]" onClick={() => setShowCurrencyDropdown(false)} />
-          <div className="relative w-full md:max-w-sm max-h-[78vh] flex flex-col bg-[#1C1C1E] border border-white/10 rounded-t-[28px] md:rounded-[28px] shadow-2xl animate-[sheet-in_420ms_cubic-bezier(0.22,1,0.36,1)_both]">
+          <div className="relative w-full md:max-w-sm max-h-[80dvh] flex flex-col bg-[#1C1C1E] border border-white/10 rounded-t-[28px] md:rounded-[28px] shadow-2xl animate-[sheet-in_420ms_cubic-bezier(0.22,1,0.36,1)_both]">
             <div className="mx-auto mt-2 w-9 h-1 rounded-full bg-white/20 md:hidden" />
             <div className="flex items-center justify-between px-5 pt-3 pb-2">
               <div>
@@ -221,7 +285,7 @@ function WalletSection() {
             <div className="px-5 pb-2">
               <div className="relative">
                 <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
-                <input autoFocus value={currencyQuery} onChange={(e) => setCurrencyQuery(e.target.value)} placeholder="Search currency" className="w-full h-9 pl-8 pr-3 rounded-xl bg-white/5 border border-white/10 text-sm text-zinc-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50" />
+                <input value={currencyQuery} onChange={(e) => setCurrencyQuery(e.target.value)} placeholder="Search currency" className="w-full h-9 pl-8 pr-3 rounded-xl bg-white/5 border border-white/10 text-sm text-zinc-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50" />
               </div>
             </div>
             <ul className="overflow-y-auto px-2 pb-[calc(env(safe-area-inset-bottom)+12px)]">
@@ -247,7 +311,8 @@ function WalletSection() {
                 ))}
             </ul>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );
