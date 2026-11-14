@@ -1,5 +1,7 @@
 "use client";
 import React from "react";
+import { Monitor, Server, Cpu, HardDrive } from 'lucide-react';
+const EquipIcon = ({ type }) => { const I = type === 'GPU' ? Monitor : type === 'ASIC' ? Server : type === 'CPU' ? Cpu : HardDrive; return <I className="w-4 h-4" strokeWidth={1.8} />; };
 
 function MiningEquipmentList({ equipment, onPurchaseEquipment, onActivateEquipment, detailed = false }) {
   const equipmentTemplates = {
@@ -80,9 +82,7 @@ function MiningEquipmentList({ equipment, onPurchaseEquipment, onActivateEquipme
                     item.status === 'idle' ? 'bg-yellow-700/20' : 'bg-red-600/20'
                   }`}>
                     <span className="text-[14px]">
-                      {item.type === 'GPU' ? '🎮' : 
-                       item.type === 'ASIC' ? '⚙️' : 
-                       item.type === 'CPU' ? '💻' : '🖥️'}
+                      <EquipIcon type={item.type} />
                     </span>
                   </div>
                   <div>
@@ -143,9 +143,7 @@ function MiningEquipmentList({ equipment, onPurchaseEquipment, onActivateEquipme
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-full flex items-center justify-center bg-blue-700/20">
                     <span className="text-[14px]">
-                      {item.type === 'GPU' ? '🎮' : 
-                       item.type === 'ASIC' ? '⚙️' : 
-                       item.type === 'CPU' ? '💻' : '🖥️'}
+                      <EquipIcon type={item.type} />
                     </span>
                   </div>
                   <div>

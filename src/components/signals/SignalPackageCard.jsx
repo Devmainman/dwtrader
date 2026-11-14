@@ -7,7 +7,7 @@ function SignalPackageCard({
   features,
   isActive,
   icon,
-  onProceed   // 👈 receive from parent
+  onProceed   // receive from parent
 }) {
   const iconUrl = icon
     ? `${STATIC_BASE_URL}${icon}`
@@ -46,7 +46,7 @@ function SignalPackageCard({
       {/* Buttons */}
       <div className="hidden md:block">
         <button
-          onClick={onProceed}   // 👈 delegate
+          onClick={onProceed}   // delegate
           className="flex overflow-hidden text-white justify-center items-center self-center px-2 py-1 mt-5 w-full bg-blue-600 rounded-full text-[12px]"
         >
           <div className="flex flex-col justify-center items-center">
@@ -59,7 +59,7 @@ function SignalPackageCard({
       <div className="md:hidden text-center">
         {isActive && (
           <button
-            onClick={onProceed}  // 👈 delegate
+            onClick={onProceed}  // delegate
             className="w-full text-[12px] bg-transparent border border-blue-500 text-[#F3F3F3] rounded-full py-2 mt-4 hover:bg-blue-500 hover:text-white transition-all"
           >
             Subscribe

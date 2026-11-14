@@ -9,6 +9,7 @@ import MiningBoostersList from "./MiningBoostersList";
 import MiningRewardsList from "./MiningRewardsList";
 import MiningHistoryList from "./MiningHistoryList";
 import MiningPoolsList from "./MiningPoolsList";
+import { Bug } from "lucide-react";
 
 export default function Mining() {
   const { fetchWithAuth, user } = useUserAuth();
@@ -144,12 +145,12 @@ export default function Mining() {
   // Debug function to check equipment status
   const checkEquipmentStatus = async () => {
     try {
-      console.log("🔍 Checking equipment status...");
+      console.log("Checking equipment status...");
       const response = await fetchWithAuth("/mining/equipment");
       
       if (response.data?.success) {
         const equipmentList = response.data.equipment || [];
-        console.log("📊 Equipment List:", equipmentList);
+        console.log("Equipment List:", equipmentList);
         
         // Group by status
         const byStatus = {};
@@ -158,7 +159,7 @@ export default function Mining() {
           byStatus[eq.status].push(eq.name);
         });
         
-        console.log("📈 Equipment by status:", byStatus);
+        console.log("Equipment by status:", byStatus);
         
         if (equipmentList.length === 0) {
           setMessage("No equipment found. Please purchase equipment first.");
@@ -530,7 +531,7 @@ export default function Mining() {
               className="p-1.5 bg-neutral-800 hover:bg-neutral-700 rounded-3xl text-stone-300 hover:text-zinc-100 text-xs"
               title="Toggle debug tools"
             >
-              🐞
+              <Bug className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

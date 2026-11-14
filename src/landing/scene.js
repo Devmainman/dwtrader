@@ -49,7 +49,7 @@ function glowTexture() {
 /* ---------------------------------------------------------------- floor + vault particles */
 
 const floorVert = /* glsl */ `
-  uniform float uTime, uMorph, uWave, uSize, uOpen, uMax;
+  uniform float uTime, uMorph, uWave, uSize, uOpen, uMax, uRipple;
   uniform mat3 uRot;
   uniform vec3 uCenter;
   attribute vec3 aVault;
@@ -61,6 +61,11 @@ const floorVert = /* glsl */ `
             + sin(p.z * 0.36 - uTime * 0.42) * 0.40
             + sin((p.x - p.z) * 0.9 + uTime * 0.9) * 0.09;
     p.y += w * uWave;
+
+    // shockwave: a ring travelling out from the core, fading as it goes
+    float dc = length(p.xz - uCenter.xz);
+    float ring = uRipple > 0.0 ? exp(-pow(dc - uRipple * 6.0, 2.0) * 0.9) * exp(-uRipple * 0.5) : 0.0;
+    p.y += ring * 0.6;
 
     float m = aSel * smoothstep(aRand * 0.55, aRand * 0.55 + 0.45, uMorph);
     vec3 v = uRot * aVault;
@@ -76,9 +81,9 @@ const floorVert = /* glsl */ `
     float d = length(p.xz - uCenter.xz);
     float pool = 0.28 + 1.5 * exp(-d * d / 34.0);
     float fog = smoothstep(32.0, 3.0, -mv.z) * smoothstep(0.6, 3.0, -mv.z);
-    vHeat = clamp(w * uWave * 1.3 + 0.05, 0.0, 1.0);
+    vHeat = clamp(w * uWave * 1.3 + 0.05 + ring * 1.6, 0.0, 1.0);
     vM = m;
-    vA = mix(fog * pool * 0.62, 0.9, m) * (1.0 - uOpen * 0.75 * m);
+    vA = mix(fog * pool * 0.62, 0.9, m) * (1.0 - uOpen * 0.85 * m);
   }
 `;
 
@@ -145,7 +150,7 @@ function buildFloor(mobile) {
     blending: THREE.AdditiveBlending,
     uniforms: {
       uTime: { value: 0 }, uMorph: { value: 0 }, uWave: { value: 0.4 }, uOpen: { value: 0 },
-      uSize: { value: 30 }, uMax: { value: 4 }, uRot: { value: new THREE.Matrix3() },
+      uSize: { value: 30 }, uMax: { value: 4 }, uRipple: { value: -1 }, uRot: { value: new THREE.Matrix3() },
       uCenter: { value: new THREE.Vector3(0, CORE_Y, 0) }, uAccent: { value: ACCENT.clone() },
     },
   });
@@ -293,6 +298,11 @@ export function createStage(canvas, { mobile = false } = {}) {
   let target = 0, cur = 0, mx = 0, my = 0, pmx = 0, pmy = 0;
   let raf = 0, running = true, still = false;
   const clock = new THREE.Clock();
+  const introPos = new THREE.Vector3(0.0, 10.5, 15.0);
+  const introLook = new THREE.Vector3(0.0, 0.2, 0.0);
+  const INTRO = 3.2; // seconds
+  let rippleAt = INTRO - 0.35; // first wave as the camera lands
+  const easeIO = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
 
   const resize = () => {
     const w = window.innerWidth, h = window.innerHeight;
@@ -320,17 +330,24 @@ export function createStage(canvas, { mobile = false } = {}) {
     if (camera.aspect < 0.8) camPos.sub(look).multiplyScalar(1.6).add(look);
     camPos.x += pmx * 0.6;
     camPos.y -= pmy * 0.3;
+    // opening shot (skipped for reduced motion)
+    const intro = still ? 1 : easeIO(Math.min(1, time / INTRO));
+    if (intro < 1) { camPos.lerpVectors(introPos, camPos, intro); look.lerpVectors(introLook, look, intro); }
     camera.position.copy(camPos);
     camera.lookAt(look);
 
     const morph = smooth(3.05, 3.85, t);
-    const open = smooth(4.25, 5.0, t);
+    const open = smooth(4.04, 4.6, t);
+    const calm = smooth(4.0, 4.35, t); // content sections: quieter scene so copy reads cleanly
     const u = floor.material.uniforms;
     u.uTime.value = time;
     u.uMorph.value = morph;
     u.uOpen.value = open;
     u.uWave.value = 0.35 + smooth(1.0, 1.8, t) * 1.15 - smooth(2.2, 3.0, t) * 0.95 + smooth(4.2, 5, t) * 0.3;
     u.uAccent.value.copy(ACCENT);
+    // landing pulse, then a gentle wave every 6.5 s while the hero is on screen
+    if (!still && time > rippleAt + 6.5 && t < 0.6) rippleAt = time;
+    u.uRipple.value = still || time < rippleAt ? -1 : time - rippleAt;
     rotE.set(0.32 + Math.sin(time * 0.2) * 0.05, time * 0.12 + t * 0.9, 0.16);
     rotM.makeRotationFromEuler(rotE);
     u.uRot.value.setFromMatrix4(rotM);
@@ -339,10 +356,12 @@ export function createStage(canvas, { mobile = false } = {}) {
     edges.scale.setScalar(1 + open * 0.6);
 
     core.position.y = CORE_Y + Math.sin(time * 0.8) * 0.06;
-    gem.rotation.y = time * 0.25 + t * 1.4;
+    gem.rotation.y = time * 0.25 + t * 1.4 + (1 - intro) * 5.0;
     gem.rotation.z = Math.sin(time * 0.3) * 0.05;
-    const pulse = 0.3 + Math.sin(time * 1.6) * 0.05;
-    glow.material.opacity = pulse * (1 - smooth(1.6, 2.4, t) * 0.4);
+    const flare = Math.max(0, 1 - Math.abs(time - INTRO + 0.35) / 0.6) * 0.45; // brief glow as the camera lands
+    const pulse = 0.3 + Math.sin(time * 1.6) * 0.05 + (still ? 0 : flare);
+    glow.material.opacity = pulse * (1 - smooth(1.6, 2.4, t) * 0.4) * (1 - calm * 0.75);
+    bloom.strength = (mobile ? 0.5 : 0.6) * (1 - calm * 0.65);
     core.scale.setScalar(1 - smooth(2.0, 2.6, t) * 0.1 + smooth(4.2, 5, t) * 0.2);
 
     web.material.uniforms.uTime.value = time;

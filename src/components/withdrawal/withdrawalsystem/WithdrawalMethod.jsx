@@ -1,3 +1,4 @@
+import { Wallet as WalletIcon } from "lucide-react";
 const WithdrawalMethod = ({ methods, onSelect }) => {
     console.log('Methods in selector:', methods); // Should show your 3 methods
     console.log('First method details:', methods[0]?.details); // Check structure
@@ -32,7 +33,7 @@ const WithdrawalMethod = ({ methods, onSelect }) => {
                           }}
                         />
                       ) : (
-                        <span>💰</span>
+                        <WalletIcon className="w-5 h-5 text-neutral-300" strokeWidth={1.8} />
                       )}
                     </div>
                     <div className="ml-3">

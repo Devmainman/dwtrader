@@ -370,7 +370,7 @@ export default function Landing() {
       <section id="top" ref={ch(0)} className="relative" style={{ height: '190vh' }}>
         <div className="ld-stick">
           <div className="ld-fade absolute inset-x-0 top-[14vh] md:top-[15vh] text-center px-5" style={{ '--o': 'var(--h1, 1)', '--y': 'calc((1 - var(--h1, 1)) * -50px)' }}>
-            <Split as="h1" onLoad delay={250} className="ld-display max-w-[17ch] mx-auto" text="All your money moves, in *one *place." />
+            <Split as="h1" onLoad delay={250} className="ld-display ld-shine max-w-[17ch] mx-auto" text="All your money moves, in *one *place." />
           </div>
           <div className="ld-fade absolute inset-x-0 bottom-[6vh] md:bottom-[6vh] text-center px-6" style={{ '--o': 'var(--h1, 1)' }}>
             <p className="ld-lead max-w-[460px] mx-auto ld-rise" style={{ animationDelay: '1100ms' }}>Trade live markets, copy expert traders, stake, own real estate and keep savings in cold storage. One account.</p>
@@ -392,9 +392,9 @@ export default function Landing() {
             <h2 className="ld-display max-w-[16ch] mx-auto">Markets that <em>never sleep.</em></h2>
             <p className="ld-lead mt-5 max-w-[460px] mx-auto">Crypto, stocks and forex, priced live, around the clock.</p>
           </div>
-          <div className="ld-fade absolute inset-x-0 bottom-[10vh] px-5" style={{ '--o': 'var(--m2, 0)', '--y': 'calc((1 - var(--m2, 0)) * 30px)' }}>
-            <div className="max-w-[1100px] mx-auto">
-              <h3 className="ld-h3 text-center mb-8 md:mb-12">Set your exit before you enter.</h3>
+          <div className="ld-fade absolute inset-x-0 bottom-[4vh] md:bottom-[8vh] px-4" style={{ '--o': 'var(--m2, 0)', '--y': 'calc((1 - var(--m2, 0)) * 30px)' }}>
+            <div className="max-w-[1100px] mx-auto ld-glass rounded-[24px] px-4 py-5 md:px-8 md:py-7">
+              <h3 className="ld-h3 text-center mb-6 md:mb-8">Set your exit before you enter.</h3>
               {CARD_COINS.some(([c]) => rows[c]) && (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-y-7">
                   {CARD_COINS.slice(0, 4).filter(([c]) => rows[c]).map(([c]) => (

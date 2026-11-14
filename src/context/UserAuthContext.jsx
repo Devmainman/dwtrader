@@ -239,7 +239,7 @@ export function UserAuthProvider({ children }) {
     try {
       const res = await api.get('/users/me');
       if (isMounted.current) {
-        const user = res.data.user || res.data; // ✅ Safe fallback
+        const user = res.data.user || res.data; // Safe fallback
         console.log("Fetched user from /me:", user);
         setUser(user);
         secureStorage.set('user', JSON.stringify(user));
@@ -266,9 +266,9 @@ export function UserAuthProvider({ children }) {
     const refreshedUser = res.data.user || res.data;
     setUser(refreshedUser);
     secureStorage.set('user', JSON.stringify(refreshedUser));
-    console.log('✅ User refreshed:', refreshedUser);
+    console.log('User refreshed:', refreshedUser);
   } catch (err) {
-    console.error('❌ Failed to refresh user:', err);
+    console.error('Failed to refresh user:', err);
   }
 }, [token, isTokenExpired, api]);
 
@@ -320,10 +320,10 @@ export function UserAuthProvider({ children }) {
     return true;
 
   } catch (err) {
-    // 🚫 NEVER set global error here
-    // 🚫 NEVER console.error here
+    // NEVER set global error here
+    // NEVER console.error here
 
-    // 🌐 Network / no internet
+    // Network / no internet
     if (!err.response) {
       throw { type: "network" };
     }
@@ -334,12 +334,12 @@ export function UserAuthProvider({ children }) {
       err.response.data?.message ||
       "Login failed";
 
-    // ❌ Wrong credentials
+    // Wrong credentials
     if (status === 400 || status === 401) {
       throw { type: "credentials", message };
     }
 
-    // 🔥 Server down
+    // Server down
     if (status >= 500) {
       throw { type: "server" };
     }

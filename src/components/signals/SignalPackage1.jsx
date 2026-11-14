@@ -154,7 +154,7 @@ function SignalPackage1() {
     features={pkg.benefits}
     isActive={activeIndex === index}
     icon={pkg.icon}
-    onProceed={handleProceed}   // 👈 THIS IS THE KEY
+    onProceed={handleProceed}   // THIS IS THE KEY
   />
 ))}
 

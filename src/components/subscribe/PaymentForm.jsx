@@ -30,7 +30,7 @@ const handleSubmit = async (e) => {
   setError("");
 
   try {
-    // 🔥 SIGNAL MODE → CALL SIGNAL ENDPOINT
+    // SIGNAL MODE → CALL SIGNAL ENDPOINT
     if (mode === "signal") {
       const params = new URLSearchParams(window.location.search);
       const packageId = params.get("packageId");
@@ -62,7 +62,7 @@ const handleSubmit = async (e) => {
       return;
     }
 
-    // 🔥 ACCOUNT MODE → EXISTING FLOW
+    // ACCOUNT MODE → EXISTING FLOW
     const finalAmount = forceAmount;
 
     const formData = new FormData();

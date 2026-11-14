@@ -37,7 +37,7 @@ const SignUpForm = () => {
   const [loading, setLoading] = useState(false);
   const [captchaAnswer, setCaptchaAnswer] = useState("");
 
-  // ✅ This now works because generateCaptcha is defined earlier
+  // This now works because generateCaptcha is defined earlier
   const [captcha, setCaptcha] = useState(generateCaptcha());
 
   const [searchParams] = useSearchParams();

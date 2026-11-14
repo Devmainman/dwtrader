@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUserAuth } from "../../context/UserAuthContext";
+import { RefreshCw, Search, BarChart3, LineChart, Wallet, Star, ArrowUpRight, ArrowDownRight, Check } from "lucide-react";
 
 // Extended list of crypto pairs
 const PAIRS = [
@@ -473,7 +474,7 @@ export default function MainMarket() {
         <div className="w-full flex flex-col">
           <div className="flex flex-wrap justify-between items-center w-full gap-4">
             <h2 className="text-sm md:text-base font-medium tracking-normal leading-tight text-zinc-100">
-              Trading Market {priceLoading && "🔄"}
+              Trading Market {priceLoading && <RefreshCw className="inline w-3.5 h-3.5 ml-1 animate-spin text-neutral-400" />}
             </h2>
             <div className="flex flex-col md:flex-row gap-3 items-end md:items-center">
               <div className="text-right">
@@ -506,7 +507,7 @@ export default function MainMarket() {
               onClick={() => setActiveTab("favorites")}
               className={`px-4 py-2 text-sm font-medium ${activeTab === "favorites" ? "text-blue-400 border-b-2 border-blue-400" : "text-neutral-400"}`}
             >
-              Favorites ★ ({favorites.length})
+              <span className="inline-flex items-center gap-1">Favorites <Star className="w-3.5 h-3.5" /> ({favorites.length})</span>
             </button>
             <button
               onClick={() => setActiveTab("positions")}
@@ -527,7 +528,7 @@ export default function MainMarket() {
                 className="w-full bg-black/40 p-2 pl-10 rounded-lg text-white text-sm outline-none"
               />
               <div className="absolute left-3 top-2.5 text-neutral-400">
-                🔍
+                <Search className="w-4 h-4" />
               </div>
               {searchTerm && (
                 <button
@@ -552,7 +553,7 @@ export default function MainMarket() {
               </div>
               {priceFeed[`${selectedPair}_change`] && (
                 <div className={`text-sm font-medium ${parseFloat(priceFeed[`${selectedPair}_change`]) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {parseFloat(priceFeed[`${selectedPair}_change`]) >= 0 ? '↗' : '↘'} 
+                  {parseFloat(priceFeed[`${selectedPair}_change`]) >= 0 ? <ArrowUpRight className="inline w-4 h-4" /> : <ArrowDownRight className="inline w-4 h-4" />} 
                   {Math.abs(parseFloat(priceFeed[`${selectedPair}_change`])).toFixed(2)}%
                 </div>
               )}
@@ -604,13 +605,13 @@ export default function MainMarket() {
                               className={`text-lg ${isFavorite ? 'text-yellow-400' : 'text-neutral-500 hover:text-yellow-300'}`}
                               title={isFavorite ? "Remove from favorites" : "Add to favorites"}
                             >
-                              {isFavorite ? '★' : '☆'}
+                              <Star className="w-4 h-4" fill={isFavorite ? 'currentColor' : 'none'} />
                             </button>
                             <div className="flex flex-col">
                               <div className="flex items-center gap-2">
                                 <span className="text-sm font-medium text-zinc-100">{pair.symbol}</span>
                                 {selectedPair === pair.symbol && (
-                                  <span className="text-xs text-blue-400">✓ Selected</span>
+                                  <span className="text-xs text-blue-400"><Check className="inline w-3 h-3" /> Selected</span>
                                 )}
                               </div>
                               <span className="text-xs text-neutral-400">
@@ -630,7 +631,7 @@ export default function MainMarket() {
                               className="px-2 py-1 bg-blue-600 hover:bg-blue-500 rounded text-xs text-white"
                               title="View Chart"
                             >
-                              📊
+                              <BarChart3 className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         </div>
@@ -831,13 +832,13 @@ export default function MainMarket() {
               }}
               className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 rounded text-xs text-white"
             >
-              📈 View Chart
+              <LineChart className="inline w-3.5 h-3.5 mr-1" />View Chart
             </button>
             <button
               onClick={() => setShowBalanceModal(true)}
               className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 rounded text-xs text-white"
             >
-              💰 Manage Balance
+              <Wallet className="inline w-3.5 h-3.5 mr-1" />Manage Balance
             </button>
           </div>
         </div>

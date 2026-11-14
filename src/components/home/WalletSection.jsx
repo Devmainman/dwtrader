@@ -198,7 +198,7 @@ function WalletSection() {
     );
   }
   
-  // ✅ Compute balance here:
+  // Compute balance here:
   const computedBalance =
     balanceData?.rawBalance && balanceData?.rate
       ? balanceData.rawBalance * balanceData.rate

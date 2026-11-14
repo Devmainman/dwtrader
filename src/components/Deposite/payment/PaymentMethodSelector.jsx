@@ -1,5 +1,6 @@
 
 import { STATIC_BASE_URL } from '../../../api/config';
+import { Wallet as WalletIcon } from "lucide-react";
 
 const PaymentMethodSelector = ({ methods, onSelect }) => {
   console.log('Methods in selector:', methods);
@@ -41,7 +42,7 @@ const PaymentMethodSelector = ({ methods, onSelect }) => {
                         }}
                       />
                     ) : (
-                      <span>💰</span>
+                      <WalletIcon className="w-5 h-5 text-neutral-300" strokeWidth={1.8} />
                     )}
                   </div>
                   <div className="ml-3">

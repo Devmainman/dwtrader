@@ -32,7 +32,7 @@ const CryptoDepositForm = () => {
       payload.append("proofImage", formData.proofImage);
     }
   
-    // 🧪 Just to verify what’s inside:
+    // Just to verify what’s inside:
     for (let pair of payload.entries()) {
       console.log(pair[0] + ": " + pair[1]);
     }

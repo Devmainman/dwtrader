@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { Star } from "lucide-react";
 
 function CryptoItem({ 
   pair, 
@@ -77,7 +78,7 @@ function CryptoItem({
               : 'bg-neutral-700 text-stone-300 hover:text-zinc-100'
           }`}
         >
-          {isFavorite ? '★' : '☆'}
+          <Star className="w-4 h-4" fill={isFavorite ? 'currentColor' : 'none'} />
         </button>
         <button
           onClick={(e) => {

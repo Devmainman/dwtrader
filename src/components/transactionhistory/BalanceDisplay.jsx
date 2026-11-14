@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { API_BASE_URL } from "../../api/config";
 import { useBalance } from "../../context/BalanceContext";
 
-// ✅ Move this outside so it's accessible in JSX
+// Move this outside so it's accessible in JSX
 const getCurrencySymbol = (currencyCode) => {
   try {
     const formatted = new Intl.NumberFormat('en', {

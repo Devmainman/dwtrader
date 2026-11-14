@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { BarChart3, Settings, Rocket, Coins, Pause, Play } from "lucide-react";
 
 function MiningHeader({ 
   isMining, 
@@ -10,10 +11,10 @@ function MiningHeader({
   onStopMining 
 }) {
   const tabs = [
-    { id: "overview", label: "Overview", icon: "📊" },
-    { id: "equipment", label: "Equipment", icon: "⚙️" },
-    { id: "boosters", label: "Boosters", icon: "🚀" },
-    { id: "rewards", label: "Rewards", icon: "💰" }
+    { id: "overview", label: "Overview", icon: BarChart3 },
+    { id: "equipment", label: "Equipment", icon: Settings },
+    { id: "boosters", label: "Boosters", icon: Rocket },
+    { id: "rewards", label: "Rewards", icon: Coins }
   ];
   
   return (
@@ -39,7 +40,7 @@ function MiningHeader({
               onClick={onStopMining}
               className="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg text-white text-sm font-medium flex items-center gap-2"
             >
-              <span>⏸️</span>
+              <Pause className="w-4 h-4" />
               Stop Mining
             </button>
           ) : (
@@ -47,7 +48,7 @@ function MiningHeader({
               onClick={onStartMining}
               className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-white text-sm font-medium flex items-center gap-2"
             >
-              <span>▶️</span>
+              <Play className="w-4 h-4" />
               Start Mining
             </button>
           )}
@@ -66,7 +67,7 @@ function MiningHeader({
                 : "bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700"
             }`}
           >
-            <span>{tab.icon}</span>
+            <span><tab.icon className="w-3.5 h-3.5" /></span>
             {tab.label}
           </button>
         ))}

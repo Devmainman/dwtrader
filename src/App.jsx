@@ -156,25 +156,25 @@ function AppContent() {
 
   useEffect(() => {
     if (user) {
-      console.log("✅ User isOnline status:", user.isOnline);
+      console.log("User isOnline status:", user.isOnline);
     }
   }, [user]);
 
 
 useEffect(() => {
-  console.log("➡️ Checking package popup conditions...");
+  console.log("Checking package popup conditions...");
   if (!user || !user.pendingPackage?._id) return;
 
   const seen = localStorage.getItem(`seenPackage_${user.pendingPackage._id}`);
-  console.log("🧾 Package ID:", user.pendingPackage._id);
-  console.log("📌 Seen in localStorage:", seen);
-  console.log("✅ Payment started:", user.packagePaymentStarted);
+  console.log("Package ID:", user.pendingPackage._id);
+  console.log("Seen in localStorage:", seen);
+  console.log("Payment started:", user.packagePaymentStarted);
 
   // SHOW popup only if not seen and not started
   if (user.pendingPackage && !user.packagePaymentStarted) {
     setShowPackagePopup(true);
   } else {
-    setShowPackagePopup(false); // ✅ Ensure modal is closed
+    setShowPackagePopup(false); // Ensure modal is closed
   }
 }, [user]);
 

@@ -37,7 +37,7 @@ const PaymentForm = ({ method, onBack, onDepositResult, forceAmount }) => {
   setError('');
 
   try {
-    // ⬇️ NEW: mark that payment has been started
+    // NEW: mark that payment has been started
     if (user?.pendingPackage?._id) {
       await axios.post(`${API_BASE_URL}/users/package-upgrade/start`, {
         pendingPackageId: user.pendingPackage._id
@@ -46,11 +46,11 @@ const PaymentForm = ({ method, onBack, onDepositResult, forceAmount }) => {
           Authorization: `Bearer ${token}`
         }
       });
-          // ✅ Mark this pending package as seen in localStorage
+          // Mark this pending package as seen in localStorage
     localStorage.setItem(`seenPackage_${user.pendingPackage._id}`, 'true');
     }
 
-    // ⬇️ Submit payment
+    // Submit payment
     const formData = new FormData();
     formData.append('paymentMethod', method.methodId);
     formData.append('amount', finalAmount);

@@ -1,14 +1,15 @@
 "use client";
 import React from "react";
+import { BarChart3, Settings, Rocket, Coins, ScrollText, Waves } from "lucide-react";
 
 function MiningTabs({ activeTab, setActiveTab }) {
   const tabs = [
-    { id: "overview", label: "Overview", icon: "📊" },
-    { id: "equipment", label: "Equipment", icon: "⚙️" },
-    { id: "boosters", label: "Boosters", icon: "🚀" },
-    { id: "rewards", label: "Rewards", icon: "💰" },
-    { id: "history", label: "History", icon: "📜" },
-    { id: "pools", label: "Pools", icon: "🌊" }
+    { id: "overview", label: "Overview", icon: BarChart3 },
+    { id: "equipment", label: "Equipment", icon: Settings },
+    { id: "boosters", label: "Boosters", icon: Rocket },
+    { id: "rewards", label: "Rewards", icon: Coins },
+    { id: "history", label: "History", icon: ScrollText },
+    { id: "pools", label: "Pools", icon: Waves }
   ];
 
   return (
@@ -23,7 +24,7 @@ function MiningTabs({ activeTab, setActiveTab }) {
               : "border-neutral-900 bg-neutral-800 text-stone-300 hover:text-zinc-100 hover:bg-neutral-700"
           }`}
         >
-          <span>{tab.icon}</span>
+          <span><tab.icon className="w-3.5 h-3.5" /></span>
           <span className="font-semibold">{tab.label}</span>
         </button>
       ))}

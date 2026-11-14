@@ -7,6 +7,7 @@ import { toast } from '../../../lib/toast';
 import { playWelcome } from '../../../components/welcome/WelcomeExperience';
 import { API_BASE_URL } from '../../../api/config';
 import { useUserAuth } from '../../../context/UserAuthContext';
+import { WifiOff, AlertTriangle } from "lucide-react";
 
 const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -61,7 +62,7 @@ const [shake, setShake] = useState(false);
   setShake(true);
   setTimeout(() => setShake(false), 400);
 
-  // 🟢 FIRST — HANDLE OUR CUSTOM ERROR TYPES
+  // FIRST — HANDLE OUR CUSTOM ERROR TYPES
   if (err?.type === "credentials") {
     setLoginError("Invalid email or password. Please try again.");
     return;
@@ -78,7 +79,7 @@ const [shake, setShake] = useState(false);
     return;
   }
 
-  // 🔥 FALLBACK — REAL AXIOS NETWORK FAILURE (JUST IN CASE)
+  // FALLBACK — REAL AXIOS NETWORK FAILURE (JUST IN CASE)
   if (!err?.response) {
     setNetworkError(true);
     setLoginError("No internet connection. Please check your network and try again.");
@@ -179,7 +180,7 @@ const [shake, setShake] = useState(false);
     }`}
   >
     <span className="text-lg">
-      {networkError ? "🌐" : "⚠️"}
+      {networkError ? <WifiOff className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
     </span>
     <span>{loginError}</span>
   </div>
