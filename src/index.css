@@ -195,3 +195,8 @@ button:not(:disabled), a[role="button"] { transition-property: color, background
 @media (prefers-reduced-motion: reduce) {
   .wx-unveil, .wx-line, .wx-soft, .wx-bar, .wx-curtain, .wx-sheet, .wx-pan, .wx-swap, .wx-text, .wx-seg { animation: none !important }
 }
+
+/* Desktop shell (1024px+): the page behind the sidebar and content stays dark. Phones unaffected. */
+@media (min-width: 1024px) {
+  html, body { background-color: #171717; }
+}

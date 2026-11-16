@@ -83,3 +83,8 @@
   .nav-item, .nav-item .nav-icon, .nav-logo { transition: none }
   .qa-fade-in, .qa-fade-out, .qa-sheet-in, .qa-sheet-out, .qa-item { animation: none }
 }
+
+/* Desktop (1024px+) uses the sidebar instead of the bottom nav. */
+@media (min-width: 1024px) {
+  .navbar { display: none; }
+}

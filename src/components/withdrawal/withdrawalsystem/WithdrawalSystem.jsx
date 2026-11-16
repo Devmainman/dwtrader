@@ -86,7 +86,7 @@ const WithdrawalForm = ({ method, onBack }) => {
   };
 
   return (
-    <div className="bg-[#161617] w-full min-h-screen text-white p-4">
+    <div className="bg-[#161617] w-full min-h-screen text-white p-4 lg:max-w-[760px] lg:mx-auto lg:pt-8">
       <Modal
   isOpen={modal.isOpen}
   title={modal.title}
@@ -339,7 +339,7 @@ const WithdrawalInterface = () => {
   }
 
  return (
-  <div className="bg-[#1D1D1F] md:rounded-[20px] text-white min-h-screen w-full px-4 py-6 md:px-5">
+  <div className="bg-[#1D1D1F] md:rounded-[20px] text-white min-h-screen w-full px-4 py-6 md:px-5 lg:max-w-[760px] lg:mx-auto lg:my-8 lg:min-h-0 lg:rounded-2xl lg:border lg:border-white/5 lg:p-8">
     <div className="w-full mx-auto">
       {!selectedMethod ? (
         <>

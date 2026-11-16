@@ -8,8 +8,41 @@ import TradingPackage from "./TradingPackage";
 import CryptoList from "./CryptoList";
 import EarnProducts from "./EarnProducts";
 import TradingNFTs from "./TradingNFTs";
+import { useDesktop, DesktopStats, DesktopPositions, DesktopActivity, DesktopAllocation, DesktopQuickActions } from "../desktop/DashboardExtras";
+
+const card = "bg-[#1D1D1F] rounded-2xl p-5 border border-white/5";
 
 function HomeDashboard() {
+  const desktop = useDesktop();
+
+  // Desktop (1024px+): its own layout, two independent columns so cards stack without gaps,
+  // plus desktop-only stats and panels.
+  if (desktop) {
+    return (
+      <section className="w-full max-w-[1400px] mx-auto px-6 py-6 pb-10 text-white">
+        <DesktopStats />
+        <div className="mt-5 flex gap-5 items-start">
+          <div className="flex-1 min-w-0 space-y-5">
+            <div className={`${card} p-6`}><WalletSection /></div>
+            <TradingChart />
+            <DesktopPositions />
+            <DesktopAllocation />
+            <div className={card}><CryptoList /></div>
+            <div className={card}><TradingNFTs /></div>
+          </div>
+          <div className="w-[360px] xl:w-[400px] shrink-0 space-y-5">
+            <div className="flex"><MarketOverview /></div>
+            <TradingPackage />
+            <DesktopQuickActions />
+            <DesktopActivity />
+            <div className={card}><EarnProducts /></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Phones and tablets: unchanged.
   return (
     <section className="overflow-x-hidden px-4 sm:px-5 pb-35 py-4 sm:py-6 mx-auto w-full max-w-[390px] md:max-w-[640px] lg:max-w-[1400px] lg:px-6 lg:pb-10 bg-neutral-900 rounded-3xl text-white">
       {/* Phones: one column (unchanged). Desktop: the same sections in a two-column grid. */}

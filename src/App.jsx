@@ -13,6 +13,7 @@ import MarketSection from "./components/trade/MarketSection/MarketSection";
 import SupportMobile from "./components/support/Support";
 import OpenSupportMobile from "./components/support/OpenSupport";
 import SideBarMobile from "./components/sidebar/SideBar";
+import DesktopSidebar from "./components/desktop/DesktopSidebar";
 import NotificationMobile from "./components/notification/index";
 import DepositeStageMobile from "./components/Deposite/payment/PaymentSystem";
 import WithdrawPage from "./components/withdrawal/withdrawalsystem/WithdrawalSystem";
@@ -265,10 +266,14 @@ useEffect(() => {
           <UserPopupHandler />
           <Navbar />
           <SideBarMobile />
+          {/* Desktop only (1024px+): a fixed sidebar, and the content shifted right of it. Phones are unchanged. */}
+          <DesktopSidebar />
+          <div className="lg:pl-[248px]">
           <TopNavBarMobile />
-          <section key={location.pathname} className="flex flex-col overflow-y-auto min-h-screen bg-neutral-900 page-enter">
+          <section key={location.pathname} className="flex flex-col overflow-y-auto min-h-screen bg-neutral-900 page-enter app-main">
             <Routes>{appRoutes()}</Routes>
           </section>
+          </div>
         </>
       ) : (
         <>

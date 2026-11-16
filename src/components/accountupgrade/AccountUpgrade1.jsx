@@ -77,7 +77,7 @@ useEffect(() => {
   if (loading) {
     return (
       <div className="flex pb-30 flex-col items-center w-full h-full p-4">
-        <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100">
+        <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100 lg:w-full lg:max-w-[1000px] lg:justify-start lg:gap-3 lg:items-center lg:pt-4">
           <h1 className="text-[16px] font-medium tracking-normal leading-tight">
             Account Upgrade
           </h1>
@@ -95,7 +95,7 @@ useEffect(() => {
   if (error) {
     return (
       <div className="flex pb-30 flex-col items-center w-full h-full p-4">
-        <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100">
+        <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100 lg:w-full lg:max-w-[1000px] lg:justify-start lg:gap-3 lg:items-center lg:pt-4">
           <h1 className="text-[16px] font-medium tracking-normal leading-tight">
             Account Upgrade
           </h1>
@@ -113,7 +113,7 @@ useEffect(() => {
   if (packages.length === 0) {
     return (
       <div className="flex pb-30 flex-col items-center w-full h-full p-4">
-        <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100">
+        <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100 lg:w-full lg:max-w-[1000px] lg:justify-start lg:gap-3 lg:items-center lg:pt-4">
           <h1 className="text-[16px] font-medium tracking-normal leading-tight">
             Account Upgrade
           </h1>
@@ -130,7 +130,7 @@ useEffect(() => {
 
   return (
     <div className="flex pb-30 flex-col items-center w-full h-full p-4">
-      <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100">
+      <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100 lg:w-full lg:max-w-[1000px] lg:justify-start lg:gap-3 lg:items-center lg:pt-4">
         <h1 className="text-[16px] font-medium tracking-normal leading-tight">
           Account Upgrade
         </h1>
@@ -142,7 +142,7 @@ useEffect(() => {
       {/* Cards */}
       <div
         ref={scrollRef}
-        className="flex h-[550px] pl-6 pr-5 overflow-x-auto items-center space-x-8 snap-x snap-mandatory scrollbar-hide w-full"
+        className="flex h-[550px] pl-6 pr-5 overflow-x-auto items-center space-x-8 snap-x snap-mandatory scrollbar-hide w-full lg:justify-center lg:h-auto lg:py-10 lg:overflow-visible"
         style={{ scrollBehavior: "smooth" }}
       >
         {packages.map((pkg, index) => (
@@ -160,7 +160,7 @@ useEffect(() => {
         ))}
       </div>
 
-      <nav className="flex gap-2 text-[12px] py-2 justify-start overflow-x-auto whitespace-nowrap scrollbar-hide text-white items-center w-full rounded-3xl bg-neutral-800 px-2">
+      <nav className="flex gap-2 text-[12px] py-2 justify-start overflow-x-auto whitespace-nowrap scrollbar-hide text-white items-center w-full rounded-3xl bg-neutral-800 px-2 lg:hidden">
         {packages.map((pkg, index) => (
           <button
             key={pkg._id}
@@ -180,7 +180,7 @@ useEffect(() => {
       {packages.length > 0 && (
         <button 
           onClick={() => handleProceed()}
-          className="flex overflow-hidden text-white justify-center items-center self-center px-2.5 py-1 mt-5 w-full bg-blue-600 rounded-3xl"
+          className="flex overflow-hidden text-white justify-center items-center self-center px-2.5 py-1 mt-5 w-full bg-blue-600 rounded-3xl lg:hidden"
         >
           <div className="flex text-[15px] flex-col justify-center items-center self-stretch my-auto">
             <span>Proceed with Plan</span>
