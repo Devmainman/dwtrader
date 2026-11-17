@@ -2,18 +2,31 @@
 import React, { useState, useRef } from "react";
 import { ChevronLeft, Upload, Check, Camera, RotateCw, X, RefreshCw } from 'lucide-react';
 import cloud from '../../../assets/cloud.svg';
+import { compressImage } from '../../../lib/compressImage';
 
 function UploadImageButton({ label, onChange, preview, onRemove }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file && file.size <= 2 * 1024 * 1024) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  // Phone photos are usually 3-12 MB; shrink them here instead of rejecting them.
+  const handleFileChange = async (event) => {
+    const picked = event.target.files[0];
+    if (!picked) return;
+    setErr("");
+    setBusy(true);
+    try {
+      const file = await compressImage(picked);
+      if (file.size > 4 * 1024 * 1024) {
+        setErr("This file is too large. Please choose a photo under 4 MB.");
+        return;
+      }
       setSelectedFile(file);
       onChange(file); // Notify parent
-    } else if (file) {
-      alert("File size exceeds 2MB limit");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -63,13 +76,14 @@ function UploadImageButton({ label, onChange, preview, onRemove }) {
 
       <p className="mt-2 text-[12px] text-gray-400">Upload Image</p>
 
-        <p className=" text-[8px] text-gray-400">Image size must be less than 2MB</p>
+        <p className=" text-[8px] text-gray-400">{err ? <span className="text-red-400">{err}</span> : "Phone photos are fine, we resize them"}</p>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
+            disabled={busy}
             className="bg-blue-600 mt-2 text-white px-2 py-1 rounded-full text-[10px]"
           >
-            Select Image
+            {busy ? "Preparing..." : "Select Image"}
           </button>
         </div>
         </div>
