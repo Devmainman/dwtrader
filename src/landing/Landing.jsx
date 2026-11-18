@@ -338,6 +338,7 @@ export default function Landing() {
             <a href="#security" onClick={go('security')} className="ld-navlink">Security</a>
             {showPlans && <a href="#plans" onClick={go('plans')} className="ld-navlink">Plans</a>}
             <a href="#faq" onClick={go('faq')} className="ld-navlink">FAQ</a>
+            <Link to="/blog" className="ld-navlink">Blog</Link>
           </nav>
           <div className="flex items-center gap-2">
             <Link to="/auth" className="ld-btn ld-btn-ghost !h-10 !px-3 sm:!px-5 !text-[14px]">Log in</Link>
@@ -355,6 +356,7 @@ export default function Landing() {
           {[['Markets', 'markets'], ['The app', 'app'], ['Security', 'security'], ...(showPlans ? [['Plans', 'plans']] : []), ['FAQ', 'faq']].map(([label, id], i) => (
             <a key={id} href={`#${id}`} onClick={go(id)} className="ld-sheet-link" style={{ transitionDelay: menu ? `${80 + i * 50}ms` : '0ms' }}>{label}<ArrowUpRight className="w-5 h-5 text-neutral-500" /></a>
           ))}
+          <Link to="/blog" className="ld-sheet-link">Blog<ArrowUpRight className="w-5 h-5 text-neutral-500" /></Link>
           <p className="ld-label mt-10 mb-4">Products</p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-[14px] text-neutral-300">
             {PRODUCTS.map((p) => <Link key={p.title} to="/signup">{p.title}</Link>)}
@@ -555,6 +557,7 @@ export default function Landing() {
             <a href="#security" onClick={go('security')} className="hover:text-white">Security</a>
             {showPlans && <a href="#plans" onClick={go('plans')} className="hover:text-white">Plans</a>}
             <a href="#faq" onClick={go('faq')} className="hover:text-white">FAQ</a>
+            <Link to="/blog" className="hover:text-white">Blog</Link>
             <Link to="/auth" className="hover:text-white">Log in</Link>
           </nav>
         </div>

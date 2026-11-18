@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { API_BASE_URL } from '../../api/config';
@@ -21,6 +21,8 @@ const PaymentSystem = () => {
   });
    const [searchParams] = useSearchParams();
   const forceAmount = searchParams.get("amount");
+  const payMode = searchParams.get("mode") || undefined;
+  const navigateTo = useNavigate();
   
 
   const showStatusModal = (message, type) => {
@@ -33,6 +35,9 @@ const PaymentSystem = () => {
     setTimeout(() => {
       setModal({ ...modal, show: false });
     }, 5000);
+    // Card payments: back to Cards so the user sees the request move on.
+    if (type === "success" && payMode === "card") setTimeout(() => navigateTo("/cards"), 2200);
+    if (type === "success" && payMode === "bot") setTimeout(() => navigateTo("/ai-trader"), 2200);
   };
 
   
@@ -149,6 +154,7 @@ const PaymentSystem = () => {
             onBack={() => setSelectedMethod(null)}
             onDepositResult={showStatusModal}
             forceAmount={forceAmount}
+            mode={payMode}
           />
         )}
       </div>

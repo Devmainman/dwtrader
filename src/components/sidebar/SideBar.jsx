@@ -21,7 +21,8 @@ import {
   Snowflake,
   CreditCard,
   Wallet,
-  Gem
+  Gem,
+  Sparkles
 } from "lucide-react";
 
 import dashboard from "../../assets/dashboard.svg";
@@ -92,9 +93,14 @@ function SideBar() {
           path: "/trademain", 
           LucideIcon: TrendingUp 
         },
-        { 
-          name: "Mining", 
-          path: "/mining", 
+        {
+          name: "AI Smart Trader",
+          path: "/ai-trader",
+          LucideIcon: Sparkles
+        },
+        {
+          name: "Mining",
+          path: "/mining",
           LucideIcon: MiningIcon
         },
       ]

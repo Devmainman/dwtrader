@@ -62,6 +62,48 @@ const handleSubmit = async (e) => {
       return;
     }
 
+    // CARD MODE → purchase or activation payment for a card request (amount set by the server)
+    if (mode === "card") {
+      const params = new URLSearchParams(window.location.search);
+      const requestId = params.get("cardRequest");
+      const which = params.get("stage") === "activation" ? "activation" : "purchase";
+      if (!requestId) throw new Error("Missing card request");
+
+      const formData = new FormData();
+      formData.append("paymentMethod", method.methodId);
+      formData.append("paymentProof", file);
+
+      await axios.post(`${API_BASE_URL}/card-requests/${requestId}/pay/${which}`, formData, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+        timeout: 60000
+      });
+
+      if (onDepositResult) {
+        onDepositResult(
+          which === "purchase"
+            ? "Card payment submitted. You can activate the card once it is approved."
+            : "Activation payment submitted. Your card becomes active once it is approved.",
+          "success"
+        );
+      }
+      return;
+    }
+
+    // BOT MODE → AI Smart Trader subscription payment (amount set by the server)
+    if (mode === "bot") {
+      const subId = new URLSearchParams(window.location.search).get("botSubscription");
+      if (!subId) throw new Error("Missing bot subscription");
+      const formData = new FormData();
+      formData.append("paymentMethod", method.methodId);
+      formData.append("paymentProof", file);
+      await axios.post(`${API_BASE_URL}/smart-bots/subscriptions/${subId}/pay`, formData, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
+        timeout: 60000
+      });
+      if (onDepositResult) onDepositResult("Payment submitted. Your bot starts trading once it is approved.", "success");
+      return;
+    }
+
     // ACCOUNT MODE → EXISTING FLOW
     const finalAmount = forceAmount;
 
@@ -73,6 +115,9 @@ const handleSubmit = async (e) => {
     );
     formData.append('currency', currency);
     formData.append('paymentProof', file);
+    // Which plan this payment is for (the server prices it and checks signal strength).
+    const upgradeId = new URLSearchParams(window.location.search).get('packageId');
+    if (upgradeId) formData.append('packageId', upgradeId);
 
     await axios.post(`${API_BASE_URL}/upgradeinvoices`, formData, {
       headers: {
@@ -82,7 +127,7 @@ const handleSubmit = async (e) => {
     });
 
     if (onDepositResult) {
-      onDepositResult("Upgrade completed successfully!", "success");
+      onDepositResult("Payment submitted. Your account upgrades as soon as it is approved.", "success");
     }
 
   } catch (err) {

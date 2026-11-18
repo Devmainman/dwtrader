@@ -5,7 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Gem, TrendingUp, Bot, Users, Cpu, PieChart, Building2, Layers,
   ArrowDownToLine, ArrowUpFromLine, History, Snowflake, CreditCard, Wallet,
-  User, Crown, Signal, Bell, LifeBuoy, Gift, LogOut,
+  User, Crown, Signal, Bell, LifeBuoy, Gift, LogOut, Sparkles,
 } from "lucide-react";
 import logo from "../../assets/Group.svg";
 import { useUserAuth } from "../../context/UserAuthContext";
@@ -20,6 +20,7 @@ const GROUPS = [
     { to: "/trademain", label: "Live trading", icon: TrendingUp },
     { to: "/trade", label: "Trading packages", icon: Bot },
     { to: "/copytrade", label: "Copy trading", icon: Users, also: ["/copy-positions"] },
+    { to: "/ai-trader", label: "AI Smart Trader", icon: Sparkles },
     { to: "/mining", label: "Mining", icon: Cpu },
   ] },
   { title: "Invest", items: [

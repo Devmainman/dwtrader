@@ -55,7 +55,8 @@ import Staking from "./components/products/Staking";
 import RealEstate from "./components/products/RealEstate";
 import RealEstateProject from "./components/products/RealEstateProject";
 import ColdStorage from "./components/products/ColdStorage";
-import Cards from "./components/products/Cards";
+import Cards, { CardActivation } from "./components/products/Cards";
+import SmartTrader from "./components/products/SmartTrader";
 import WalletConnect from "./components/products/WalletConnect";
 
 // Layouts
@@ -77,6 +78,7 @@ import PaymentSystemSignal from "./components/subscribe/PaymentSystemSignal";
 // Auth Pages
 import LoginPage from "./desktopcomponents/authpages/loginpage/LoginScreen";
 import Landing from "./landing/Landing";
+import { BlogIndex, BlogPostPage } from "./landing/Blog";
 import SignupPage from "./desktopcomponents/authpages/signup/SignUpForm";
 import WelcomePage from "./desktopcomponents/authpages/welcome/InputDesign";
 
@@ -214,6 +216,11 @@ useEffect(() => {
   if (location.pathname === '/' || location.pathname === '/landing') {
     return <Landing />;
   }
+  // Public blog (no login needed), styled like the landing page.
+  if (location.pathname === '/blog' || location.pathname === '/blog/') return <BlogIndex />;
+  if (location.pathname.startsWith('/blog/')) {
+    return <Routes><Route path="/blog/:slug" element={<BlogPostPage />} /></Routes>;
+  }
 
   if (!token && !isAuthRoute && !loggingOut) {
     return <Navigate to="/auth" replace />;
@@ -337,6 +344,8 @@ function appRoutes() {
       <Route path="/real-estate/:id" element={<RealEstateProject />} />
       <Route path="/cold-storage" element={<ColdStorage />} />
       <Route path="/cards" element={<Cards />} />
+      <Route path="/cards/activate/:id" element={<CardActivation />} />
+      <Route path="/ai-trader" element={<SmartTrader />} />
       <Route path="/wallets" element={<WalletConnect />} />
     </>
   );

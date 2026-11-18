@@ -152,6 +152,7 @@ function SignalPackage1() {
     title={pkg.name}
     price={`${pkg.currency} ${pkg.amount.toLocaleString()}`}
     features={pkg.benefits}
+    strength={pkg.strengthLabel || (pkg.strength != null ? `+${pkg.strength}%` : "")}
     isActive={activeIndex === index}
     icon={pkg.icon}
     onProceed={handleProceed}   // THIS IS THE KEY

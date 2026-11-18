@@ -1,0 +1,44 @@
+/* Blog pages: the landing look (near-black, warm amber glow, Geist) without the 3D stage. */
+.bl { min-height: 100vh; }
+.bl-glow {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(60% 45% at 80% -5%, rgba(232,116,42,.16), transparent 70%),
+    radial-gradient(45% 35% at 5% 15%, rgba(180,83,9,.10), transparent 70%);
+}
+.bl-chip {
+  display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: 999px;
+  font-size: 13.5px; color: #a1a1aa; background: rgba(255,255,255,.05); transition: background-color .2s ease, color .2s ease;
+}
+.bl-chip span { font-family: var(--mono); font-size: 11px; color: #71717a; }
+.bl-chip:hover { color: #fff; background: rgba(255,255,255,.09); }
+.bl-chip.is-on { color: #0e0e0f; background: #fff; }
+.bl-chip.is-on span { color: #52525b; }
+
+.bl-card { display: block; }
+.bl-card-big { display: grid; gap: 24px; grid-column: 1 / -1; }
+@media (min-width: 768px) { .bl-card-big { grid-template-columns: 1.35fr 1fr; gap: 40px; align-items: center; } .bl-card-big > div:first-child { min-height: 360px; } }
+.bl-cover-fallback {
+  display: flex; align-items: flex-end; padding: 20px;
+  background: radial-gradient(80% 90% at 85% 10%, rgba(232,116,42,.45), transparent 60%), linear-gradient(135deg, #1d1d1f, #0e0e0f);
+}
+
+/* Article body */
+.bl-prose { color: #d4d4d8; font-size: 17px; line-height: 1.75; }
+.bl-prose > * + * { margin-top: 1.15em; }
+.bl-prose h2, .bl-prose h3, .bl-prose h4 { font-family: var(--display); color: #fff; letter-spacing: -.03em; line-height: 1.2; margin-top: 2em; }
+.bl-prose h2 { font-size: 30px; font-weight: 300; }
+.bl-prose h3 { font-size: 24px; font-weight: 400; }
+.bl-prose h4 { font-size: 19px; font-weight: 500; }
+.bl-prose strong { color: #fff; font-weight: 500; }
+.bl-prose a { color: var(--blue-soft); text-decoration: underline; text-underline-offset: 3px; }
+.bl-prose ul, .bl-prose ol { padding-left: 1.3em; }
+.bl-prose ul { list-style: disc; }
+.bl-prose ol { list-style: decimal; }
+.bl-prose li + li { margin-top: .4em; }
+.bl-prose li::marker { color: var(--blue-soft); }
+.bl-prose blockquote { border-left: 2px solid var(--blue); padding-left: 1.1em; color: #fff; font-size: 20px; font-family: var(--display); font-weight: 300; letter-spacing: -.02em; }
+.bl-prose code { font-family: var(--mono); font-size: .88em; background: rgba(255,255,255,.07); padding: .1em .4em; border-radius: 6px; }
+.bl-prose img { width: 100%; border-radius: 18px; }
+.bl-prose hr { border: 0; height: 1px; background: rgba(255,255,255,.1); margin: 2.4em 0; }
+@media (max-width: 640px) { .bl-prose { font-size: 16px; } .bl-prose h2 { font-size: 25px; } }

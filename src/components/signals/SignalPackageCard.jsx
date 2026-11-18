@@ -7,7 +7,8 @@ function SignalPackageCard({
   features,
   isActive,
   icon,
-  onProceed   // receive from parent
+  onProceed,   // receive from parent
+  strength
 }) {
   const iconUrl = icon
     ? `${STATIC_BASE_URL}${icon}`
@@ -32,7 +33,8 @@ function SignalPackageCard({
       </div>
 
       <h2 className="text-center text-lg font-semibold mb-3">{title}</h2>
-      <p className="text-center text-yellow-400 mb-4">{price}</p>
+      <p className={`text-center text-yellow-400 ${strength ? "mb-1" : "mb-4"}`}>{price}</p>
+      {strength && <p className="text-center text-[11px] text-green-400 mb-4">Signal strength {strength}</p>}
 
       <ul className="space-y-3 text-[10px] text-stone-300 mb-4">
         {features?.map((feature, i) => (

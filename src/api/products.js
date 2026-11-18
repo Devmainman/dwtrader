@@ -126,3 +126,20 @@ export const miningApi = {
   switchPool: (poolId) => client.post('/mining/switch-pool', { poolId }).then((r) => r.data),
   history: () => client.get('/mining/history', { params: { limit: 20 } }).then((r) => r.data.history)
 };
+
+/** Cards from the admin's Card Settings, and the user's card requests (purchase + activation payments). */
+export const cardRequestsApi = {
+  catalog: () => unwrap(client.get('/card-requests/catalog')),
+  list: () => unwrap(client.get('/card-requests')),
+  create: (productId, holder) => unwrap(client.post('/card-requests', { productId, holder })),
+  cancel: (id) => unwrap(client.post(`/card-requests/${id}/cancel`)),
+  pay: (id, which, formData) => unwrap(client.post(`/card-requests/${id}/pay/${which}`, formData, { timeout: 60000 }))
+};
+
+/** AI Smart Trader bots and the user's subscriptions. */
+export const smartBotsApi = {
+  list: () => unwrap(client.get('/smart-bots')),
+  mine: () => unwrap(client.get('/smart-bots/subscriptions')),
+  subscribe: (id, allocation) => unwrap(client.post(`/smart-bots/${id}/subscribe`, { allocation })),
+  cancel: (id) => unwrap(client.post(`/smart-bots/subscriptions/${id}/cancel`))
+};

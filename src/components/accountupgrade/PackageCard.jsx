@@ -7,7 +7,7 @@ import { useUserAuth } from "../../context/UserAuthContext";
 import { API_BASE_URL, STATIC_BASE_URL } from "../../api/config";
 import axios from "axios";
 
-function PackageCard({ title, price, currency, features, isActive, onSubscribe, icon, packageId, amount }) {
+function PackageCard({ title, price, currency, features, isActive, onSubscribe, icon, packageId, amount, requiredSignal = 0, userSignal = 0, paymentPending = false }) {
   const { token, user } = useUserAuth();
   const [showPaymentSection, setShowPaymentSection] = useState(false);
   const [methods, setMethods] = useState([]);
@@ -18,10 +18,9 @@ function PackageCard({ title, price, currency, features, isActive, onSubscribe, 
 
   const iconUrl = icon ? `${STATIC_BASE_URL}${icon}` : null;
 
-  const handleProceed = () => {
-  const queryAmount = encodeURIComponent(price);
-  navigate(`/payment?amount=${queryAmount}`);
-};
+  // The plans page decides what happens (pay, or explain why not).
+  const handleProceed = () => onSubscribe?.(packageId);
+  const short = requiredSignal > userSignal;
 
   useEffect(() => {
     const fetchMethods = async () => {
@@ -72,7 +71,14 @@ function PackageCard({ title, price, currency, features, isActive, onSubscribe, 
 
       {/* Title and Price */}
       <h2 className="text-center text-lg font-semibold mb-3">{title}</h2>
-      <p className="text-center text-yellow-400 mb-4">{price}{currency}</p>
+      <p className={`text-center text-yellow-400 ${requiredSignal > 0 || paymentPending ? "mb-1" : "mb-4"}`}>{price}{currency}</p>
+      {paymentPending ? (
+        <p className="text-center text-[10px] text-blue-400 mb-4">Payment under review</p>
+      ) : requiredSignal > 0 ? (
+        <p className={`text-center text-[10px] mb-4 ${short ? "text-red-400" : "text-neutral-400"}`}>
+          Needs {requiredSignal}% signal strength{short ? ` (you have ${userSignal}%)` : ""}
+        </p>
+      ) : null}
 
       {/* Feature List */}
       <ul className="space-y-3 text-[10px] text-stone-300 mb-4">

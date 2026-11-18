@@ -11,15 +11,18 @@ function AccountUpgrade1() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userSignal, setUserSignal] = useState(0);
   const { user, token } = useUserAuth();
   const scrollRef = useRef(null);
   const navigate = useNavigate();
   const { fetchWithAuth } = useUserAuth();
 
   const handleProceed = () => {
-  const queryAmount = encodeURIComponent(packages[activeIndex].amount);
-  navigate(`/payment?amount=${queryAmount}`);
-};
+    const pkg = packages[activeIndex];
+    if (pkg) handleSubscribe(pkg._id);
+  };
+  // Shown instead of the payment page when a plan can't be bought yet.
+  const [blocked, setBlocked] = useState(null);
 
 useEffect(() => {
   const fetchPackages = async () => {
@@ -29,6 +32,7 @@ useEffect(() => {
       });
       const data = response.data;
       setPackages(data.packages || data);
+      setUserSignal(Number(data.userSignal || 0));
     } catch (err) {
       console.error('Error loading packages:', err);
       setError("Failed to load packages. Please try again later.");
@@ -71,8 +75,42 @@ useEffect(() => {
   const handleSubscribe = (packageId) => {
     const pkg = (packages || []).find((p) => p._id === packageId);
     if (!pkg) return;
+    if (pkg.paymentPending) { setBlocked({ pkg, reason: 'pending' }); return; }
+    if (Number(pkg.requiredSignal || 0) > userSignal) { setBlocked({ pkg, reason: 'signal' }); return; }
     navigate(`/payment?amount=${encodeURIComponent(pkg.amount)}&packageId=${encodeURIComponent(pkg._id)}`);
   };
+
+  const blockedSheet = blocked && (
+    <div className="fixed inset-0 z-[9600] flex items-end sm:items-center justify-center bg-black/60 p-4" onClick={() => setBlocked(null)}>
+      <div className="w-full max-w-[380px] rounded-2xl bg-[#1D1D1F] border border-white/10 p-5 text-white" onClick={(e) => e.stopPropagation()}>
+        {blocked.reason === 'signal' ? (
+          <>
+            <p className="text-[15px] font-semibold">Signal strength too low</p>
+            <p className="mt-2 text-[13px] leading-5 text-neutral-400">
+              The {blocked.pkg.name} plan needs at least <span className="text-white">{blocked.pkg.requiredSignal}%</span> signal strength.
+              Yours is <span className="text-white">{userSignal}%</span>.
+            </p>
+            <div className="mt-3 h-1.5 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-full bg-blue-600 rounded-full" style={{ width: `${Math.min(100, (userSignal / Math.max(1, blocked.pkg.requiredSignal)) * 100)}%` }} />
+            </div>
+            <p className="mt-3 text-[12px] leading-5 text-neutral-400">Buy a signal package to raise your signal strength, then come back to upgrade.</p>
+            <div className="mt-4 flex gap-2">
+              <button type="button" onClick={() => setBlocked(null)} className="flex-1 h-10 rounded-full border border-white/15 text-[13px]">Not now</button>
+              <button type="button" onClick={() => navigate('/signal-packages')} className="flex-1 h-10 rounded-full bg-blue-600 text-[13px] font-medium">Get signal</button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p className="text-[15px] font-semibold">Payment under review</p>
+            <p className="mt-2 text-[13px] leading-5 text-neutral-400">
+              We already have your payment for the {blocked.pkg.name} plan. Your account upgrades as soon as it is approved, so there is no need to pay again.
+            </p>
+            <button type="button" onClick={() => setBlocked(null)} className="mt-4 w-full h-10 rounded-full bg-blue-600 text-[13px] font-medium">OK</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
 
   if (loading) {
     return (
@@ -130,6 +168,7 @@ useEffect(() => {
 
   return (
     <div className="flex pb-30 flex-col items-center w-full h-full p-4">
+      {blockedSheet}
       <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100 lg:w-full lg:max-w-[1000px] lg:justify-start lg:gap-3 lg:items-center lg:pt-4">
         <h1 className="text-[16px] font-medium tracking-normal leading-tight">
           Account Upgrade
@@ -155,6 +194,9 @@ useEffect(() => {
             onSubscribe={() => handleSubscribe(pkg._id)}
             icon={pkg.icon}
             packageId={pkg._id}
+            requiredSignal={Number(pkg.requiredSignal || 0)}
+            userSignal={userSignal}
+            paymentPending={!!pkg.paymentPending}
             amount={pkg.amount}
           />
         ))}
