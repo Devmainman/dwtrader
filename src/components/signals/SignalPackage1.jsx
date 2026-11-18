@@ -22,7 +22,7 @@ function SignalPackage1() {
       
       // CRITICAL FIX: Pass 'type=signal' and 'packageId' so the Payment page 
       // knows this is NOT a standard account upgrade.
-      navigate(`/signal-payment?packageId=${pkg._id}`);
+      navigate(`/signal-payment?packageId=${pkg._id}&amount=${queryAmount}`);
     }
   };
 

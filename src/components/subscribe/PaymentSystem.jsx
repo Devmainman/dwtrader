@@ -1,165 +1,83 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// /payment: the shared payment UI for account upgrades (default), card payments
+// (?mode=card) and AI Smart Trader subscriptions (?mode=bot). The amount comes
+// from the page that sent the user here; the server prices every payment itself.
+import { useSearchParams } from 'react-router-dom';
+import PaymentFlow, { postProof } from '../payment/PaymentFlow';
 import { useUserAuth } from '../../context/UserAuthContext';
-import { API_BASE_URL } from '../../api/config';
-import PaymentMethodSelector from './PaymentMethodSelector';
-import PaymentForm from './PaymentForm';
-import StatusModal from './StatusModal';
 
-const PaymentSystem = () => {
-
-  const { user, token } = useUserAuth(); // Destructure both user and token
-  const [methods, setMethods] = useState([]);
-  const [selectedMethod, setSelectedMethod] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [modal, setModal] = useState({
-    show: false,
-    message: '',
-    type: '' // 'success' or 'error'
-  });
-   const [searchParams] = useSearchParams();
-  const forceAmount = searchParams.get("amount");
-  const payMode = searchParams.get("mode") || undefined;
-  const navigateTo = useNavigate();
-  
-
-  const showStatusModal = (message, type) => {
-    setModal({
-      show: true,
-      message,
-      type
-    });
-    
-    setTimeout(() => {
-      setModal({ ...modal, show: false });
-    }, 5000);
-    // Card payments: back to Cards so the user sees the request move on.
-    if (type === "success" && payMode === "card") setTimeout(() => navigateTo("/cards"), 2200);
-    if (type === "success" && payMode === "bot") setTimeout(() => navigateTo("/ai-trader"), 2200);
-  };
-
-  
-
-  useEffect(() => {
-    const fetchPaymentMethods = async () => {
-      try {
-        // Verify token exists (using the token from context)
-        if (!token) {
-          throw new Error('Authentication token not found. Please login.');
-        }
-
-        setLoading(true);
-        setError('');
-
-        console.log('Using token:', token.substring(0, 6) + '...'); // Log first 6 chars for verification
-
-        const response = await axios.get(
-          `${API_BASE_URL}/payments/methods`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`, // Use token from context
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-
-        console.log('API Response:', response.data);
-
-        // Handle both response formats
-        const methodsData = response.data?.data || response.data;
-
-        if (!Array.isArray(methodsData)) {
-          throw new Error('Server returned invalid data format');
-        }
-
-        setMethods(methodsData);
-      } catch (err) {
-        console.error('Payment methods fetch failed:', {
-          error: err,
-          response: err.response?.data,
-          status: err.response?.status
-        });
-        
-        setError(err.response?.data?.message || err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Only fetch if token exists
-    if (token) {
-      fetchPaymentMethods();
-    } else {
-      setLoading(false);
-      setError('Authentication required');
-    }
-  }, [token]); // Dependency on token instead of user
-
-
-  // Render states
-  if (!user || !token) {
-    return (
-      <div className="text-red-500 p-4">
-        Please login to access payment methods
-        <button
-          onClick={() => window.location.href = '/login'} // Redirect to login
-          className="ml-2 bg-blue-500 px-3 py-1 rounded text-white"
-        >
-          Login
-        </button>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return <div className="text-white p-4">Loading payment methods...</div>;
-  }
-
-  if (error) {
-    return (
-      <div className="text-red-500 p-4">
-        Error: {error}
-        <button
-          onClick={() => window.location.reload()}
-          className="ml-2 bg-blue-500 px-3 py-1 rounded text-white"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen lg:w-full lg:max-w-[1050px] lg:mx-auto text-white relative">
-      {/* Status Modal */}
-      {modal.show && (
-        <StatusModal 
-          message={modal.message} 
-          type={modal.type} 
-          onClose={() => setModal({ ...modal, show: false })}
-        />
-      )}
-
-      <div className="w-full px-4 xl:px-0">
-        {!selectedMethod ? (
-          <PaymentMethodSelector
-            methods={methods}
-            onSelect={setSelectedMethod}
-          />
-        ) : (
-          <PaymentForm
-            method={methods.find(m => m.methodId === selectedMethod)}
-            onBack={() => setSelectedMethod(null)}
-            onDepositResult={showStatusModal}
-            forceAmount={forceAmount}
-            mode={payMode}
-          />
-        )}
-      </div>
-    </div>
-  );
+const UPGRADE_INSTRUCTIONS = {
+  title: "Let's Proceed with that Upgrade",
+  intro: 'To make a Upgrade, please follow these simple steps:'
 };
 
-export default PaymentSystem;
+export default function PaymentSystem() {
+  const { token } = useUserAuth();
+  const [params] = useSearchParams();
+  const mode = params.get('mode');
+  const amount = params.get('amount') || undefined;
+
+  if (mode === 'card') {
+    const which = params.get('stage') === 'activation' ? 'activation' : 'purchase';
+    const id = params.get('cardRequest');
+    return (
+      <PaymentFlow
+        purpose={which === 'purchase' ? 'Card purchase' : 'Card activation'}
+        heading={which === 'purchase' ? 'Pay for your card' : 'Activate your card'}
+        subheading={which === 'purchase' ? 'Once this payment is approved you can activate the card.' : 'Your card becomes active once this payment is approved.'}
+        amount={amount}
+        instructions={{ title: which === 'purchase' ? "Let's get your card" : "Let's activate your card", intro: 'To pay for your card, please follow these simple steps:' }}
+        successRedirect="/cards"
+        onSubmit={async ({ method, file }) => {
+          if (!id) throw new Error('Missing card request');
+          await postProof(`/card-requests/${id}/pay/${which}`, token, { paymentMethod: method.methodId, paymentProof: file });
+          return which === 'purchase'
+            ? 'Card payment submitted. You can activate the card once it is approved.'
+            : 'Activation payment submitted. Your card becomes active once it is approved.';
+        }}
+      />
+    );
+  }
+
+  if (mode === 'bot') {
+    const id = params.get('botSubscription');
+    return (
+      <PaymentFlow
+        purpose="AI Smart Trader"
+        heading="Start your AI Smart Trader"
+        subheading="Your bot starts trading as soon as this payment is approved."
+        amount={amount}
+        instructions={{ title: "Let's start your bot", intro: 'To subscribe, please follow these simple steps:' }}
+        successRedirect="/ai-trader"
+        onSubmit={async ({ method, file }) => {
+          if (!id) throw new Error('Missing bot subscription');
+          await postProof(`/smart-bots/subscriptions/${id}/pay`, token, { paymentMethod: method.methodId, paymentProof: file });
+          return 'Payment submitted. Your bot starts trading once it is approved.';
+        }}
+      />
+    );
+  }
+
+  // Account upgrade
+  const packageId = params.get('packageId');
+  return (
+    <PaymentFlow
+      purpose="Account upgrade"
+      heading="Upgrade your account"
+      subheading="Your account upgrades as soon as this payment is approved."
+      amount={amount}
+      editableAmount={!amount}
+      amountPlaceholder={(cur) => `upgrade Amount (${cur})`}
+      instructions={UPGRADE_INSTRUCTIONS}
+      onSubmit={async ({ method, file, amount: amt, currency }) => {
+        await postProof('/upgradeinvoices', token, {
+          paymentMethod: method.methodId,
+          amount: parseFloat(String(amt ?? '').replace(/[^\d.]/g, '')) || undefined,
+          currency,
+          packageId: packageId || undefined,
+          paymentProof: file
+        });
+        return 'Payment submitted. Your account upgrades as soon as it is approved.';
+      }}
+    />
+  );
+}
