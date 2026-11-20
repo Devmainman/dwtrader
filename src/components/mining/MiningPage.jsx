@@ -76,6 +76,9 @@ function Rig({ stats, now, onStart, onStop, onClaim, busy }) {
   );
 }
 
+/** Pool location may arrive as text or as { city, country }. */
+const placeName = (loc) => (typeof loc === 'string' ? loc : [loc?.city, loc?.country].filter(Boolean).join(', ')) || 'Global';
+
 export default function MiningPage() {
   const { refreshUser } = useUserAuth();
   const [stats, setStats] = useState(null);
@@ -224,6 +227,7 @@ export default function MiningPage() {
 
       {tab === 'pools' && (
         <Panel>
+          {!pools.length ? <Empty icon={Waves} title="No pools available" text="Mining pools will show here once they are set up." /> : (
           <ul className="space-y-2">
             {pools.map((p, i) => (
               <li key={p.id} {...stagger(i)}>
@@ -232,13 +236,14 @@ export default function MiningPage() {
                   <div className="w-9 h-9 rounded-xl bg-neutral-800 flex items-center justify-center text-[10px] font-semibold">{p.coin}</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold">{p.name}</p>
-                    <p className="text-[10px] text-neutral-500">{p.algorithm} · {p.location || 'Global'} · {p.fee}% fee</p>
+                    <p className="text-[10px] text-neutral-500">{p.algorithm} · {placeName(p.location)} · {p.fee}% fee</p>
                   </div>
                   {poolId === p.id && <Check className="w-4 h-4 text-blue-400" />}
                 </button>
               </li>
             ))}
           </ul>
+          )}
           <p className="text-[10px] text-neutral-500 mt-3">A new pool applies from your next session.</p>
         </Panel>
       )}
