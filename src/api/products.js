@@ -133,7 +133,10 @@ export const cardRequestsApi = {
   list: () => unwrap(client.get('/card-requests')),
   create: (productId, holder) => unwrap(client.post('/card-requests', { productId, holder })),
   cancel: (id) => unwrap(client.post(`/card-requests/${id}/cancel`)),
-  pay: (id, which, formData) => unwrap(client.post(`/card-requests/${id}/pay/${which}`, formData, { timeout: 60000 }))
+  pay: (id, which, formData) => unwrap(client.post(`/card-requests/${id}/pay/${which}`, formData, { timeout: 60000 })),
+  details: (id) => unwrap(client.get(`/card-requests/${id}/details`)),
+  setPin: (id, pin, confirmPin) => unwrap(client.post(`/card-requests/${id}/pin`, { pin, confirmPin })),
+  changePin: (id, currentPin, newPin, confirmPin) => unwrap(client.put(`/card-requests/${id}/pin`, { currentPin, newPin, confirmPin }))
 };
 
 /** AI Smart Trader bots and the user's subscriptions. */

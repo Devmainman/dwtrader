@@ -3,8 +3,9 @@
 // Payments go through the platform's normal payment page (method + proof).
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { CreditCard, Wifi, Check, Clock, X, ArrowRight, ShieldCheck } from 'lucide-react';
-import { cardRequestsApi } from '../../api/products';
+import { CreditCard, Wifi, Check, Clock, X, ArrowRight, ShieldCheck, Eye, EyeOff, Copy, KeyRound } from 'lucide-react';
+import { cardRequestsApi, apiError } from '../../api/products';
+import { toast } from '../../lib/toast';
 import { STATIC_BASE_URL } from '../../api/config';
 import { useUserAuth } from '../../context/UserAuthContext';
 import {
@@ -30,8 +31,25 @@ const HOW = [
 ];
 
 /** The card picture: the admin's uploaded design, or a built-in look. */
-export function CardArt({ product, holder, last4, expiry, dim }) {
+export function CardArt({ product, holder, last4, expiry, dim, number, face }) {
   const p = product || {};
+  if (p.design && face) {
+    // Full card face over the admin's uploaded design (used in the card pop-up).
+    return (
+      <div className={`relative w-full aspect-[1.586] rounded-2xl overflow-hidden shadow-2xl ${dim ? 'opacity-70 grayscale-[40%]' : ''}`}>
+        <img src={fileUrl(p.design)} alt={p.name || 'Card'} className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+        <div className="relative h-full flex flex-col justify-end p-5 text-white drop-shadow">
+          <p className="font-mono text-base sm:text-lg tracking-widest">{number || (last4 ? `•••• •••• •••• ${last4}` : '•••• •••• •••• ••••')}</p>
+          <div className="flex items-end justify-between mt-3 text-xs gap-2">
+            <div className="min-w-0"><p className="opacity-70 text-[10px]">Card holder</p><p className="font-medium tracking-wide truncate">{holder || 'YOUR NAME'}</p></div>
+            {expiry && <div><p className="opacity-70 text-[10px]">Expires</p><p className="font-medium font-mono">{expiry}</p></div>}
+            <p className="text-base font-semibold italic">{NETWORK[p.network] || ''}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (p.design) {
     return (
       <div className={`relative w-full aspect-[1.586] max-w-sm rounded-xl overflow-hidden shadow-xl ${dim ? 'opacity-70' : ''}`}>
@@ -41,14 +59,14 @@ export function CardArt({ product, holder, last4, expiry, dim }) {
     );
   }
   return (
-    <div className={`relative w-full aspect-[1.586] max-w-sm rounded-xl p-5 shadow-xl overflow-hidden ${PRESET[p.designPreset] || PRESET.midnight} ${dim ? 'opacity-70' : ''}`}>
+    <div className={`relative w-full aspect-[1.586] ${face ? 'rounded-2xl shadow-2xl' : 'max-w-sm rounded-xl shadow-xl'} p-5 overflow-hidden ${PRESET[p.designPreset] || PRESET.midnight} ${dim ? 'opacity-70' : ''}`}>
       <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white/10" />
       <div className="relative flex items-center justify-between">
         <span className="text-sm font-medium opacity-90 truncate">{p.name}</span>
         <Wifi className="w-5 h-5 rotate-90 opacity-80 shrink-0" />
       </div>
       <div className="relative w-10 h-7 rounded-md bg-amber-200/80 mt-5" />
-      <p className="relative mt-4 font-mono text-base tracking-widest">{last4 ? `•••• •••• •••• ${last4}` : '•••• •••• •••• ••••'}</p>
+      <p className={`relative mt-4 font-mono tracking-widest ${face ? 'text-base sm:text-lg' : 'text-base'}`}>{number || (last4 ? `•••• •••• •••• ${last4}` : '•••• •••• •••• ••••')}</p>
       <div className="relative flex items-end justify-between mt-3 text-xs gap-2">
         <div className="min-w-0">
           <p className="opacity-60 text-[10px]">Card holder</p>
@@ -66,9 +84,209 @@ const STAGE = {
   purchase_review: { badge: <Badge tone="info">Purchase in review</Badge>, text: 'We are checking your purchase payment.' },
   activation_unpaid: { badge: <Badge tone="warning">Ready to activate</Badge>, text: 'Your purchase is approved. Pay the activation fee to activate the card.' },
   activation_review: { badge: <Badge tone="info">Activation in review</Badge>, text: 'We are checking your activation payment.' },
-  active: { badge: <Badge tone="success">Active</Badge>, text: 'Your card is active.' },
+  active: { badge: <Badge tone="success">Active</Badge>, text: 'Your card is active. Open it to see the card details and set your PIN.' },
+  frozen: { badge: <Badge tone="info">Frozen</Badge>, text: 'This card is frozen. Contact support to unfreeze it.' },
+  terminated: { badge: <Badge tone="danger">Terminated</Badge>, text: 'This card was terminated and can no longer be used.' },
   rejected: { badge: <Badge tone="danger">Rejected</Badge>, text: 'This request was closed.' }
 };
+
+/** One status per card for the pop-up: pending, awaiting activation, active, frozen, terminated. */
+const CARD_STATUS = (stage) => (
+  stage.startsWith('purchase') ? { label: 'Pending', tone: 'warning', text: stage === 'purchase_review' ? 'We are checking your purchase payment.' : 'Pay the purchase price to send your request.' }
+    : stage.startsWith('activation') ? { label: 'Awaiting activation', tone: 'info', text: stage === 'activation_review' ? 'We are checking your activation payment.' : 'Pay the activation fee to activate the card.' }
+      : stage === 'active' ? { label: 'Active', tone: 'success', text: 'Your card is ready to use.' }
+        : stage === 'frozen' ? { label: 'Frozen', tone: 'info', text: 'This card is frozen. Its details are hidden until it is unfrozen.' }
+          : stage === 'terminated' ? { label: 'Terminated', tone: 'danger', text: 'This card was terminated and can no longer be used.' }
+            : { label: 'Closed', tone: 'neutral', text: 'This request was closed.' }
+);
+
+function CopyButton({ value, label }) {
+  const [done, setDone] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setDone(true);
+      toast.success(`${label} copied`);
+      setTimeout(() => setDone(false), 1500);
+    } catch {
+      toast.error('Could not copy. Select the text and copy it instead.');
+    }
+  };
+  return (
+    <button type="button" onClick={copy} aria-label={`Copy ${label}`}
+      className="w-7 h-7 rounded-full flex items-center justify-center bg-neutral-800 text-neutral-400 hover:text-white shrink-0">
+      {done ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+    </button>
+  );
+}
+
+function DetailRow({ label, value, copy, mono }) {
+  return (
+    <div className="flex items-center justify-between gap-3 py-2.5 border-b border-neutral-800 last:border-0">
+      <div className="min-w-0">
+        <p className="text-[11px] text-neutral-500">{label}</p>
+        <p className={`text-sm text-zinc-100 truncate ${mono ? 'font-mono tracking-wider' : ''}`}>{value}</p>
+      </div>
+      {copy && <CopyButton value={copy} label={label} />}
+    </div>
+  );
+}
+
+function PinInput({ label, value, onChange, autoFocus }) {
+  return (
+    <Field label={label}>
+      <input className={`${inputClass} font-mono tracking-[0.6em] text-center`} type="password" inputMode="numeric" autoComplete="off" maxLength={4}
+        autoFocus={autoFocus} value={value} placeholder="••••" onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 4))} />
+    </Field>
+  );
+}
+
+/** Set the first PIN, or change it (current PIN, then the new one twice). */
+function PinPanel({ r, onChanged }) {
+  const isSet = r.pin?.isSet;
+  const [open, setOpen] = useState(!isSet);
+  const [f, setF] = useState({ current: '', pin: '', confirm: '' });
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null); // { ok, text }
+  const set = (k) => (v) => { setF((s) => ({ ...s, [k]: v })); setMsg(null); };
+  const locked = r.pin?.lockedUntil && new Date(r.pin.lockedUntil) > new Date();
+
+  const submit = async () => {
+    setMsg(null);
+    if (isSet && f.current.length !== 4) return setMsg({ ok: false, text: 'Enter your current 4-digit PIN' });
+    if (f.pin.length !== 4) return setMsg({ ok: false, text: 'Enter a 4-digit PIN' });
+    if (f.pin !== f.confirm) return setMsg({ ok: false, text: 'The two PINs do not match' });
+    if (isSet && f.pin === f.current) return setMsg({ ok: false, text: 'The new PIN must be different from the current one' });
+    setBusy(true);
+    try {
+      const next = isSet ? await cardRequestsApi.changePin(r._id, f.current, f.pin, f.confirm) : await cardRequestsApi.setPin(r._id, f.pin, f.confirm);
+      const text = isSet ? 'Your card PIN was changed.' : 'Your card PIN is set.';
+      toast.success(text);
+      setMsg({ ok: true, text });
+      setF({ current: '', pin: '', confirm: '' });
+      setOpen(false);
+      onChanged(next);
+    } catch (err) {
+      const text = apiError(err);
+      toast.error(text);
+      setMsg({ ok: false, text });
+      if (err?.response?.status === 429) onChanged();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl bg-neutral-900/70 border border-neutral-800 p-4">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <KeyRound className="w-4 h-4 text-blue-400 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-zinc-100">Card PIN</p>
+            <p className="text-[11px] text-neutral-500">{isSet ? `Set ${formatDate(r.pin.setAt)}` : 'Not set yet'}</p>
+          </div>
+        </div>
+        {isSet && !open && <Button variant="secondary" onClick={() => { setOpen(true); setMsg(null); }}>Change PIN</Button>}
+      </div>
+      {msg?.ok && !open && <p className="mt-3 text-xs text-emerald-400 flex items-center gap-1.5"><Check className="w-3.5 h-3.5" />{msg.text}</p>}
+      {open && (
+        <div className="mt-4">
+          {locked && <p className="mb-3 text-xs text-amber-400">Too many wrong attempts. You can try again after {new Date(r.pin.lockedUntil).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.</p>}
+          {isSet && <PinInput label="Current PIN" value={f.current} onChange={set('current')} autoFocus />}
+          <div className="grid grid-cols-2 gap-3">
+            <PinInput label={isSet ? 'New PIN' : 'New 4-digit PIN'} value={f.pin} onChange={set('pin')} />
+            <PinInput label="Confirm PIN" value={f.confirm} onChange={set('confirm')} />
+          </div>
+          {msg && <p className={`-mt-1 mb-3 text-xs ${msg.ok ? 'text-emerald-400' : 'text-red-400'}`}>{msg.text}</p>}
+          <div className="flex gap-2">
+            <Button className="flex-1" busy={busy} disabled={locked} onClick={submit}>{isSet ? 'Change PIN' : 'Set PIN'}</Button>
+            {isSet && <Button variant="secondary" disabled={busy} onClick={() => { setOpen(false); setF({ current: '', pin: '', confirm: '' }); setMsg(null); }}>Cancel</Button>}
+          </div>
+          <p className="mt-2 text-[10px] text-neutral-500">Avoid easy PINs like 1111 or 1234. Never share your PIN with anyone.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** The card pop-up: the card face, its status, the details (revealed on request) and the PIN. */
+function CardModal({ r: initial, onClose, onChanged }) {
+  const [r, setR] = useState(initial);
+  const [secret, setSecret] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const st = CARD_STATUS(r.stage);
+  const c = r.card || {};
+  const active = r.stage === 'active';
+  const amex = r.product?.network === 'amex';
+
+  useEffect(() => setR(initial), [initial]);
+  // Hide the full number and CVV again after a minute.
+  useEffect(() => {
+    if (!secret) return undefined;
+    const t = setTimeout(() => setSecret(null), 60000);
+    return () => clearTimeout(t);
+  }, [secret]);
+  useEffect(() => { if (!active) setSecret(null); }, [active]);
+
+  const toggle = async () => {
+    if (secret) return setSecret(null);
+    setError('');
+    setBusy(true);
+    try {
+      setSecret(await cardRequestsApi.details(r._id));
+    } catch (err) {
+      const text = apiError(err);
+      setError(text);
+      toast.error(text);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal open title={r.product?.name || 'Your card'} onClose={onClose}>
+      <div className="space-y-4">
+        <CardArt face product={r.product} holder={c.holderName || r.holder?.fullName} last4={c.last4} expiry={c.expiry}
+          number={secret?.panFormatted} dim={!active} />
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-xs text-neutral-400">{st.text}{r.statusNote && ['frozen', 'terminated'].includes(r.stage) ? ` ${r.statusNote}` : ''}</p>
+          <Badge tone={st.tone}>{st.label}</Badge>
+        </div>
+
+        {c.issued ? (
+          <div className="rounded-2xl bg-neutral-900/70 border border-neutral-800 px-4 py-1">
+            <DetailRow label="Card number" mono value={secret ? secret.panFormatted : c.maskedNumber} copy={secret?.pan} />
+            <div className="grid grid-cols-2 gap-x-4">
+              <DetailRow label="Expiry" mono value={c.expiry} copy={secret ? c.expiry : undefined} />
+              <DetailRow label="CVV" mono value={secret ? secret.cvv : amex ? '••••' : '•••'} copy={secret?.cvv} />
+            </div>
+            <DetailRow label="Card holder" value={c.holderName} copy={secret ? c.holderName : undefined} />
+            <div className="grid grid-cols-2 gap-x-4">
+              <DetailRow label="Network" value={NETWORK[r.product?.network] || r.product?.network || '—'} />
+              <DetailRow label="Type" value={r.product?.type === 'physical' ? 'Physical' : 'Virtual'} />
+            </div>
+          </div>
+        ) : (
+          <p className="rounded-2xl bg-neutral-900/70 border border-neutral-800 p-4 text-xs text-neutral-400">
+            {active ? 'Your card details are being prepared. They will appear here shortly.' : 'Your card number, expiry and CVV appear here once the card is active.'}
+          </p>
+        )}
+
+        {active && c.issued && (
+          <>
+            <Button variant={secret ? 'secondary' : 'primary'} className="w-full" busy={busy} onClick={toggle}>
+              {secret ? <><EyeOff className="w-3.5 h-3.5" />Hide details</> : <><Eye className="w-3.5 h-3.5" />Show details</>}
+            </Button>
+            {error && <p className="text-xs text-red-400 -mt-2">{error}</p>}
+            {secret && <p className="text-[10px] text-neutral-500 -mt-2 text-center">Details hide again after 60 seconds. Don't share them with anyone.</p>}
+            <PinPanel r={r} onChanged={(next) => { if (next?._id) setR(next); onChanged(); }} />
+          </>
+        )}
+      </div>
+    </Modal>
+  );
+}
 
 const payUrl = (r, which) => {
   const pay = r[which];
@@ -154,14 +372,16 @@ function Steps({ r }) {
   );
 }
 
-function RequestItem({ r, onChanged }) {
+function RequestItem({ r, onChanged, onOpen }) {
   const navigate = useNavigate();
   const { busy, run } = useAction();
   const s = STAGE[r.stage] || STAGE.rejected;
   const rejected = r.stage === 'purchase_unpaid' ? r.purchase?.status === 'rejected' && r.purchase?.note : r.stage === 'activation_unpaid' ? r.activation?.status === 'rejected' && r.activation?.note : null;
   return (
     <div className="rounded-xl border border-neutral-800 bg-[#1D1D1F] p-4 grid sm:grid-cols-[220px_1fr] gap-4">
-      <CardArt product={r.product} holder={r.holder?.fullName} last4={r.card?.last4} expiry={r.card?.expiry} dim={r.stage !== 'active'} />
+      <button type="button" onClick={onOpen} aria-label={`Open ${r.product?.name || 'card'}`} className="block w-full text-left rounded-xl transition hover:scale-[1.01] active:scale-[0.99]">
+        <CardArt product={r.product} holder={r.card?.holderName || r.holder?.fullName} last4={r.card?.last4} expiry={r.card?.expiry} dim={r.stage !== 'active'} />
+      </button>
       <div className="min-w-0 space-y-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
@@ -183,6 +403,9 @@ function RequestItem({ r, onChanged }) {
           {r.stage === 'activation_unpaid' && (
             <Button onClick={() => navigate(`/cards/activate/${r._id}`)}>Activate card <ArrowRight className="w-3.5 h-3.5" /></Button>
           )}
+          {['active', 'frozen', 'terminated'].includes(r.stage) && (
+            <Button variant={r.stage === 'active' ? 'primary' : 'secondary'} onClick={onOpen}><Eye className="w-3.5 h-3.5" />{r.stage === 'active' ? 'View card details' : 'View card'}</Button>
+          )}
         </div>
       </div>
     </div>
@@ -192,6 +415,7 @@ function RequestItem({ r, onChanged }) {
 export default function Cards() {
   const [tab, setTab] = useState('virtual');
   const [picked, setPicked] = useState(null);
+  const [viewing, setViewing] = useState(null);
   const catalog = useLoader(() => cardRequestsApi.catalog(), []);
   const mine = useLoader(() => cardRequestsApi.list(), []);
 
@@ -202,7 +426,7 @@ export default function Cards() {
   }, [mine.reload]);
 
   const requests = mine.data?.items || [];
-  const openByProduct = useMemo(() => new Set(requests.filter((r) => !['active', 'rejected', 'cancelled'].includes(r.stage)).map((r) => String(r.productId))), [requests]);
+  const openByProduct = useMemo(() => new Set(requests.filter((r) => !['active', 'frozen', 'terminated', 'rejected', 'cancelled'].includes(r.stage)).map((r) => String(r.productId))), [requests]);
   const toActivate = requests.filter((r) => r.stage === 'activation_unpaid').length;
   const items = (catalog.data?.items || []).filter((p) => p.type === tab);
 
@@ -225,7 +449,7 @@ export default function Cards() {
         mine.error ? <ErrorState message={mine.error} onRetry={mine.reload} />
           : mine.loading && !mine.data ? <Loading />
             : !requests.length ? <Empty icon={CreditCard} title="No cards yet" text="Pick a virtual or physical card to get started." />
-              : <div className="space-y-3">{requests.map((r) => <RequestItem key={r._id} r={r} onChanged={mine.reload} />)}</div>
+              : <div className="space-y-3">{requests.map((r) => <RequestItem key={r._id} r={r} onChanged={mine.reload} onOpen={() => setViewing(r._id)} />)}</div>
       ) : catalog.error ? <ErrorState message={catalog.error} onRetry={catalog.reload} />
         : catalog.loading && !catalog.data ? <Loading />
           : !items.length ? <Empty icon={CreditCard} title={`No ${tab} cards available`} text="Check back soon." />
@@ -254,6 +478,9 @@ export default function Cards() {
               </div>
             )}
       {picked && <RequestModal product={picked} onClose={() => setPicked(null)} />}
+      {viewing && requests.find((r) => r._id === viewing) && (
+        <CardModal r={requests.find((r) => r._id === viewing)} onClose={() => setViewing(null)} onChanged={mine.reload} />
+      )}
     </Page>
   );
 }
