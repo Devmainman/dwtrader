@@ -3,7 +3,7 @@
 // Payments go through the platform's normal payment page (method + proof).
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { CreditCard, Wifi, Check, Clock, X, ArrowRight, ShieldCheck, Eye, EyeOff, Copy, KeyRound } from 'lucide-react';
+import { CreditCard, Wifi, Check, Clock, X, ArrowRight, ShieldCheck, Eye, EyeOff, Copy, KeyRound, Loader2 } from 'lucide-react';
 import { cardRequestsApi, apiError } from '../../api/products';
 import { toast } from '../../lib/toast';
 import { STATIC_BASE_URL } from '../../api/config';
@@ -120,14 +120,23 @@ function CopyButton({ value, label }) {
   );
 }
 
-function DetailRow({ label, value, copy, mono }) {
+function DetailRow({ label, value, copy, mono, reveal }) {
   return (
     <div className="flex items-center justify-between gap-3 py-2.5 border-b border-neutral-800 last:border-0">
       <div className="min-w-0">
         <p className="text-[11px] text-neutral-500">{label}</p>
         <p className={`text-sm text-zinc-100 truncate ${mono ? 'font-mono tracking-wider' : ''}`}>{value}</p>
       </div>
-      {copy && <CopyButton value={copy} label={label} />}
+      <div className="flex items-center gap-1.5 shrink-0">
+        {reveal && (
+          <button type="button" onClick={reveal.onToggle} disabled={reveal.busy}
+            aria-label={`${reveal.shown ? 'Hide' : 'Show'} ${label}`} title={`${reveal.shown ? 'Hide' : 'Show'} ${label}`}
+            className="w-7 h-7 rounded-full flex items-center justify-center bg-neutral-800 text-neutral-400 hover:text-white disabled:opacity-60">
+            {reveal.busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : reveal.shown ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+          </button>
+        )}
+        {copy && <CopyButton value={copy} label={label} />}
+      </div>
     </div>
   );
 }
@@ -212,43 +221,63 @@ function PinPanel({ r, onChanged }) {
 /** The card pop-up: the card face, its status, the details (revealed on request) and the PIN. */
 function CardModal({ r: initial, onClose, onChanged }) {
   const [r, setR] = useState(initial);
-  const [secret, setSecret] = useState(null);
-  const [busy, setBusy] = useState(false);
+  const [secret, setSecret] = useState(null);          // full number + CVV, kept only while something is shown
+  const [shown, setShown] = useState({ pan: false, cvv: false });
+  const [busy, setBusy] = useState(null);               // 'pan' | 'cvv' | 'all' while fetching
   const [error, setError] = useState('');
   const st = CARD_STATUS(r.stage);
   const c = r.card || {};
   const active = r.stage === 'active';
   const amex = r.product?.network === 'amex';
+  const anyShown = shown.pan || shown.cvv;
+  const allShown = shown.pan && shown.cvv;
 
   useEffect(() => setR(initial), [initial]);
+  const hideAll = () => { setShown({ pan: false, cvv: false }); setSecret(null); };
   // Hide the full number and CVV again after a minute.
   useEffect(() => {
-    if (!secret) return undefined;
-    const t = setTimeout(() => setSecret(null), 60000);
+    if (!anyShown) return undefined;
+    const t = setTimeout(hideAll, 60000);
     return () => clearTimeout(t);
-  }, [secret]);
-  useEffect(() => { if (!active) setSecret(null); }, [active]);
+  }, [anyShown]);
+  useEffect(() => { if (!active) hideAll(); }, [active]);
 
-  const toggle = async () => {
-    if (secret) return setSecret(null);
-    setError('');
-    setBusy(true);
-    try {
-      setSecret(await cardRequestsApi.details(r._id));
-    } catch (err) {
-      const text = apiError(err);
-      setError(text);
-      toast.error(text);
-    } finally {
-      setBusy(false);
+  /** Show or hide one field ('pan' | 'cvv'), or both ('all'). Fetches the details the first time. */
+  const reveal = async (which) => {
+    const fields = which === 'all' ? ['pan', 'cvv'] : [which];
+    const show = which === 'all' ? !allShown : !shown[which];
+    if (!show) {
+      const next = { ...shown };
+      fields.forEach((f) => { next[f] = false; });
+      if (!next.pan && !next.cvv) return hideAll();
+      return setShown(next);
     }
+    setError('');
+    if (!secret) {
+      setBusy(which);
+      try {
+        setSecret(await cardRequestsApi.details(r._id));
+      } catch (err) {
+        const text = apiError(err);
+        setError(text);
+        toast.error(text);
+        return undefined;
+      } finally {
+        setBusy(null);
+      }
+    }
+    setShown((s) => ({ ...s, ...Object.fromEntries(fields.map((f) => [f, true])) }));
+    return undefined;
   };
+  const canReveal = active && c.issued;
+  const panShown = shown.pan && secret;
+  const cvvShown = shown.cvv && secret;
 
   return (
     <Modal open title={r.product?.name || 'Your card'} onClose={onClose}>
       <div className="space-y-4">
         <CardArt face product={r.product} holder={c.holderName || r.holder?.fullName} last4={c.last4} expiry={c.expiry}
-          number={secret?.panFormatted} dim={!active} />
+          number={panShown ? secret.panFormatted : undefined} dim={!active} />
         <div className="flex items-start justify-between gap-3">
           <p className="text-xs text-neutral-400">{st.text}{r.statusNote && ['frozen', 'terminated'].includes(r.stage) ? ` ${r.statusNote}` : ''}</p>
           <Badge tone={st.tone}>{st.label}</Badge>
@@ -256,12 +285,14 @@ function CardModal({ r: initial, onClose, onChanged }) {
 
         {c.issued ? (
           <div className="rounded-2xl bg-neutral-900/70 border border-neutral-800 px-4 py-1">
-            <DetailRow label="Card number" mono value={secret ? secret.panFormatted : c.maskedNumber} copy={secret?.pan} />
+            <DetailRow label="Card number" mono value={panShown ? secret.panFormatted : c.maskedNumber} copy={panShown ? secret.pan : undefined}
+              reveal={canReveal ? { shown: !!panShown, busy: busy === 'pan', onToggle: () => reveal('pan') } : undefined} />
             <div className="grid grid-cols-2 gap-x-4">
-              <DetailRow label="Expiry" mono value={c.expiry} copy={secret ? c.expiry : undefined} />
-              <DetailRow label="CVV" mono value={secret ? secret.cvv : amex ? '••••' : '•••'} copy={secret?.cvv} />
+              <DetailRow label="Expiry" mono value={c.expiry} copy={canReveal ? c.expiry : undefined} />
+              <DetailRow label="CVV" mono value={cvvShown ? secret.cvv : amex ? '••••' : '•••'} copy={cvvShown ? secret.cvv : undefined}
+                reveal={canReveal ? { shown: !!cvvShown, busy: busy === 'cvv', onToggle: () => reveal('cvv') } : undefined} />
             </div>
-            <DetailRow label="Card holder" value={c.holderName} copy={secret ? c.holderName : undefined} />
+            <DetailRow label="Card holder" value={c.holderName} copy={canReveal ? c.holderName : undefined} />
             <div className="grid grid-cols-2 gap-x-4">
               <DetailRow label="Network" value={NETWORK[r.product?.network] || r.product?.network || '—'} />
               <DetailRow label="Type" value={r.product?.type === 'physical' ? 'Physical' : 'Virtual'} />
@@ -275,11 +306,11 @@ function CardModal({ r: initial, onClose, onChanged }) {
 
         {active && c.issued && (
           <>
-            <Button variant={secret ? 'secondary' : 'primary'} className="w-full" busy={busy} onClick={toggle}>
-              {secret ? <><EyeOff className="w-3.5 h-3.5" />Hide details</> : <><Eye className="w-3.5 h-3.5" />Show details</>}
+            <Button variant={allShown ? 'secondary' : 'primary'} className="w-full" busy={busy === 'all'} disabled={!!busy} onClick={() => reveal('all')}>
+              {allShown ? <><EyeOff className="w-3.5 h-3.5" />Hide details</> : <><Eye className="w-3.5 h-3.5" />Show details</>}
             </Button>
             {error && <p className="text-xs text-red-400 -mt-2">{error}</p>}
-            {secret && <p className="text-[10px] text-neutral-500 -mt-2 text-center">Details hide again after 60 seconds. Don't share them with anyone.</p>}
+            {anyShown && <p className="text-[10px] text-neutral-500 -mt-2 text-center">Details hide again after 60 seconds. Don't share them with anyone.</p>}
             <PinPanel r={r} onChanged={(next) => { if (next?._id) setR(next); onChanged(); }} />
           </>
         )}
