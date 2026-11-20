@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Gem, TrendingUp, Bot, Users, Cpu, PieChart, Building2, Layers,
-  ArrowDownToLine, ArrowUpFromLine, History, Snowflake, CreditCard, Wallet,
+  ArrowDownToLine, ArrowUpFromLine, History, Snowflake, CreditCard, Wallet, Trophy,
   User, Crown, Signal, Bell, LifeBuoy, Gift, LogOut, Sparkles,
 } from "lucide-react";
 import logo from "../../assets/Group.svg";
@@ -34,6 +34,7 @@ const GROUPS = [
     { to: "/transactionhistory", label: "Transactions", icon: History },
     { to: "/cold-storage", label: "Cold storage", icon: Snowflake },
     { to: "/cards", label: "Cards", icon: CreditCard },
+    { to: "/rewards", label: "Rewards", icon: Trophy },
     { to: "/wallets", label: "Connect wallet", icon: Wallet },
   ] },
   { title: "Account", items: [

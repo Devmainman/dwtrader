@@ -74,6 +74,22 @@ export function VerifiedTick({ badge, size = 16 }) {
 }
 
 /** Username with its verification tick (unverified traders simply have no tick). */
+/** Live status from the server: trading (open trades), online (watching the market), offline. */
+export function StatusDot({ trader, withLabel = true }) {
+  const st = trader?.status || 'offline';
+  const c = st === 'trading' ? 'bg-emerald-400' : st === 'online' ? 'bg-blue-400' : 'bg-neutral-600';
+  const label = st === 'trading' ? 'Trading now' : st === 'online' ? 'Online' : 'Offline';
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[11px] text-neutral-400">
+      <span className="relative flex w-2 h-2">
+        {st !== 'offline' && <span className={`absolute inline-flex w-full h-full rounded-full ${c} opacity-60 animate-ping`} />}
+        <span className={`relative inline-flex w-2 h-2 rounded-full ${c}`} />
+      </span>
+      {withLabel && label}
+    </span>
+  );
+}
+
 export const TraderName = ({ trader }) => (
   <span className="inline-flex items-center gap-1.5 font-semibold min-w-0">
     <span className="truncate">{trader.username}</span>

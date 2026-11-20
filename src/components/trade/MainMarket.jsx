@@ -119,7 +119,7 @@ export default function MainMarket() {
       for (let i = 0; i < PAIRS.length; i += batchSize) {
         const batch = PAIRS.slice(i, i + batchSize);
         const pricePromises = batch.map(pair =>
-          fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${pair.binanceSymbol}`)
+          fetch(`https://data-api.binance.vision/api/v3/ticker/24hr?symbol=${pair.binanceSymbol}`)
             .then(res => res.json())
             .then(data => ({
               pair: pair.symbol,

@@ -49,7 +49,7 @@ function TradingChart() {
     let alive = true;
     setStats(null);
     const load = () =>
-      fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${coin}USDT`)
+      fetch(`https://data-api.binance.vision/api/v3/ticker/24hr?symbol=${coin}USDT`)
         .then((r) => r.json())
         .then((d) => {
           if (!alive || !d?.lastPrice) return;

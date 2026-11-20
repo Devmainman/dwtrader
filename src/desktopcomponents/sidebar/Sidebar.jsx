@@ -21,6 +21,7 @@ import {
   Layers,
   Snowflake,
   CreditCard,
+  Trophy,
   Wallet, Gem } from "lucide-react";
 
 import dashboard from "../../assets/dashboard.svg";
@@ -236,6 +237,7 @@ function Sidebar() {
             { to: "/staking", label: "Staking", Icon: Layers },
             { to: "/cold-storage", label: "Cold Storage", Icon: Snowflake },
             { to: "/cards", label: "Cards", Icon: CreditCard },
+            { to: "/rewards", label: "Rewards", Icon: Trophy },
             { to: "/wallets", label: "Connect Wallet", Icon: Wallet },
           ].map(({ to, label, Icon }) => (
             <li key={`solo-${to}`}>

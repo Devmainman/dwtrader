@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowDownToLine, ArrowUpFromLine, CandlestickChart, Bot, Copy, Coins, Building2,
-  LineChart, Cpu, CreditCard, Lock, Wallet, X, PieChart
+  LineChart, Cpu, CreditCard, Lock, Wallet, X, PieChart, Trophy
 } from "lucide-react";
 import "./Navbar.css";
 
@@ -33,6 +33,7 @@ const ACTIONS = [
   { to: "/real-estate", label: "Real estate", icon: Building2 },
   { to: "/mining", label: "Mining", icon: Cpu },
   { to: "/cards", label: "Cards", icon: CreditCard },
+  { to: "/rewards", label: "Rewards", icon: Trophy },
   { to: "/wallets", label: "Wallets", icon: Wallet },
   { to: "/cold-storage", label: "Vault", icon: Lock }
 ];

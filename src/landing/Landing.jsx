@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import logo from '../assets/Group.svg';
 import { API_BASE_URL } from '../api/config';
+import { HelpCategoryCard } from './Help';
 import './landing.css';
 
 const IMG = (name) => `/landing/${name}.webp`;
@@ -45,12 +46,6 @@ const SECURITY = [
   { icon: Bell, title: 'Every move, notified', text: 'Each deposit, withdrawal, trade and payout is reported to you.' },
 ];
 
-const FAQ = [
-  ['Who can open an account?', 'Anyone of legal age in a supported country. Sign up with your email, choose your currency, then complete the identity check before your first withdrawal.'],
-  ['What is copy trading?', 'You choose a trader, set an amount, and their positions are mirrored in your account. You can stop copying at any time.'],
-  ['Do you ask for my wallet seed phrase?', 'Never. Wallets are connected by signing a message. Anyone asking for your seed phrase or private key is not us.'],
-  ['Can I lose money?', 'Yes. Prices go down as well as up, and past results do not guarantee future returns. Only invest what you can afford to lose.'],
-];
 
 const TICKER = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX', 'LINK', 'DOT'];
 const CARD_COINS = [['BTC', 'Bitcoin'], ['ETH', 'Ethereum'], ['SOL', 'Solana'], ['BNB', 'BNB'], ['XRP', 'XRP']];
@@ -65,7 +60,7 @@ function useMarket() {
     const load = async () => {
       try {
         const symbols = encodeURIComponent(JSON.stringify(TICKER.map((c) => `${c}USDT`)));
-        const data = await (await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbols=${symbols}`)).json();
+        const data = await (await fetch(`https://data-api.binance.vision/api/v3/ticker/24hr?symbols=${symbols}`)).json();
         if (alive && Array.isArray(data)) {
           setRows(Object.fromEntries(data.map((d) => [d.symbol.replace('USDT', ''), { price: Number(d.lastPrice), change: Number(d.priceChangePercent) }])));
         }
@@ -75,7 +70,7 @@ function useMarket() {
       const out = {};
       await Promise.all(CARD_COINS.map(async ([c]) => {
         try {
-          const k = await (await fetch(`https://api.binance.com/api/v3/klines?symbol=${c}USDT&interval=1h&limit=24`)).json();
+          const k = await (await fetch(`https://data-api.binance.vision/api/v3/klines?symbol=${c}USDT&interval=1h&limit=24`)).json();
           if (Array.isArray(k)) out[c] = k.map((r) => Number(r[4]));
         } catch { /* no line */ }
       }));
@@ -183,7 +178,8 @@ export default function Landing() {
   const [solid, setSolid] = useState(false);
   const [menu, setMenu] = useState(false);
   const [mega, setMega] = useState(false);
-  const [faq, setFaq] = useState(0);
+  const [help, setHelp] = useState([]);
+  useEffect(() => { fetch(`${API_BASE_URL}/public/faq/categories`).then((r) => r.json()).then((j) => setHelp(Array.isArray(j.data) ? j.data : [])).catch(() => {}); }, []);
   const [shot, setShot] = useState({ i: 0, prev: null, n: 0 });
   const [gl, setGl] = useState(true);
   const { rows, lines } = useMarket();
@@ -337,7 +333,7 @@ export default function Landing() {
             <a href="#app" onClick={go('app')} className="ld-navlink">The app</a>
             <a href="#security" onClick={go('security')} className="ld-navlink">Security</a>
             {showPlans && <a href="#plans" onClick={go('plans')} className="ld-navlink">Plans</a>}
-            <a href="#faq" onClick={go('faq')} className="ld-navlink">FAQ</a>
+            {help.length ? <a href="#faq" onClick={go('faq')} className="ld-navlink">Help Center</a> : <Link to="/help" className="ld-navlink">Help Center</Link>}
             <Link to="/blog" className="ld-navlink">Blog</Link>
           </nav>
           <div className="flex items-center gap-2">
@@ -353,10 +349,11 @@ export default function Landing() {
       {/* mobile menu */}
       <div className={`ld-sheet ${menu ? 'is-open' : ''}`} aria-hidden={!menu}>
         <div className="px-6 pt-32 pb-10 h-full overflow-y-auto flex flex-col">
-          {[['Markets', 'markets'], ['The app', 'app'], ['Security', 'security'], ...(showPlans ? [['Plans', 'plans']] : []), ['FAQ', 'faq']].map(([label, id], i) => (
+          {[['Markets', 'markets'], ['The app', 'app'], ['Security', 'security'], ...(showPlans ? [['Plans', 'plans']] : []), ...(help.length ? [['Help Center', 'faq']] : [])].map(([label, id], i) => (
             <a key={id} href={`#${id}`} onClick={go(id)} className="ld-sheet-link" style={{ transitionDelay: menu ? `${80 + i * 50}ms` : '0ms' }}>{label}<ArrowUpRight className="w-5 h-5 text-neutral-500" /></a>
           ))}
           <Link to="/blog" className="ld-sheet-link">Blog<ArrowUpRight className="w-5 h-5 text-neutral-500" /></Link>
+          {!help.length && <Link to="/help" className="ld-sheet-link">Help Center<ArrowUpRight className="w-5 h-5 text-neutral-500" /></Link>}
           <p className="ld-label mt-10 mb-4">Products</p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-[14px] text-neutral-300">
             {PRODUCTS.map((p) => <Link key={p.title} to="/signup">{p.title}</Link>)}
@@ -514,22 +511,23 @@ export default function Landing() {
           </section>
         )}
 
-        {/* FAQ */}
-        <section id="faq" className="relative px-5 md:px-8 py-20 md:py-28">
-          <div className="max-w-[860px] mx-auto">
-            <Split className="ld-h2 mb-8 md:mb-10 text-center" text="Good to *know." />
-            <div className="ld-glass rounded-[26px] px-5 md:px-8 py-2">
-              {FAQ.map(([q, a], i) => (
-                <div key={q} className={`ld-faq ${faq === i ? 'is-open' : ''}`}>
-                  <button type="button" onClick={() => setFaq(faq === i ? -1 : i)} aria-expanded={faq === i}>
-                    <span>{q}</span><Plus className="w-4 h-4 shrink-0" />
-                  </button>
-                  <div className="ld-faq-body"><div><p>{a}</p></div></div>
+        {/* Help Center: FAQ categories from the admin */}
+        {help.length > 0 && (
+          <section id="faq" className="relative px-5 md:px-8 py-20 md:py-28">
+            <div className="max-w-[1320px] mx-auto">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                <div>
+                  <p className="ld-label">Help Center</p>
+                  <Split className="ld-h2 mt-3" text="Good to *know." />
                 </div>
-              ))}
+                <Link to="/help" className="ld-btn ld-btn-glass shrink-0">Visit the Help Center<ArrowUpRight className="w-4 h-4" /></Link>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {help.slice(0, 6).map((c, i) => <HelpCategoryCard key={c.id} c={c} i={i} />)}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* closing call */}
         <section className="relative px-5 md:px-8 pt-6 pb-20 md:pb-28">
@@ -556,7 +554,7 @@ export default function Landing() {
             <a href="#app" onClick={go('app')} className="hover:text-white">The app</a>
             <a href="#security" onClick={go('security')} className="hover:text-white">Security</a>
             {showPlans && <a href="#plans" onClick={go('plans')} className="hover:text-white">Plans</a>}
-            <a href="#faq" onClick={go('faq')} className="hover:text-white">FAQ</a>
+            <Link to="/help" className="hover:text-white">Help Center</Link>
             <Link to="/blog" className="hover:text-white">Blog</Link>
             <Link to="/auth" className="hover:text-white">Log in</Link>
           </nav>

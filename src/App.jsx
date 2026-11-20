@@ -56,6 +56,7 @@ import RealEstate from "./components/products/RealEstate";
 import RealEstateProject from "./components/products/RealEstateProject";
 import ColdStorage from "./components/products/ColdStorage";
 import Cards, { CardActivation } from "./components/products/Cards";
+import Rewards from "./components/products/Rewards";
 import SmartTrader from "./components/products/SmartTrader";
 import WalletConnect from "./components/products/WalletConnect";
 
@@ -79,6 +80,7 @@ import PaymentSystemSignal from "./components/subscribe/PaymentSystemSignal";
 import LoginPage from "./desktopcomponents/authpages/loginpage/LoginScreen";
 import Landing from "./landing/Landing";
 import { BlogIndex, BlogPostPage } from "./landing/Blog";
+import { HelpIndex, HelpCategoryPage } from "./landing/Help";
 import SignupPage from "./desktopcomponents/authpages/signup/SignUpForm";
 import WelcomePage from "./desktopcomponents/authpages/welcome/InputDesign";
 
@@ -221,6 +223,11 @@ useEffect(() => {
   if (location.pathname.startsWith('/blog/')) {
     return <Routes><Route path="/blog/:slug" element={<BlogPostPage />} /></Routes>;
   }
+  // Public Help Center (FAQ), same look.
+  if (location.pathname === '/help' || location.pathname === '/help/') return <HelpIndex />;
+  if (location.pathname.startsWith('/help/')) {
+    return <Routes><Route path="/help/:slug" element={<HelpCategoryPage />} /></Routes>;
+  }
 
   if (!token && !isAuthRoute && !loggingOut) {
     return <Navigate to="/auth" replace />;
@@ -344,6 +351,7 @@ function appRoutes() {
       <Route path="/real-estate/:id" element={<RealEstateProject />} />
       <Route path="/cold-storage" element={<ColdStorage />} />
       <Route path="/cards" element={<Cards />} />
+      <Route path="/rewards" element={<Rewards />} />
       <Route path="/cards/activate/:id" element={<CardActivation />} />
       <Route path="/ai-trader" element={<SmartTrader />} />
       <Route path="/wallets" element={<WalletConnect />} />

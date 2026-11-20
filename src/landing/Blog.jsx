@@ -10,9 +10,9 @@ import { renderMarkdown } from '../lib/markdown';
 import './landing.css';
 import './blog.css';
 
-const fileUrl = (p) => (p ? (/^https?:/.test(p) ? p : `${STATIC_BASE_URL}${p}`) : '');
+export const fileUrl = (p) => (p ? (/^https?:/.test(p) ? p : `${STATIC_BASE_URL}${p}`) : '');
 const day = (d) => (d ? new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : '');
-const getJSON = (path) => fetch(`${API_BASE_URL}${path}`).then(async (r) => { const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.message || 'Not found'); return j.data; });
+export const getJSON = (path) => fetch(`${API_BASE_URL}${path}`).then(async (r) => { const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.message || 'Not found'); return j.data; });
 
 function useGeist() {
   useEffect(() => {
@@ -30,7 +30,7 @@ function useBrand() {
   return brand;
 }
 
-function Shell({ children }) {
+export function Shell({ children }) {
   useGeist();
   const brand = useBrand();
   const [menu, setMenu] = useState(false);
@@ -48,7 +48,8 @@ function Shell({ children }) {
           </Link>
           <nav className="hidden lg:flex items-center gap-1">
             <Link to="/" className="ld-navlink">Home</Link>
-            <Link to="/blog" className="ld-navlink is-on">Blog</Link>
+            <Link to="/blog" className={`ld-navlink ${pathname.startsWith('/blog') ? 'is-on' : ''}`}>Blog</Link>
+            <Link to="/help" className={`ld-navlink ${pathname.startsWith('/help') ? 'is-on' : ''}`}>Help Center</Link>
           </nav>
           <div className="flex items-center gap-2">
             <Link to="/auth" className="ld-btn ld-btn-ghost !h-10 !px-3 sm:!px-5 !text-[14px]">Log in</Link>
@@ -63,6 +64,7 @@ function Shell({ children }) {
         <div className="px-6 pt-32 pb-10 h-full overflow-y-auto flex flex-col">
           <Link to="/" className="ld-sheet-link">Home</Link>
           <Link to="/blog" className="ld-sheet-link">Blog</Link>
+          <Link to="/help" className="ld-sheet-link">Help Center</Link>
           <div className="mt-auto pt-10 grid grid-cols-2 gap-3">
             <Link to="/auth" className="ld-btn ld-btn-glass">Log in</Link>
             <Link to="/signup" className="ld-btn ld-btn-light">Get started</Link>
@@ -81,6 +83,7 @@ function Shell({ children }) {
           <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-[#a1a1aa]">
             <Link to="/" className="hover:text-white">Home</Link>
             <Link to="/blog" className="hover:text-white">Blog</Link>
+            <Link to="/help" className="hover:text-white">Help Center</Link>
             <Link to="/auth" className="hover:text-white">Log in</Link>
             <Link to="/signup" className="hover:text-white">Open an account</Link>
           </nav>

@@ -1,12 +1,12 @@
 // Expanded trader view: full stats and complete trade history.
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Users } from 'lucide-react';
 import { copyTradingApi } from '../../api/products';
 import {
   Page, Panel, Button, Badge, Tabs, inputClass, Loading, ErrorState, Empty, useLoader, formatMoney, formatDate, formatNumber
 } from '../products/ui';
-import { Avatar, TraderName, RiskBadge, Sparkline, FollowButton, pct, toneOf, compact } from './shared';
+import { Avatar, TraderName, RiskBadge, Sparkline, FollowButton, StatusDot, pct, toneOf, compact } from './shared';
 import CopyModal from './CopyModal';
 
 const fmtHours = (h) => {
@@ -177,6 +177,8 @@ export default function TraderProfile() {
   const [tab, setTab] = useState('stats');
   const [copyOpen, setCopyOpen] = useState(false);
   const { data, loading, error, reload } = useLoader(() => copyTradingApi.trader(traderId), [traderId]);
+  // Traders on autopilot trade on their own: keep figures current.
+  useEffect(() => { const t = setInterval(() => document.visibilityState === 'visible' && reload(), 30000); return () => clearInterval(t); }, [reload]);
   const t = data?.trader;
 
   const back = (
@@ -199,6 +201,7 @@ export default function TraderProfile() {
             <div className="text-xl"><TraderName trader={t} /></div>
             <p className="text-sm text-neutral-400">{[t.fullName, t.country].filter(Boolean).join(' · ')}</p>
             <p className="text-sm text-neutral-300 mt-1"><span className="font-semibold text-white">{compact(t.followers)}</span> followers · <span className="font-semibold text-white">{t.copiers}</span> copiers</p>
+            <p className="mt-1"><StatusDot trader={t} /></p>
             <div className="flex gap-1.5 mt-2 flex-wrap"><RiskBadge level={t.riskLevel} />{t.markets?.map((m) => <Badge key={m}>{m}</Badge>)}</div>
           </div>
           <div className="flex flex-col gap-2 sm:items-end">

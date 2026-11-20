@@ -171,7 +171,7 @@ export default function MarketSection() {
       const cryptoPairs = currentPairs.filter(p => p.type === 'crypto');
       
       const pricePromises = cryptoPairs.map(pair =>
-        fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${pair.binanceSymbol}`)
+        fetch(`https://data-api.binance.vision/api/v3/ticker/24hr?symbol=${pair.binanceSymbol}`)
           .then(res => res.json())
           .then(data => ({
             pair: pair.symbol,

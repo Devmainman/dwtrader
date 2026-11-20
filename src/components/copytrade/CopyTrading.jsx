@@ -7,7 +7,7 @@ import {
   Page, Panel, Button, Badge, Tabs, inputClass, Loading, ErrorState, Empty,
   useLoader, formatMoney
 } from '../products/ui';
-import { Avatar, TraderName, RiskBadge, Sparkline, FollowButton, pct, toneOf, compact } from './shared';
+import { Avatar, TraderName, RiskBadge, Sparkline, FollowButton, StatusDot, pct, toneOf, compact } from './shared';
 import CopyingPanel from './CopyingPanel';
 import CopyModal from './CopyModal';
 
@@ -29,7 +29,7 @@ function TraderCard({ t, currency, onOpen, onCopy, onManage, onFollowChange }) {
           <Avatar src={t.avatar} name={t.username} size={52} badge={t.badge} />
           <div className="min-w-0 flex-1">
             <TraderName trader={t} />
-            <p className="text-xs text-neutral-400 truncate">{compact(t.followers)} followers · {t.copiers} copiers</p>
+            <p className="text-xs text-neutral-400 truncate flex items-center gap-2"><StatusDot trader={t} withLabel={false} />{compact(t.followers)} followers · {t.copiers} copiers</p>
           </div>
           <RiskBadge level={t.riskLevel} />
         </div>
@@ -72,6 +72,8 @@ export default function CopyTrading({ initialTab = 'experts' }) {
   const [sort, setSort] = useState('roi');
   const [risk, setRisk] = useState('');
   const { data, loading, error, reload } = useLoader(() => copyTradingApi.traders({ sort, risk: risk || undefined }), [sort, risk]);
+  // Traders on autopilot trade on their own: keep figures current.
+  useEffect(() => { const t = setInterval(() => document.visibilityState === 'visible' && reload(), 30000); return () => clearInterval(t); }, [reload]);
   const copies = useLoader(() => copyTradingApi.copies(), [tab]);
   const [copyTarget, setCopyTarget] = useState(null);
 

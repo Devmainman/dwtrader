@@ -127,6 +127,13 @@ export const miningApi = {
   history: () => client.get('/mining/history', { params: { limit: 20 } }).then((r) => r.data.history)
 };
 
+/** Trader Rewards: milestones, progress and claims. */
+export const rewardsApi = {
+  get: () => unwrap(client.get('/rewards')),
+  claim: (milestoneId) => unwrap(client.post(`/rewards/milestones/${milestoneId}/claim`)),
+  cancel: (claimId) => unwrap(client.post(`/rewards/claims/${claimId}/cancel`))
+};
+
 /** Cards from the admin's Card Settings, and the user's card requests (purchase + activation payments). */
 export const cardRequestsApi = {
   catalog: () => unwrap(client.get('/card-requests/catalog')),

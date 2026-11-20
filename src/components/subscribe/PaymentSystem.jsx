@@ -38,6 +38,25 @@ export default function PaymentSystem() {
     );
   }
 
+  if (mode === 'reward') {
+    const id = params.get('rewardClaim');
+    return (
+      <PaymentFlow
+        purpose="Reward claim fee"
+        heading="Pay your reward claim fee"
+        subheading="Your reward invoice is reviewed once this payment is received."
+        amount={amount}
+        instructions={{ title: "Let's claim your reward", intro: 'To pay the claim fee, please follow these simple steps:' }}
+        successRedirect="/rewards"
+        onSubmit={async ({ method, file }) => {
+          if (!id) throw new Error('Missing reward claim');
+          await postProof(`/rewards/claims/${id}/pay`, token, { paymentMethod: method.methodId, paymentProof: file });
+          return 'Fee paid. Your reward invoice is being reviewed and the reward is credited once approved.';
+        }}
+      />
+    );
+  }
+
   if (mode === 'bot') {
     const id = params.get('botSubscription');
     return (

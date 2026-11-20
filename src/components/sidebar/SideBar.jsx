@@ -20,6 +20,7 @@ import {
   Layers,
   Snowflake,
   CreditCard,
+  Trophy,
   Wallet,
   Gem,
   Sparkles
@@ -118,6 +119,7 @@ function SideBar() {
     // Wealth protection & spending
     { name: "Cold Storage", path: "/cold-storage", LucideIcon: Snowflake },
     { name: "Cards", path: "/cards", LucideIcon: CreditCard },
+    { name: "Rewards", path: "/rewards", LucideIcon: Trophy },
     { name: "Connect Wallet", path: "/wallets", LucideIcon: Wallet },
 
     // Financial Section

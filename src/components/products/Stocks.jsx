@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { LineChart, Search, TrendingUp, TrendingDown } from 'lucide-react';
 import { stocksApi } from '../../api/products';
 import {
@@ -79,6 +79,15 @@ export function StocksPanel({ onChange }) {
   const portfolio = useLoader(() => stocksApi.portfolio(), []);
   const orders = useLoader(() => (tab === 'orders' ? stocksApi.orders({ limit: 50 }) : Promise.resolve(null)), [tab]);
   const [trade, setTrade] = useState(null); // { stock, side }
+  // Prices follow the real market: refresh every 30 seconds while the page is open (not while a trade is being entered).
+  useEffect(() => {
+    const t = setInterval(() => { if (document.visibilityState === 'visible' && !trade) { market.reload(); portfolio.reload(); } }, 30000);
+    return () => clearInterval(t);
+  }, [market.reload, portfolio.reload, trade]);
+  const lastUpdate = useMemo(() => {
+    const ts = (market.data?.stocks || []).map((x) => (x.priceSource !== 'manual' && x.lastPriceAt ? new Date(x.lastPriceAt).getTime() : 0)).filter(Boolean);
+    return ts.length ? new Date(Math.max(...ts)) : null;
+  }, [market.data]);
 
   const holdingsBySymbol = useMemo(
     () => Object.fromEntries((portfolio.data?.positions || []).map((p) => [p.symbol, p.shares])),
@@ -106,6 +115,12 @@ export function StocksPanel({ onChange }) {
 
       {tab === 'market' && (
         <Panel>
+          {lastUpdate && (
+            <p className="text-[11px] text-neutral-500 mb-3 flex items-center gap-1.5">
+              <span className="relative flex w-2 h-2"><span className="absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-60 animate-ping" /><span className="relative inline-flex w-2 h-2 rounded-full bg-emerald-400" /></span>
+              Live market prices · updated {lastUpdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </p>
+          )}
           <div className="flex flex-col sm:flex-row gap-2 mb-4">
             <div className="relative flex-1">
               <Search className="w-4 h-4 absolute left-3 top-3 text-neutral-500" />
