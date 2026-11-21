@@ -31,16 +31,6 @@ export const coldStorageApi = {
   close: (id) => unwrap(client.delete(`/cold-storage/${id}`))
 };
 
-export const cardsApi = {
-  list: () => unwrap(client.get('/cards')),
-  request: (body) => unwrap(client.post('/cards', body)),
-  fund: (id, amount) => unwrap(client.post(`/cards/${id}/fund`, { amount })),
-  unload: (id, amount) => unwrap(client.post(`/cards/${id}/unload`, { amount })),
-  freeze: (id, frozen) => unwrap(client.patch(`/cards/${id}/freeze`, { frozen })),
-  setLimit: (id, spendingLimit) => unwrap(client.patch(`/cards/${id}/limit`, { spendingLimit })),
-  cancel: (id) => unwrap(client.delete(`/cards/${id}`))
-};
-
 export const walletsApi = {
   list: () => unwrap(client.get('/wallets')),
   nonce: () => unwrap(client.post('/wallets/nonce')),
