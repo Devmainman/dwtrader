@@ -4,7 +4,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ArrowDownToLine, ArrowUpFromLine, ArrowLeftRight, CandlestickChart, MoreHorizontal, Eye, EyeOff, ChevronDown,
+  Eye, EyeOff, ChevronDown,
   ChevronRight, ArrowDownLeft, ArrowUpRight, Info
 } from 'lucide-react';
 import { useWallets, useHidden, money, currencySymbol, qty, price, CoinIcon, CurrencySheet } from '../wallet/shared';
@@ -12,6 +12,7 @@ import { AssetSheet } from '../wallet/AssetList';
 import QuickActionsSheet from './QuickActionsSheet';
 import { cryptoApi } from '../../api/products';
 import { useUserAuth } from '../../context/UserAuthContext';
+import Duo from '../icons/Duo';
 
 /* ================================ data hooks ================================ */
 
@@ -150,7 +151,7 @@ function SlideTabs({ items, value, onChange, variant = 'pill' }) {
   );
 }
 
-const buzz = () => { try { if (window.matchMedia('(pointer: coarse)').matches) navigator.vibrate?.(4); } catch { /* */ } };
+const buzz = () => { try { if (navigator.userActivation?.hasBeenActive && window.matchMedia('(pointer: coarse)').matches) navigator.vibrate?.(4); } catch { /* */ } };
 
 /* ================================ small pieces ================================ */
 
@@ -387,18 +388,18 @@ export function ActionBar() {
   const { data } = useWallets();
   const [more, setMore] = useState(false);
   const items = [
-    { label: 'Deposit', icon: ArrowDownToLine, to: '/deposite', primary: true },
-    ...(data?.convertEnabled !== false ? [{ label: 'Convert', icon: ArrowLeftRight, to: '/convert' }] : []),
-    { label: 'Withdraw', icon: ArrowUpFromLine, to: '/withdraw' },
-    { label: 'Trade', icon: CandlestickChart, to: '/trademain' },
-    { label: 'More', icon: MoreHorizontal, onClick: () => setMore(true) }
+    { label: 'Deposit', icon: 'deposit', to: '/deposite', primary: true },
+    ...(data?.convertEnabled !== false ? [{ label: 'Convert', icon: 'convert', to: '/convert' }] : []),
+    { label: 'Withdraw', icon: 'withdraw', to: '/withdraw' },
+    { label: 'Trade', icon: 'candles', to: '/trademain' },
+    { label: 'More', icon: 'more', onClick: () => setMore(true) }
   ];
   return (
     <nav className="dash-panel p-1.5 grid" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }} aria-label="Quick actions">
       {items.map((a) => (
         <button key={a.label} type="button" onClick={a.onClick || (() => navigate(a.to))}
-          className={`h-[62px] rounded-[18px] flex flex-col items-center justify-center gap-1 transition active:scale-[.96] ${a.primary ? 'bg-blue-600 text-white hover:bg-blue-500' : 'text-zinc-200 hover:bg-white/[.05]'}`}>
-          <a.icon className="w-[18px] h-[18px]" strokeWidth={1.9} />
+          className={`action-btn group h-[64px] rounded-[18px] flex flex-col items-center justify-center gap-1 transition active:scale-[.94] ${a.primary ? 'bg-blue-600 text-white hover:bg-blue-500 shadow-[0_10px_22px_-12px_var(--color-blue-600)]' : 'text-zinc-200 hover:bg-white/[.05]'}`}>
+          <Duo name={a.icon} size={22} soft={a.primary ? 0.28 : undefined} className="dash-act-icon" />
           <span className={`text-[11px] font-medium ${a.primary ? 'text-white' : 'text-neutral-400'}`}>{a.label}</span>
         </button>
       ))}

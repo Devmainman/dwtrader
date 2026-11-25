@@ -31,20 +31,20 @@ function SelectField({ label, value, options = [], onChange }) {
   };
 
   return (
-    <div className="flex flex-col gap-2.5 relative">
-      <label className="text-xs text-neutral-500">{label}</label>
+    <div className="flex flex-col gap-1.5 relative">
+      <label className="text-[11px] font-medium text-neutral-400">{label}</label>
       <div 
-        className="flex justify-between items-center p-2.5 w-full h-8 rounded-lg border bg-neutral-900 border-neutral-600 cursor-pointer"
+        className="flex justify-between items-center px-3.5 w-full h-11 rounded-xl border bg-white/[.04] border-white/10 cursor-pointer hover:border-white/20 transition"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-xs text-stone-300">
+        <span className="text-[13px] text-zinc-100">
           {getSelectedLabel()}
         </span>
         <DownArrowIcon />
       </div>
       
       {isOpen && (
-        <div className="absolute top-full mt-1 w-full z-10 rounded-lg border bg-neutral-900 border-neutral-600 max-h-40 overflow-y-auto">
+        <div className="absolute top-full mt-1 w-full z-20 rounded-xl border bg-[var(--card)] border-white/10 shadow-2xl max-h-48 overflow-y-auto">
           {options.map((option, index) => {
             const displayLabel = typeof option === "string" ? option : option.label;
             const optionValue = typeof option === "string" ? option : option.value;
@@ -52,7 +52,7 @@ function SelectField({ label, value, options = [], onChange }) {
             return (
               <div
                 key={index}
-                className="p-2.5 text-xs text-stone-300 hover:bg-neutral-800 cursor-pointer"
+                className="px-3.5 py-2.5 text-[13px] text-zinc-100 hover:bg-white/[.06] cursor-pointer"
                 onClick={() => {
                   onChange(optionValue);
                   setIsOpen(false);

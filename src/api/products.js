@@ -154,6 +154,7 @@ export const cryptoApi = {
   convert: (body) => client.post('/crypto/convert', body).then((r) => r.data),
   sparklines: (symbols) => unwrap(client.get('/crypto/sparklines', { params: { symbols: symbols.join(',') } })),
   activity: (limit = 5) => unwrap(client.get('/account/transactions', { params: { limit } })),
+  activityPage: (params) => unwrap(client.get('/account/transactions', { params })),
   markets: () => unwrap(client.get('/crypto/markets')),
   history: (symbols, range) => unwrap(client.get('/crypto/history', { params: { symbols: symbols.join(','), range } }))
 };

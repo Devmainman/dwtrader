@@ -58,24 +58,24 @@ const SettingsEditChangePassword = () => {
       setPasswords({ oldPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err) {
       console.error("Password change error:", err);
-      setError(err.message || "Failed to change password");
+      setError(err?.response?.data?.message || "Could not change your password. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <section className="overflow-hidden pt-3 pb-44 mx-auto w-full rounded-3xl bg-neutral-900 max-w-[480px]">
-      <form onSubmit={handleSaveChanges} className="flex flex-col items-start px-9 py-7 w-full rounded-xl bg-[var(--card)]">
-        <h2 className="text-sm font-medium text-neutral-400">Change Password</h2>
-        <div className="mt-5 ml-4 text-xs w-full">
+    <section className="w-full max-w-[480px]">
+      <form onSubmit={handleSaveChanges} className="flex flex-col items-start w-full">
+        <h2 className="text-[13px] font-semibold tracking-[-0.01em]">Change password</h2>
+        <div className="mt-4 w-full">
           <PasswordField label="Old Password" value={passwords.oldPassword} onChange={handleChange("oldPassword")} />
           <PasswordField label="New Password" value={passwords.newPassword} onChange={handleChange("newPassword")} />
           <PasswordField label="Confirm Password" value={passwords.confirmPassword} onChange={handleChange("confirmPassword")} />
         </div>
 
-        {error && <div className="mt-4 ml-4 text-xs text-red-500">{error}</div>}
-        {success && <div className="mt-4 ml-4 text-xs text-green-500">{success}</div>}
+        {error && <div className="mt-4 text-[12px] text-red-400">{error}</div>}
+        {success && <div className="mt-4 text-[12px] text-emerald-400">{success}</div>}
         <SaveButton type="submit" disabled={isLoading}>
           {isLoading ? "Saving..." : "Save Changes"}
         </SaveButton>

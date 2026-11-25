@@ -1,326 +1,131 @@
+// Phone drawer (below 1024px). Slides in from the left with a spring, closes on the
+// backdrop, Escape, a swipe left or any navigation. Same links as the desktop sidebar.
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { X, LogOut, ChevronRight, Crown } from "lucide-react";
 import { useSidebar } from "../../context/SidebarContext";
 import { useUserAuth } from "../../context/UserAuthContext";
-
-// Import Lucide icons
-import { 
-  Cpu as MiningIcon, 
-  Users as UsersIcon, 
-  TrendingUp,
-  DollarSign,
-  BarChart3,
-  Activity,
-  Gift, // Add this
-  User, // Add for Profile
-  Bell, // Add for Notification
-  MessageSquare, // Add for Support Ticket
-  PieChart,
-  Building2,
-  Layers,
-  Snowflake,
-  CreditCard,
-  Trophy,
-  Wallet,
-  Gem,
-  Sparkles
-} from "lucide-react";
-
-import dashboard from "../../assets/dashboard.svg";
-import deposit from "../../assets/deposit.svg";
-import notification from "../../assets/notification.svg";
-import profile from "../../assets/profile.svg";
-import referrals from "../../assets/referrals.svg";
-import transaction from "../../assets/transaction.svg";
-import tradingactivities from "../../assets/tradingactivities.svg";
-import ticket from "../../assets/ticket.svg";
-import upgrade from "../../assets/upgrade.svg";
-import withdraw from "../../assets/withdraw.svg";
+import { useBalance } from "../../context/BalanceContext";
+import { NAV_GROUPS } from "../desktop/DesktopSidebar";
+import { ModeSwitch } from "../navigation/ModeToggle";
+import { formatMoney } from "../products/ui";
+import useBrand from "../../lib/useBrand";
+import logo from "../../assets/Group.svg";
 
 function SideBar() {
   const { isOpen, toggleSidebar } = useSidebar();
-  const { logout } = useUserAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const sidebarRef = useRef(null);
-  const [tradingGroupOpen, setTradingGroupOpen] = useState(true);
+  const { user, logout } = useUserAuth();
+  const balance = useBalance();
+  const { pathname } = useLocation();
+  const brand = useBrand();
+  const [mounted, setMounted] = useState(isOpen);
+  const [leaving, setLeaving] = useState(false);
+  const touch = useRef(null);
+  const panel = useRef(null);
 
-  // Close sidebar on click outside
+  // Keep the drawer on screen while it animates out.
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
-        toggleSidebar();
-      }
-    };
+    if (isOpen) { setMounted(true); setLeaving(false); return undefined; }
+    if (!mounted) return undefined;
+    setLeaving(true);
+    const t = setTimeout(() => { setMounted(false); setLeaving(false); }, 260);
+    return () => clearTimeout(t);
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, toggleSidebar]);
+  const close = () => { if (isOpen) toggleSidebar(); };
+  useEffect(() => { close(); }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKey = (e) => e.key === "Escape" && close();
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!isOpen) return null;
+  if (!mounted) return null;
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+  const isOn = (it) => pathname === it.to || pathname.startsWith(`${it.to}/`) || (it.also || []).some((p) => pathname.startsWith(p));
+  const name = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "";
+  const initials = [user?.firstName, user?.lastName].filter(Boolean).map((s) => s[0]).join("").toUpperCase() || "·";
+  let i = 0; // running index for the staggered entrance
+
+  // Swipe left to close.
+  const onTouchStart = (e) => { touch.current = { x: e.touches[0].clientX, dx: 0 }; };
+  const onTouchMove = (e) => {
+    if (!touch.current) return;
+    const dx = Math.min(0, e.touches[0].clientX - touch.current.x);
+    touch.current.dx = dx;
+    if (panel.current) panel.current.style.transform = `translateX(${dx}px)`;
+  };
+  const onTouchEnd = () => {
+    const dx = touch.current?.dx || 0;
+    touch.current = null;
+    if (panel.current) panel.current.style.transform = "";
+    if (dx < -70) close();
   };
 
-  const menuItems = [
-    { name: "Dashboard", path: "/dashboard", icon: dashboard, LucideIcon: Activity },
-    { name: "Profile", path: "/settings", icon: profile, LucideIcon: User },
-    
-    // Trading Group - Only Live Trading and Mining
-    {
-      name: "Trading",
-      isGroup: true,
-      groupId: "trading",
-      isOpen: tradingGroupOpen,
-      toggle: () => setTradingGroupOpen(!tradingGroupOpen),
-      items: [
-        { 
-          name: "Trading Activities", 
-          path: "/trade", 
-          icon: tradingactivities,
-          LucideIcon: BarChart3 
-        },
-        { 
-          name: "Live Trading", 
-          path: "/trademain", 
-          LucideIcon: TrendingUp 
-        },
-        {
-          name: "AI Smart Trader",
-          path: "/ai-trader",
-          LucideIcon: Sparkles
-        },
-        {
-          name: "Mining",
-          path: "/mining",
-          LucideIcon: MiningIcon
-        },
-      ]
-    },
-
-    // COPY TRADING - one page with "Top Experts" and "Copying" tabs
-    { name: "Copy Trading", path: "/copytrade", LucideIcon: UsersIcon, activePaths: ["/copytrade", "/copy-positions"] },
-
-    // Wealth: Investing (stocks + real estate tabs), Real Estate, Staking
-    { name: "Assets", path: "/assets", LucideIcon: Gem },
-    { name: "Investing", path: "/invest", LucideIcon: PieChart },
-    { name: "Real Estate", path: "/real-estate", LucideIcon: Building2 },
-    { name: "Staking", path: "/staking", LucideIcon: Layers },
-
-    // Wealth protection & spending
-    { name: "Cold Storage", path: "/cold-storage", LucideIcon: Snowflake },
-    { name: "Cards", path: "/cards", LucideIcon: CreditCard },
-    { name: "Rewards", path: "/rewards", LucideIcon: Trophy },
-    { name: "Connect Wallet", path: "/wallets", LucideIcon: Wallet },
-
-    // Financial Section
-    { name: "Deposit", path: "/deposite", icon: deposit, LucideIcon: DollarSign },
-    { name: "Withdraw", path: "/withdraw", icon: withdraw, LucideIcon: DollarSign },
-    { name: "Transaction History", path: "/transactionhistory", icon: transaction, LucideIcon: BarChart3 },
-    
-    // Account Section
-    { name: "Upgrade Account", path: "/accountupgrade", icon: upgrade, LucideIcon: Activity },
-    { name: "Signal Packages", path: "/signal-packages", icon: upgrade, LucideIcon: Activity },
-    
-    // Support & Community
-    { name: "Notification", path: "/notification", icon: notification, LucideIcon: Bell },
-    { name: "Support Ticket", path: "/support", icon: ticket, LucideIcon: MessageSquare },
-    { name: "Referrals", path: "/referrals", icon: referrals, LucideIcon: Gift }, // Fixed: Use Gift icon
-  ];
-
-  const LogoutIcon = () => (
-    <svg
-      className="w-5 h-5 stroke-white"
-      fill="none"
-      viewBox="0 0 24 25"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M13.4771 21.7451H8.3401C7.04824 21.8042 5.78507 21.3522 4.82389 20.4871C3.86272 19.6219 3.28082 18.4131 3.2041 17.1221V7.87814C3.28082 6.5872 3.86272 5.37838 4.82389 4.51321C5.78507 3.64804 7.04824 3.19608 8.3401 3.25514H13.4761"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M20.7951 12.5H7.44214"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeMiterlimit="10"
-        strokeLinecap="round"
-      />
-      <path
-        d="M16.083 17.6363L20.487 13.2323C20.68 13.0375 20.7882 12.7744 20.7882 12.5003C20.7882 12.2261 20.68 11.963 20.487 11.7683L16.083 7.36426"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-
-  const ChevronIcon = ({ isOpen }) => (
-    <svg
-      className={`w-4 h-4 text-stone-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-    </svg>
-  );
-
   return (
-    <>
-      <div className="fixed inset-0 bg-black/50 z-[9998] pointer-events-auto" />
-      <nav
-        ref={sidebarRef}
-        className="fixed top-0 left-0 z-[9999] px-1 pt-9 pb-3.5 bg-black/90 max-w-[258px] h-full max-h-screen overflow-y-auto transition-transform duration-300 ease-in-out
-        [&::-webkit-scrollbar]:w-[1px]
-        [&::-webkit-scrollbar-track]:bg-transparent
-        [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[var(--color-blue-700)]
-        dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
-      >
-        <div className="absolute top-2 right-2">
-          <button onClick={toggleSidebar} className="p-2 text-white hover:text-gray-300">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+    <div className="lg:hidden fixed inset-0 z-[9998]" role="dialog" aria-modal="true" aria-label="Menu">
+      <div className={`absolute inset-0 bg-black/55 backdrop-blur-[3px] ${leaving ? "drawer-fade-out" : "drawer-fade-in"}`} onClick={close} />
+      <nav ref={panel} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}
+        className={`drawer absolute top-0 left-0 h-full w-[min(84vw,320px)] flex flex-col bg-[var(--page)] border-r border-white/[.07] shadow-2xl ${leaving ? "drawer-out" : "drawer-in"}`}>
+        {/* Brand + close */}
+        <div className="flex items-center gap-2.5 px-4 h-[60px] shrink-0">
+          <img src={logo} alt="" className="w-7 h-7 brand-logo" />
+          <span className="flex-1 text-[14px] font-semibold tracking-[-0.02em] text-zinc-100 truncate">{brand || "Menu"}</span>
+          <button type="button" data-no-busy onClick={close} className="topbar-btn !w-9 !h-9" aria-label="Close menu"><X className="w-4 h-4" /></button>
         </div>
 
-        <ul className="mt-4 w-full text-[13px] font-medium tracking-normal leading-tight text-stone-300">
-          {menuItems.map((item, index) => {
-            if (item.isGroup) {
-              const isGroupActive = item.items.some(subItem => location.pathname === subItem.path);
-              
-              return (
-                <li key={index} className="mb-2">
-                  {/* Group Header */}
-                  <button
-                    onClick={item.toggle}
-                    className={`flex justify-between items-center w-full px-8 py-3 rounded-3xl transition-all ${
-                      isGroupActive ? "bg-black/30 text-white" : "hover:bg-white/10"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
-                        style={{
-                          background: "linear-gradient(80deg,var(--color-blue-700)_18.83%,var(--color-blue-500)_103.47%)",
-                        }}
-                      >
-                        {item.GroupIcon ? (
-                          <item.GroupIcon className="w-5 h-5 text-white" />
-                        ) : item.groupId === "copytrading" ? (
-                          <UsersIcon className="w-5 h-5 text-white" />
-                        ) : (
-                          <TrendingUp className="w-5 h-5 text-white" />
-                        )}
-                      </div>
-                      <span className="text-[13px] text-stone-300 font-medium">{item.name}</span>
-                    </div>
-                    <ChevronIcon isOpen={item.isOpen} />
-                  </button>
+        <div className="flex-1 overflow-y-auto overscroll-contain px-3 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {/* You */}
+          <Link to="/settings" className="drawer-item block dash-panel !rounded-[20px] p-3.5 mb-4" style={{ animationDelay: "40ms" }}>
+            <div className="flex items-center gap-3">
+              <span className="topbar-avatar !w-11 !h-11 !text-[14px]">{initials}</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-semibold text-zinc-100 truncate">{name}</p>
+                <p className="text-[11px] text-neutral-500 tabular-nums">{balance?.currency ? formatMoney(balance.balance || 0, balance.currency) : ""}</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-500" />
+            </div>
+            <div className="mt-3 flex items-center justify-between rounded-xl bg-blue-600/10 border border-blue-500/15 px-3 py-2">
+              <span className="flex items-center gap-1.5 text-[11px] font-semibold text-blue-400"><Crown className="w-3.5 h-3.5" />{user?.accountTypeName || "Basic"} plan</span>
+              <span className="text-[11px] text-neutral-400">Upgrade</span>
+            </div>
+          </Link>
 
-                  {/* Group Items */}
-                  {item.isOpen && (
-                    <div className="ml-8 pl-8 mt-1 border-l border-white/20">
-                      {item.items.map((subItem, subIndex) => {
-                        const isActive = location.pathname === subItem.path;
-                        return (
-                          <div
-                            key={subIndex}
-                            className={`flex gap-2.5 items-center px-4 mt-2 w-full rounded-3xl min-h-[45px] transition-all ${
-                              isActive ? "bg-black text-white font-semibold" : "hover:bg-white/10"
-                            }`}
-                          >
-                            <div
-                              className="flex items-center justify-center rounded-full w-[30px] h-[30px]"
-                              style={{
-                                background: isActive 
-                                  ? "linear-gradient(80deg,var(--color-blue-700)_18.83%,var(--color-blue-500)_103.47%)"
-                                  : "rgba(255,255,255,0.1)",
-                              }}
-                            >
-                              {subItem.LucideIcon ? (
-                                <subItem.LucideIcon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-stone-300'}`} />
-                              ) : subItem.icon ? (
-                                <img src={subItem.icon} alt={`${subItem.name} Icon`} className="w-4 h-4" />
-                              ) : null}
-                            </div>
-                            <Link to={subItem.path} className="w-full">
-                              <span className={isActive ? "text-white font-medium" : "text-stone-300"}>
-                                {subItem.name}
-                              </span>
-                            </Link>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </li>
-              );
-            }
+          {NAV_GROUPS.map((g, gi) => (
+            <div key={gi} className={gi ? "mt-4" : ""}>
+              {g.title && <p className="drawer-item px-3 mb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-500" style={{ animationDelay: `${60 + i++ * 18}ms` }}>{g.title}</p>}
+              <ul>
+                {g.items.map((it) => {
+                  const on = isOn(it);
+                  return (
+                    <li key={it.to} className="drawer-item" style={{ animationDelay: `${60 + i++ * 18}ms` }}>
+                      <Link to={it.to} aria-current={on ? "page" : undefined}
+                        className={`group relative flex items-center gap-3 h-11 px-3 rounded-2xl transition-colors ${on ? "bg-white/[.07] text-zinc-100" : "text-neutral-400 hover:text-zinc-100 hover:bg-white/[.04]"}`}>
+                        {on && <span className="absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full bg-blue-500 drawer-bar" />}
+                        <span className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${on ? "bg-blue-600 text-white shadow-[0_6px_14px_-6px_var(--color-blue-600)]" : "bg-white/[.04] group-hover:bg-white/[.07]"}`}>
+                          <it.icon className="w-4 h-4" strokeWidth={1.9} />
+                        </span>
+                        <span className="text-[13px] font-medium">{it.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
 
-            // Regular menu items
-            const isActive = item.activePaths ? item.activePaths.includes(location.pathname) : location.pathname === item.path;
-            return (
-              <li
-                key={index}
-                className={`flex gap-2.5 items-center px-8 mt-2.5 w-full rounded-3xl min-h-[51px] transition-all ${
-                  isActive ? "bg-black text-white font-semibold" : "hover:bg-white/10"
-                }`}
-              >
-                <div
-                  className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
-                  style={{
-                    background: isActive 
-                      ? "linear-gradient(80deg,var(--color-blue-700)_18.83%,var(--color-blue-500)_103.47%)"
-                      : "rgba(255,255,255,0.1)",
-                  }}
-                >
-                  {item.LucideIcon ? (
-                    <item.LucideIcon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-stone-300'}`} />
-                  ) : item.icon ? (
-                    <img src={item.icon} alt={`${item.name} Icon`} className="w-5 h-5" />
-                  ) : null}
-                </div>
-                <Link to={item.path} className="w-full">
-                  <span className={isActive ? "text-white font-medium" : "text-stone-300"}>
-                    {item.name}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-          
-        <button
-          onClick={handleLogout}
-          className="flex gap-2.5 items-center px-8 mt-6 w-full rounded-3xl min-h-[51px] text-stone-300 hover:bg-white/10 transition-all"
-        >
-          <div
-            className="flex items-center justify-center rounded-full w-[35px] h-[35px]"
-            style={{
-              background: "linear-gradient(80deg,var(--color-blue-700)_18.83%,var(--color-blue-500)_103.47%)",
-            }}
-          >
-             <LogoutIcon />
-          </div>
-          <span className="font-medium">Logout</span>
-        </button>
+        <div className="shrink-0 border-t border-white/[.07] p-3 space-y-2.5 pb-[calc(env(safe-area-inset-bottom)+12px)]">
+          <ModeSwitch />
+          <button type="button" onClick={() => logout?.()} className="w-full h-11 rounded-2xl flex items-center justify-center gap-2 text-[13px] font-semibold text-red-400 bg-red-500/[.08] hover:bg-red-500/[.14] transition">
+            <LogOut className="w-4 h-4" />Sign out
+          </button>
+        </div>
       </nav>
-    </>
+    </div>
   );
 }
 

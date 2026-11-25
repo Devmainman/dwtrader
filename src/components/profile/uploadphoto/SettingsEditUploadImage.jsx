@@ -95,11 +95,11 @@ function SettingsEditUploadImage() {
   
 
   return (
-    <section className="overflow-hidden pt-2 pb-44 w-full text-xs tracking-normal text-center rounded-3xl bg-neutral-900 max-w-[480px] text-zinc-100">
+    <section className="w-full max-w-[420px] text-[12px] text-center text-zinc-100">
       <div>
         <ImagePreview imageSrc={previewUrl} onUploadClick={handleUpload} onSaveClick={handleSave} isLoading={isLoading} />
-        {error && <p className="mt-2 text-red-500 text-xs">{error}</p>}
-        {successMessage && <p className="mt-2 text-green-500 text-xs">{successMessage}</p>}
+        {error && <p className="mt-2 text-red-400 text-[12px]">{error}</p>}
+        {successMessage && <p className="mt-2 text-emerald-400 text-[12px]">{successMessage}</p>}
       </div>
     </section>
   );

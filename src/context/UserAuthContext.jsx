@@ -132,7 +132,10 @@ export function UserAuthProvider({ children }) {
         return newToken;
       } catch (error) {
         console.error('Token refresh failed:', error);
-        await logout(true);
+        // Only a real rejection ends the session. A network blip or a server that is
+        // briefly unavailable keeps the user signed in; the next request retries.
+        const status = error?.response?.status;
+        if (status === 401 || status === 403) await logout(true);
         return null;
       } finally {
         setLoading(prev => ({ ...prev, refresh: false }));

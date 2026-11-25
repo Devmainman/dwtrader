@@ -146,7 +146,7 @@
 .ld-glass { background: rgba(16,16,18,.66); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 
 
-.ld-cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.ld-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
 .ld-coin { border-radius: 22px; padding: 18px; transition: transform .5s cubic-bezier(.2,.8,.2,1), background-color .3s ease, opacity .9s cubic-bezier(.22,1,.36,1); }
 .ld-coin:hover { transform: translateY(-6px); }
 .ld-spark { stroke-dasharray: 600; stroke-dashoffset: 600; transition: stroke-dashoffset 1.8s cubic-bezier(.4,0,.2,1) .2s; }
@@ -219,3 +219,16 @@
 }
 .ld-shine .ld-sw.is-accent .ld-sc { color: transparent; }
 @media (prefers-reduced-motion: reduce) { .ld-shine .ld-sw.is-accent { animation: none; } }
+
+/* Crypto section */
+.ld-feat-icon { width: 44px; height: 44px; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; color: #fb9b4b; background: rgba(251, 155, 75, .1); border: 1px solid rgba(251, 155, 75, .2); }
+.ld-step { flex: none; width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 13px; color: #fff; background: linear-gradient(135deg, #fb9b4b, #e0701f); box-shadow: 0 8px 20px -8px rgba(251, 155, 75, .7); }
+.ld-coinwall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 640px) { .ld-coinwall { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .ld-coinwall { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.ld-coinchip { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px; border-radius: 16px; background: rgba(255, 255, 255, .03); border: 1px solid rgba(255, 255, 255, .06);
+  font-family: var(--mono); font-size: 11px; color: #d4d4d8; animation: ld-bob 4.8s ease-in-out infinite; transition: background-color .2s ease, transform .2s ease; }
+.ld-coinchip:hover { background: rgba(255, 255, 255, .07); transform: translateY(-3px); }
+.ld-coinchip img { width: 30px; height: 30px; border-radius: 50%; }
+@keyframes ld-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+@media (prefers-reduced-motion: reduce) { .ld-coinchip { animation: none; } }

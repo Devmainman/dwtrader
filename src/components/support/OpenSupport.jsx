@@ -1,143 +1,39 @@
-import React, { useState } from "react";
+// New support ticket. Inside /support (embedded) or on its own at /opensupport.
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { LifeBuoy, ImagePlus, X } from "lucide-react";
 import { ticketsApi, apiMessage } from "../../api/tickets";
 import { toast } from "../../lib/toast";
+import { Page, Field, inputClass, Button } from "../products/ui";
 
+const PRIORITIES = [["Low", "General question"], ["Medium", "Something isn't working"], ["High", "Money or access issue"]];
 
-function UploadAttachment({ onFileSelect, file }) {
-  const fileInputRef = React.useRef(null);
-
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file.size <= 2 * 1024 * 1024) {
-      onFileSelect(file);
-    } else {
-      toast.error("File size exceeds 2MB limit");
-      e.target.value = null;
-    }
-  };
-
-  return (
-    <section className="mt-5 w-full">
-      <p className="text-xs text-neutral-500">
-        <span className="font-semibold text-[var(--fg-2)]">Upload attachment</span> (optional)
-      </p>
-
-      <div className="flex flex-col justify-center px-4 py-4 mt-3 w-full rounded-xl bg-[var(--card)]">
-        <div className="flex flex-col items-center px-6 py-3 rounded-xl bg-neutral-800">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/6ec391f010ecf0794dc64df30ced5c6e4bd82f56d00ad2c01f0ad19a49756de6?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
-            className="w-12"
-            alt="Upload icon"
-          />
-          <h3 className="mt-2 text-xs font-medium text-zinc-100">Upload Image</h3>
-          <p className="text-[8px] text-neutral-400">{file ? `Selected: ${file.name}` : "Image size must be less than 2MB"}</p>
-
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileSelect}
-            accept="image/*"
-            className="hidden"
-          />
-
-          <button
-            type="button"
-            onClick={() => fileInputRef.current.click()}
-            className="mt-3 px-4 py-1 text-[10px] bg-blue-600 rounded-3xl text-zinc-100"
-          >
-            Select Image
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function SubmitButton({ busy }) {
-  return (
-    <button
-      type="submit"
-      disabled={busy}
-      className="mt-6 w-full py-3 text-xs bg-blue-600 rounded-3xl text-zinc-100 disabled:opacity-60"
-    >
-      {busy ? "Submitting…" : "Submit"}
-    </button>
-  );
-}
-
-function FormField({ label, type, name, value, onChange, options, placeholder }) {
-  return (
-    <div className="mb-4">
-      {label && <label className="block mb-1 text-[10px] text-white">{label}</label>}
-
-      {type === "select" ? (
-        <select
-          className="w-[243px] px-2.5 py-3 rounded-md bg-[var(--card)] text-neutral-400 outline-none"
-          name={name}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        >
-          {options.map((opt, idx) => (
-            <option key={idx} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      ) : type === "textarea" ? (
-        <textarea
-          className="w-[243px] px-2.5 py-3 rounded-md bg-[var(--card)] text-neutral-400 resize-none outline-none"
-          name={name}
-          value={value}
-          placeholder={placeholder}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      ) : (
-        <input
-          type={type}
-          name={name}
-          value={value}
-          placeholder={placeholder}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-[243px] px-2.5 py-3 rounded-md bg-[var(--card)] text-neutral-400 outline-none"
-        />
-      )}
-    </div>
-  );
-}
-
-
-
-function Support3({ onCreated }) {
+function NewTicketForm({ onCreated, embedded = false }) {
   const navigate = useNavigate();
+  const fileRef = useRef(null);
   const [busy, setBusy] = useState(false);
-  const [formData, setFormData] = useState({
-    subject: "",
-    priority: "",
-    message: "",
-    attachment: null
-  });
+  const [f, setF] = useState({ subject: "", priority: "", message: "", attachment: null });
+  const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
 
-  const handleChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
+  const pick = (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { toast.error("File size exceeds 2MB limit"); return; }
+    set("attachment", file);
   };
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    if (!formData.subject.trim()) return toast.error("Add a subject");
-    if (!formData.priority) return toast.error("Choose a priority");
-    if (!formData.message.trim()) return toast.error("Describe the issue in the message");
+    if (!f.subject.trim()) return toast.error("Add a subject");
+    if (!f.priority) return toast.error("Choose a priority");
+    if (!f.message.trim()) return toast.error("Describe the issue in the message");
     setBusy(true);
     try {
-      await ticketsApi.create(formData);
+      await ticketsApi.create(f);
       toast.success("Ticket submitted", { description: "Our team will reply here and notify you." });
-      setFormData({ subject: "", priority: "", message: "", attachment: null });
-      if (onCreated) onCreated();
-      else navigate("/support");
+      setF({ subject: "", priority: "", message: "", attachment: null });
+      if (onCreated) onCreated(); else navigate("/support");
     } catch (err) {
       toast.error(apiMessage(err));
     } finally {
@@ -146,58 +42,49 @@ function Support3({ onCreated }) {
     return undefined;
   };
 
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col pt-2 pb-6 mx-auto w-full max-w-[480px] md:max-w-[640px] lg:max-w-[820px] lg:px-6 rounded-3xl bg-neutral-900"
-    >
-      <h2 className="text-[14px] font-medium text-white">Create Ticket</h2>
-
-      <div className="mt-2.5  gap-5 w-full text-xs">
-        <div className="gap-5 flex justify-between">
-        <label className="block mt-3 text-neutral-400 mb-1">Subject</label>
-        <FormField
-          placeholder="Subject"
-          type="text"
-          name="subject"
-          value={formData.subject}
-          onChange={(value) => handleChange("subject", value)}
-        />
+  const form = (
+    <form onSubmit={submit} className="dash-panel p-4 sm:p-5">
+      <Field label="Subject">
+        <input value={f.subject} onChange={(e) => set("subject", e.target.value)} maxLength={140} placeholder="e.g. My deposit hasn't arrived" className={inputClass} />
+      </Field>
+      <Field label="Priority">
+        <div className="grid grid-cols-3 gap-2" data-no-busy>
+          {PRIORITIES.map(([p, hint]) => (
+            <button key={p} type="button" onClick={() => set("priority", p)}
+              className={`text-left rounded-2xl border px-3 py-2.5 transition ${f.priority === p ? "border-blue-500/70 bg-blue-600/10" : "border-white/10 bg-white/[.02] hover:border-white/20"}`}>
+              <span className="block text-[12px] font-semibold text-zinc-100">{p}</span>
+              <span className="block text-[10px] text-neutral-500 leading-snug mt-0.5">{hint}</span>
+            </button>
+          ))}
         </div>
-
-      <div className="gap-5 flex justify-between">
-       <label className="block mt-3 text-neutral-400 mb-1">Priority</label>
-        <FormField
-          
-          type="select"
-          name="priority"
-          value={formData.priority}
-          onChange={(value) => handleChange("priority", value)}
-          options={[{ value: "", label: "--Select--" }, { value: "Low", label: "Low" }, { value: "Medium", label: "Medium" }, { value: "High", label: "High" }]}
-        />
+      </Field>
+      <Field label="Message" hint={`${f.message.length}/4000`}>
+        <textarea value={f.message} onChange={(e) => set("message", e.target.value)} maxLength={4000} rows={5} placeholder="Tell us what happened, and include any reference numbers."
+          className={`${inputClass} h-auto py-3 resize-none leading-relaxed`} />
+      </Field>
+      <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={pick} />
+      {f.attachment ? (
+        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[.02] px-3 py-2.5 mb-4">
+          <ImagePlus className="w-4 h-4 text-blue-400" />
+          <span className="flex-1 min-w-0 text-[12px] truncate">{f.attachment.name}</span>
+          <button type="button" data-no-busy onClick={() => set("attachment", null)} className="w-7 h-7 rounded-full bg-white/[.06] flex items-center justify-center" aria-label="Remove attachment"><X className="w-3.5 h-3.5" /></button>
         </div>
-        
-
-<div className="mb-4 flex justify-end">
-  
-  <textarea
-    placeholder="Message"
-    maxLength={4000}
-    className="w-[243px] h-[102px] px-2.5 py-3 rounded-md bg-[var(--card)] text-neutral-400 resize-none outline-none"
-    value={formData.message}
-    onChange={(e) => handleChange("message", e.target.value)}
-    rows="4"
-  />
-</div>
-
-
-      </div>
-
-      <UploadAttachment file={formData.attachment} onFileSelect={(file) => handleChange("attachment", file)} />
-
-      <SubmitButton busy={busy} />
+      ) : (
+        <button type="button" data-no-busy onClick={() => fileRef.current?.click()} className="w-full mb-4 rounded-2xl border border-dashed border-white/15 hover:border-white/25 bg-white/[.02] px-4 py-3.5 flex items-center gap-3 text-left transition">
+          <span className="w-9 h-9 rounded-full bg-blue-600/12 text-blue-400 flex items-center justify-center"><ImagePlus className="w-4 h-4" /></span>
+          <span><span className="block text-[12px] font-medium">Add a screenshot (optional)</span><span className="block text-[10px] text-neutral-500">Images up to 2 MB</span></span>
+        </button>
+      )}
+      <Button type="submit" busy={busy} className="w-full h-12 !text-[13px]">{busy ? "Submitting…" : "Submit ticket"}</Button>
     </form>
+  );
+
+  if (embedded) return form;
+  return (
+    <Page title="New ticket" subtitle="Our team replies within the ticket" icon={LifeBuoy}>
+      <div className="max-w-[640px]">{form}</div>
+    </Page>
   );
 }
 
-export default Support3;
+export default NewTicketForm;

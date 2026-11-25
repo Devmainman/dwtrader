@@ -74,7 +74,7 @@ export function LimitBanner({ info }) {
   }[level];
   const Icon = copy.icon;
   return (
-    <div className="sticky top-0 lg:top-[62px] z-[700] px-3 sm:px-5 lg:px-8 pt-2.5 pb-1 pointer-events-none">
+    <div className="sticky top-[60px] z-[700] px-3 sm:px-5 lg:px-8 pt-2.5 pb-1 pointer-events-none">
       <div role="alert" className={`limit-banner limit-${level} keep-dark pointer-events-auto mx-auto max-w-[1280px]`}>
         <span className="limit-shine" aria-hidden />
         <span className="limit-icon"><Icon className="w-4 h-4" strokeWidth={2.2} /></span>

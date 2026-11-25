@@ -11,7 +11,7 @@ import logo from "../../assets/Group.svg";
 import { useUserAuth } from "../../context/UserAuthContext";
 import { API_BASE_URL } from "../../api/config";
 
-const GROUPS = [
+export const NAV_GROUPS = [
   { title: null, items: [
     { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/assets", label: "Assets", icon: Gem },
@@ -67,7 +67,7 @@ export default function DesktopSidebar() {
       </Link>
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4 [scrollbar-width:thin]">
-        {GROUPS.map((g, gi) => (
+        {NAV_GROUPS.map((g, gi) => (
           <div key={gi} className={gi ? "mt-5" : "mt-1"}>
             {g.title && <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-neutral-500">{g.title}</p>}
             <ul className="space-y-0.5">

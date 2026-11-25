@@ -197,7 +197,7 @@ useEffect(() => {
   // Light mode is for the signed-in app; public pages (landing, blog, help, sign-in) stay dark.
   const publicPage = !token || isAuthRoute || ['/', '/landing'].includes(location.pathname)
     || location.pathname.startsWith('/blog') || location.pathname.startsWith('/help');
-  useEffect(() => { paintMode(publicPage ? 'dark' : getMode()); }, [publicPage]);
+  useEffect(() => { paintMode(getMode(), { force: publicPage }); }, [publicPage]);
 
   // 1. Global loading first
   if (loading.global) {

@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, ArrowUpRight, ChevronDown, Lock, Fingerprint, PenLine, Bell, Signal, Wifi, BatteryFull,
-  LineChart, Copy, Coins, Building2, Cpu, Plus, Menu, X,
+  LineChart, Copy, Coins, Building2, Cpu, Plus, Menu, X, Wallet, ArrowLeftRight, QrCode, BadgeCheck, Send, Bitcoin,
 } from 'lucide-react';
 import logo from '../assets/Group.svg';
 import { API_BASE_URL } from '../api/config';
@@ -22,6 +22,8 @@ const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce
 /* ------------------------------------------------------------ content */
 
 const PRODUCTS = [
+  { icon: Wallet, title: 'Crypto wallets', text: 'Deposit Bitcoin, Ethereum and more, each in its own wallet.' },
+  { icon: ArrowLeftRight, title: 'Convert', text: 'Swap crypto and cash instantly at live prices.' },
   { icon: LineChart, title: 'Live trading', text: 'Go long or short with take-profit and stop-loss.' },
   { icon: Copy, title: 'Copy trading', text: 'Mirror the positions of traders you choose.' },
   { icon: Coins, title: 'Staking', text: 'Lock coins for a term and earn daily rewards.' },
@@ -47,8 +49,14 @@ const SECURITY = [
 ];
 
 
-const TICKER = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX', 'LINK', 'DOT'];
-const CARD_COINS = [['BTC', 'Bitcoin'], ['ETH', 'Ethereum'], ['SOL', 'Solana'], ['BNB', 'BNB'], ['XRP', 'XRP']];
+const TICKER = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX', 'LINK', 'DOT', 'TRX', 'TON', 'LTC', 'SHIB', 'NEAR', 'UNI', 'ATOM', 'APT'];
+const CARD_COINS = [['BTC', 'Bitcoin'], ['ETH', 'Ethereum'], ['SOL', 'Solana'], ['BNB', 'BNB'], ['XRP', 'XRP'], ['DOGE', 'Dogecoin'], ['ADA', 'Cardano'], ['AVAX', 'Avalanche']];
+
+const CRYPTO_STEPS = [
+  { icon: QrCode, title: 'Pick a coin', text: 'Choose Bitcoin, Ethereum, USDT or any coin we support and scan its address.' },
+  { icon: Send, title: 'Send it from any wallet', text: 'Paste your transaction hash, or add a screenshot of the transfer.' },
+  { icon: BadgeCheck, title: 'Credited to that coin', text: 'Once verified it lands in that coin’s own wallet, valued live in your currency.' },
+];
 
 /* ------------------------------------------------------------ data */
 
@@ -82,6 +90,16 @@ function useMarket() {
     return () => { alive = false; clearInterval(id); };
   }, []);
   return { rows, lines };
+}
+
+function useCoins() {
+  const [coins, setCoins] = useState({ list: [], convert: true });
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/public/crypto`).then((r) => r.json())
+      .then((d) => { if (d?.success) setCoins({ list: d.data.coins || [], convert: d.data.convertEnabled !== false }); })
+      .catch(() => {});
+  }, []);
+  return coins;
 }
 
 function usePlans() {
@@ -184,6 +202,7 @@ export default function Landing() {
   const [gl, setGl] = useState(true);
   const { rows, lines } = useMarket();
   const plans = usePlans();
+  const coins = useCoins();
 
   // Fonts for this page only (the dashboard keeps Montserrat).
   useEffect(() => {
@@ -329,6 +348,7 @@ export default function Landing() {
                 </div>
               </div>
             </div>
+            <a href="#crypto" onClick={go('crypto')} className="ld-navlink">Crypto</a>
             <a href="#markets" onClick={go('markets')} className="ld-navlink">Markets</a>
             <a href="#app" onClick={go('app')} className="ld-navlink">The app</a>
             <a href="#security" onClick={go('security')} className="ld-navlink">Security</a>
@@ -349,7 +369,7 @@ export default function Landing() {
       {/* mobile menu */}
       <div className={`ld-sheet ${menu ? 'is-open' : ''}`} aria-hidden={!menu}>
         <div className="px-6 pt-32 pb-10 h-full overflow-y-auto flex flex-col">
-          {[['Markets', 'markets'], ['The app', 'app'], ['Security', 'security'], ...(showPlans ? [['Plans', 'plans']] : []), ...(help.length ? [['Help Center', 'faq']] : [])].map(([label, id], i) => (
+          {[['Crypto', 'crypto'], ['Markets', 'markets'], ['The app', 'app'], ['Security', 'security'], ...(showPlans ? [['Plans', 'plans']] : []), ...(help.length ? [['Help Center', 'faq']] : [])].map(([label, id], i) => (
             <a key={id} href={`#${id}`} onClick={go(id)} className="ld-sheet-link" style={{ transitionDelay: menu ? `${80 + i * 50}ms` : '0ms' }}>{label}<ArrowUpRight className="w-5 h-5 text-neutral-500" /></a>
           ))}
           <Link to="/blog" className="ld-sheet-link">Blog<ArrowUpRight className="w-5 h-5 text-neutral-500" /></Link>
@@ -369,17 +389,17 @@ export default function Landing() {
       <section id="top" ref={ch(0)} className="relative" style={{ height: '190vh' }}>
         <div className="ld-stick">
           <div className="ld-fade absolute inset-x-0 top-[14vh] md:top-[15vh] text-center px-5" style={{ '--o': 'var(--h1, 1)', '--y': 'calc((1 - var(--h1, 1)) * -50px)' }}>
-            <Split as="h1" onLoad delay={250} className="ld-display ld-shine max-w-[17ch] mx-auto" text="All your money moves, in *one *place." />
+            <Split as="h1" onLoad delay={250} className="ld-display ld-shine max-w-[17ch] mx-auto" text="Your crypto, *all *in *one *place." />
           </div>
           <div className="ld-fade absolute inset-x-0 bottom-[6vh] md:bottom-[6vh] text-center px-6" style={{ '--o': 'var(--h1, 1)' }}>
-            <p className="ld-lead max-w-[460px] mx-auto ld-rise" style={{ animationDelay: '1100ms' }}>Trade live markets, copy expert traders, stake, own real estate and keep savings in cold storage. One account.</p>
+            <p className="ld-lead max-w-[480px] mx-auto ld-rise" style={{ animationDelay: '1100ms' }}>Deposit Bitcoin, Ethereum and more, convert to cash at live prices, then trade, copy expert traders, stake and mine. One account.</p>
             <div className="mt-7 flex flex-wrap justify-center gap-3 ld-rise" style={{ animationDelay: '1250ms' }}>
               <Link to="/signup" className="ld-btn ld-btn-light">Open a free account<ArrowRight className="w-4 h-4" /></Link>
               <Link to="/auth" className="ld-btn ld-btn-glass">Log in</Link>
             </div>
           </div>
           <div className="ld-fade absolute inset-x-0 top-[16vh] md:top-[17vh] text-center px-6" style={{ '--o': 'var(--h2, 0)', '--y': 'calc((1 - var(--h2, 0)) * 30px)' }}>
-            <h2 className="ld-display">One balance. <em>Every market.</em></h2>
+            <h2 className="ld-display">Every coin. <em>One balance.</em></h2>
           </div>
         </div>
       </section>
@@ -388,8 +408,8 @@ export default function Landing() {
       <section id="markets" ref={ch(1)} className="relative" style={{ height: '240vh' }}>
         <div className="ld-stick">
           <div className="ld-fade absolute inset-x-0 top-[17vh] text-center px-6" style={{ '--o': 'var(--m1, 0)', '--y': 'calc((1 - var(--m1, 0)) * 30px)' }}>
-            <h2 className="ld-display max-w-[16ch] mx-auto">Markets that <em>never sleep.</em></h2>
-            <p className="ld-lead mt-5 max-w-[460px] mx-auto">Crypto, stocks and forex, priced live, around the clock.</p>
+            <h2 className="ld-display max-w-[16ch] mx-auto">Crypto that <em>never sleeps.</em></h2>
+            <p className="ld-lead mt-5 max-w-[460px] mx-auto">Bitcoin, Ethereum and the coins you follow, priced live around the clock. Stocks and forex too.</p>
           </div>
           <div className="ld-fade absolute inset-x-0 bottom-[4vh] md:bottom-[8vh] px-4" style={{ '--o': 'var(--m2, 0)', '--y': 'calc((1 - var(--m2, 0)) * 30px)' }}>
             <div className="max-w-[1100px] mx-auto ld-glass rounded-[24px] px-4 py-5 md:px-8 md:py-7">
@@ -487,6 +507,70 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* crypto, made simple */}
+        <section id="crypto" className="relative px-5 md:px-8 py-20 md:py-28">
+          <div className="max-w-[1240px] mx-auto">
+            <p className="ld-label">Crypto</p>
+            <Split className="ld-h2 mt-3 mb-4" text="Crypto, made *simple." />
+            <p className="ld-lead max-w-[560px] ld-reveal">Hold real coins, see them valued live in your own currency, and move between crypto and cash whenever you like.</p>
+
+            <div className="grid md:grid-cols-3 gap-4 mt-10">
+              {[
+                { icon: Wallet, title: 'A wallet for every coin', text: 'Each coin you deposit sits in its own wallet, shown with its live price and 24-hour change.' },
+                ...(coins.convert ? [{ icon: ArrowLeftRight, title: 'Convert in seconds', text: 'Swap crypto to cash or cash to crypto at the live rate. You see the amount, rate and fee before you confirm.' }] : []),
+                { icon: Coins, title: 'Make it work', text: 'Use your balance to trade, copy expert traders, stake for daily rewards or rent mining power.' },
+              ].map(({ icon: Icon, title, text }, i) => (
+                <article key={title} className="ld-glass ld-reveal rounded-[22px] p-6" style={{ transitionDelay: `${i * 80}ms` }}>
+                  <span className="ld-feat-icon"><Icon className="w-5 h-5" strokeWidth={1.8} /></span>
+                  <h3 className="text-[17px] font-medium mt-5">{title}</h3>
+                  <p className="text-[13px] text-[#a1a1aa] mt-2 leading-relaxed">{text}</p>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-14 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] gap-10 items-center">
+              <div>
+                <p className="ld-label">Depositing crypto</p>
+                <h3 className="ld-h3 mt-3">Three steps from your wallet to ours.</h3>
+                <ol className="mt-7 space-y-5">
+                  {CRYPTO_STEPS.map(({ icon: Icon, title, text }, i) => (
+                    <li key={title} className="flex gap-4 ld-reveal" style={{ transitionDelay: `${i * 90}ms` }}>
+                      <span className="ld-step">{i + 1}</span>
+                      <div><p className="text-[15px] font-medium flex items-center gap-2"><Icon className="w-4 h-4 text-[#fb9b4b]" strokeWidth={1.8} />{title}</p><p className="text-[13px] text-[#a1a1aa] mt-1 leading-relaxed max-w-[420px]">{text}</p></div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div className="ld-glass rounded-[26px] p-6 md:p-8 ld-reveal">
+                <div className="flex items-center justify-between">
+                  <p className="ld-label">{coins.list.length ? `${coins.list.length} coins supported` : 'Supported coins'}</p>
+                  <Bitcoin className="w-5 h-5 text-[#fb9b4b]" strokeWidth={1.8} />
+                </div>
+                {coins.list.length ? (
+                  <div className="ld-coinwall mt-6">
+                    {coins.list.slice(0, 18).map((c, i) => (
+                      <div key={c.symbol} className="ld-coinchip" style={{ animationDelay: `${(i % 6) * 0.4}s` }} title={c.name}>
+                        <img src={c.icon} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />
+                        <span>{c.symbol}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="ld-coinwall mt-6">
+                    {CARD_COINS.map(([c, name], i) => (
+                      <div key={c} className="ld-coinchip" style={{ animationDelay: `${(i % 6) * 0.4}s` }} title={name}>
+                        <img src={`https://assets.coincap.io/assets/icons/${c.toLowerCase()}@2x.png`} alt="" loading="lazy" />
+                        <span>{c}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <Link to="/signup" className="ld-btn ld-btn-light mt-8 w-full">Create a free wallet<ArrowRight className="w-4 h-4" /></Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* plans (from the admin's active packages) */}
         {showPlans && (
           <section id="plans" className="relative px-5 md:px-8 py-20 md:py-28">
@@ -532,8 +616,8 @@ export default function Landing() {
         {/* closing call */}
         <section className="relative px-5 md:px-8 pt-6 pb-20 md:pb-28">
           <div className="ld-cta ld-glass max-w-[860px] mx-auto text-center">
-            <Split className="ld-display" text="Start in *minutes." />
-            <p className="ld-lead mt-4 ld-reveal">Create your account, verify who you are, fund and start.</p>
+            <Split className="ld-display" text="Own your first *coin *today." />
+            <p className="ld-lead mt-4 ld-reveal">Create your account, verify who you are, deposit crypto or cash and start.</p>
             <div className="mt-8 flex flex-wrap justify-center gap-3 ld-reveal">
               <Link to="/signup" className="ld-btn ld-btn-light">Open a free account<ArrowRight className="w-4 h-4" /></Link>
               <Link to="/auth" className="ld-btn ld-btn-glass">Log in</Link>
@@ -550,6 +634,7 @@ export default function Landing() {
             {brand && <span className="ld-brand text-[16px]">{brand}</span>}
           </div>
           <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-[#a1a1aa]">
+            <a href="#crypto" onClick={go('crypto')} className="hover:text-white">Crypto</a>
             <a href="#markets" onClick={go('markets')} className="hover:text-white">Markets</a>
             <a href="#app" onClick={go('app')} className="hover:text-white">The app</a>
             <a href="#security" onClick={go('security')} className="hover:text-white">Security</a>
@@ -561,7 +646,7 @@ export default function Landing() {
         </div>
         <div className="max-w-[1240px] mx-auto mt-8 pt-6 ld-foot-base flex flex-col md:flex-row gap-3 md:justify-between text-[11px] text-[#71717a]">
           <p>© {year}{brand ? ` ${brand}` : ''}. All rights reserved.</p>
-          <p className="max-w-[560px] leading-relaxed md:text-right">Investing involves risk. Prices can go down as well as up, and past returns do not guarantee future results.</p>
+          <p className="max-w-[560px] leading-relaxed md:text-right">Crypto prices are volatile and investing involves risk. Prices can go down as well as up, and past returns do not guarantee future results.</p>
         </div>
       </footer>
     </div>

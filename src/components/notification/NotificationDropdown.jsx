@@ -31,12 +31,12 @@ export default function NotificationDropdown({ className = '' }) {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="relative w-9 h-9 rounded-full flex items-center justify-center bg-zinc-900 border border-neutral-800 text-zinc-100 hover:bg-neutral-800 transition"
+        data-no-busy className={`topbar-btn relative ${unreadCount ? "has-unread" : ""}`}
         aria-label={unreadCount ? `Notifications, ${unreadCount} unread` : 'Notifications'}
       >
-        <Bell className="w-[18px] h-[18px]" strokeWidth={2} />
+        <Bell className="w-[18px] h-[18px] topbar-bell" strokeWidth={1.9} />
         {unreadCount > 0 && (
-          <span key={unreadCount} className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-blue-600 text-white text-[9px] font-semibold flex items-center justify-center ring-2 ring-[var(--card)] animate-[notice-drop_500ms_cubic-bezier(0.22,1,0.36,1)_both]">
+          <span key={unreadCount} className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-blue-600 text-white text-[9px] font-semibold flex items-center justify-center ring-2 ring-[var(--page)] animate-[notice-drop_500ms_cubic-bezier(0.22,1,0.36,1)_both]">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}

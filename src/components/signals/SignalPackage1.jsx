@@ -1,198 +1,67 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import SignalPackageCard from "./SignalPackageCard";
-import { useUserAuth } from "../../context/UserAuthContext";
+// /signal-packages — signal packages from the admin (GET /public/signal-packages).
+// Buying goes through /signal-payment, which adds the strength once the payment is approved.
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { API_BASE_URL } from "../../api/config";
+import { Signal, Check, Zap } from "lucide-react";
+import { useUserAuth } from "../../context/UserAuthContext";
+import { API_BASE_URL, STATIC_BASE_URL } from "../../api/config";
+import { Page, Button, Loading, ErrorState, Empty, formatMoney } from "../products/ui";
 
 function SignalPackage1() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [packages, setPackages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const { token } = useUserAuth();
-  const scrollRef = useRef(null);
   const navigate = useNavigate();
+  const [packages, setPackages] = useState(null);
+  const [error, setError] = useState(null);
 
-  // --- NAVIGATION LOGIC ---
-  const handleProceed = () => {
-    if (packages[activeIndex]) {
-      const pkg = packages[activeIndex];
-      const queryAmount = encodeURIComponent(pkg.amount);
-      
-      // CRITICAL FIX: Pass 'type=signal' and 'packageId' so the Payment page 
-      // knows this is NOT a standard account upgrade.
-      navigate(`/signal-payment?packageId=${pkg._id}&amount=${queryAmount}`);
+  const load = async () => {
+    setError(null);
+    try {
+      const res = await axios.get(`${API_BASE_URL}/public/signal-packages`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = res.data?.packages || res.data;
+      setPackages(Array.isArray(data) ? data : []);
+    } catch {
+      setError("Failed to load signal packages. Please try again later.");
+      setPackages([]);
     }
   };
+  useEffect(() => { if (token) load(); }, [token]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // --- FETCH LOGIC ---
-  useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        // Correct endpoint for Signal Packages (Different from AccountUpgrade)
-        const response = await axios.get(
-          `${API_BASE_URL}/public/signal-packages`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        const data = response.data?.packages || response.data;
-        setPackages(Array.isArray(data) ? data : []);
-
-      } catch (err) {
-        console.error('Error loading signal packages:', err);
-        setError("Failed to load signal packages. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (token) fetchPackages();
-  }, [token]);
-
-  // --- SCROLL LOGIC (Copied from AccountUpgrade1) ---
-  const scrollToCard = (index) => {
-    const cardWidth = scrollRef.current?.children[0]?.offsetWidth || 0;
-    scrollRef.current.scrollTo({
-      left: cardWidth * index,
-      behavior: "smooth",
-    });
-    setActiveIndex(index);
-  };
-
-  const handleScroll = () => {
-    const cardWidth = scrollRef.current?.children[0]?.offsetWidth || 0;
-    const scrollLeft = scrollRef.current.scrollLeft;
-    const newIndex = Math.round(scrollLeft / cardWidth);
-    setActiveIndex(newIndex);
-  };
-
-  useEffect(() => {
-    const ref = scrollRef.current;
-    if (ref) {
-      ref.addEventListener("scroll", handleScroll);
-      return () => ref.removeEventListener("scroll", handleScroll);
-    }
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex pb-30 flex-col items-center w-full h-full p-4">
-        <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100 lg:w-full lg:max-w-[1000px] lg:justify-start lg:gap-3 lg:items-center lg:pt-4">
-          <h1 className="text-[16px] font-medium tracking-normal leading-tight">
-            Signal Packages
-          </h1>
-          <span className="self-stretch px-2 py-1 text-[8px] font-semibold whitespace-nowrap bg-blue-700 rounded-3xl">
-            SIGNAL
-          </span>
-        </header>
-        <div className="flex justify-center items-center h-64">
-          <p className="text-white">Loading signal packages...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex pb-30 flex-col items-center w-full h-full p-4">
-        <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100 lg:w-full lg:max-w-[1000px] lg:justify-start lg:gap-3 lg:items-center lg:pt-4">
-          <h1 className="text-[16px] font-medium tracking-normal leading-tight">
-            Signal Packages
-          </h1>
-          <span className="self-stretch px-2 py-1 text-[8px] font-semibold whitespace-nowrap bg-blue-700 rounded-3xl">
-            SIGNAL
-          </span>
-        </header>
-        <div className="flex justify-center items-center h-64">
-          <p className="text-red-500">{error}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (packages.length === 0) {
-    return (
-      <div className="flex pb-30 flex-col items-center w-full h-full p-4">
-        <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100 lg:w-full lg:max-w-[1000px] lg:justify-start lg:gap-3 lg:items-center lg:pt-4">
-          <h1 className="text-[16px] font-medium tracking-normal leading-tight">
-            Signal Packages
-          </h1>
-          <span className="self-stretch px-2 py-1 text-[8px] font-semibold whitespace-nowrap bg-blue-700 rounded-3xl">
-            SIGNAL
-          </span>
-        </header>
-        <div className="flex justify-center items-center h-64">
-          <p className="text-white">No signal packages available at the moment.</p>
-        </div>
-      </div>
-    );
-  }
+  const buy = (pkg) => navigate(`/signal-payment?packageId=${pkg._id}&amount=${encodeURIComponent(pkg.amount)}`);
 
   return (
-    <div className="flex pb-30 flex-col items-center w-full h-full p-4">
-      <header className="flex gap-30 flex justify-between w-[350px] items-start text-zinc-100 lg:w-full lg:max-w-[1000px] lg:justify-start lg:gap-3 lg:items-center lg:pt-4">
-        <h1 className="text-[16px] font-medium tracking-normal leading-tight">
-          Signal Packages
-        </h1>
-        <span className="self-stretch px-2 py-1 text-[8px] font-semibold whitespace-nowrap bg-blue-700 rounded-3xl">
-          SIGNAL
-        </span>
-      </header>
-
-      {/* Cards */}
-      <div
-        ref={scrollRef}
-        className="flex h-[550px] pl-6 pr-5 overflow-x-auto items-center space-x-8 snap-x snap-mandatory scrollbar-hide w-full lg:justify-center lg:h-auto lg:py-10 lg:overflow-visible"
-        style={{ scrollBehavior: "smooth" }}
-      >
-       {packages.map((pkg, index) => (
-  <SignalPackageCard
-    key={pkg._id}
-    title={pkg.name}
-    price={`${pkg.currency} ${pkg.amount.toLocaleString()}`}
-    features={pkg.benefits}
-    strength={pkg.strengthLabel || (pkg.strength != null ? `+${pkg.strength}%` : "")}
-    isActive={activeIndex === index}
-    icon={pkg.icon}
-    onProceed={handleProceed}   // THIS IS THE KEY
-  />
-))}
-
-      </div>
-
-      {/* Tabs */}
-      <nav className="flex gap-2 text-[12px] py-2 justify-start overflow-x-auto whitespace-nowrap scrollbar-hide text-white items-center w-full rounded-3xl bg-neutral-800 px-2 lg:hidden">
-        {packages.map((pkg, index) => (
-          <button
-            key={pkg._id}
-            onClick={() => scrollToCard(index)}
-            className={`px-3 rounded-3xl border text-nowrap border-solid ${
-              activeIndex === index
-                ? "bg-blue-600 border-[color:var(--white-90,#505050)]"
-                : "border-neutral-600"
-            } min-h-[29px]`}
-          >
-            {pkg.name}
-          </button>
-        ))}
-      </nav>
-
-      {/* Proceed Button - Navigates with Type: Signal */}
-      {packages.length > 0 && packages[activeIndex] && (
-        <button 
-          onClick={() => handleProceed()}
-          className="flex overflow-hidden text-white justify-center items-center self-center px-2.5 py-1 mt-5 w-full bg-blue-600 rounded-3xl lg:hidden"
-        >
-          <div className="flex text-[15px] flex-col justify-center items-center self-stretch my-auto">
-            <span>Proceed with Plan</span>
-            <strong className="font-bold">
-              {packages[activeIndex].currency} {packages[activeIndex].amount.toLocaleString()}
-            </strong>
-          </div>
-        </button>
-      )}
-    </div>
+    <Page title="Signal packages" subtitle="Raise your signal strength to unlock higher plans" icon={Signal}>
+      {error ? <ErrorState message={error} onRetry={load} />
+        : !packages ? <Loading rows={3} />
+          : !packages.length ? (
+            <div className="dash-panel max-w-[640px]">
+              <Empty icon={Signal} title="No signal packages right now" text="New packages will appear here as soon as they are available."
+                action={<Button variant="secondary" onClick={() => navigate("/accountupgrade")}>See upgrade plans</Button>} />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 max-w-[1080px]">
+              {packages.map((pkg) => {
+                const strength = pkg.strengthLabel || (pkg.strength != null ? `+${pkg.strength}%` : "");
+                return (
+                  <article key={pkg._id} className="dash-panel p-5 flex flex-col">
+                    <div className="flex items-center gap-3">
+                      <span className="w-11 h-11 rounded-2xl bg-white/[.05] border border-white/[.08] flex items-center justify-center overflow-hidden">
+                        {pkg.icon ? <img src={`${STATIC_BASE_URL}${pkg.icon}`} alt="" className="w-8 h-8 object-contain" /> : <Zap className="w-5 h-5 text-blue-400" />}
+                      </span>
+                      <div className="flex-1 min-w-0"><p className="text-[15px] font-semibold tracking-[-0.01em] truncate">{pkg.name}</p></div>
+                      {strength && <span className="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-emerald-500/12 text-emerald-400 text-[11px] font-semibold"><Signal className="w-3 h-3" />{strength}</span>}
+                    </div>
+                    <p className="mt-4 text-[28px] font-light tracking-[-0.03em] tabular-nums leading-none">{formatMoney(pkg.amount, pkg.currency)}</p>
+                    <ul className="mt-4 space-y-2 flex-1">
+                      {(pkg.benefits || []).map((b, i) => <li key={i} className="flex gap-2 text-[12px] text-neutral-300"><Check className="w-4 h-4 text-emerald-400 shrink-0" />{b}</li>)}
+                    </ul>
+                    <Button onClick={() => buy(pkg)} className="mt-5 w-full h-11 !text-[13px]">Get {pkg.name}</Button>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+    </Page>
   );
 }
 

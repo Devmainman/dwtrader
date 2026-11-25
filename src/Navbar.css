@@ -1,10 +1,12 @@
-/* Floating tab bar: translucent dark material, no outline, no glow. */
+/* Floating tab bar: the calm dark glass pill with a flat white brand disc in the middle.
+   Active tab: filled icon in the foreground colour, a small accent dot sliding underneath. */
 .navbar {
+  --nav-ink: rgba(24, 20, 17, .92);
   position: fixed;
-  bottom: calc(env(safe-area-inset-bottom) + 28px);
+  bottom: calc(env(safe-area-inset-bottom) + 22px);
   left: 50%;
   transform: translateX(-50%);
-  width: min(342px, calc(100vw - 32px));
+  width: min(348px, calc(100vw - 32px));
   height: 66px;
   background-color: var(--nav-bg, rgba(38, 30, 25, 0.84));
   -webkit-backdrop-filter: saturate(180%) blur(24px);
@@ -13,61 +15,104 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(255, 255, 255, .05) inset;
   z-index: 1000;
+  transition: transform .45s cubic-bezier(.22, 1, .36, 1), opacity .3s ease;
+  animation: nav-rise .6s cubic-bezier(.22, 1, .36, 1) backwards;
 }
+html:root[data-mode="light"] .navbar { --nav-ink: #ffffff; box-shadow: 0 12px 32px -10px rgba(20, 18, 24, .28), 0 0 0 1px rgba(20, 18, 24, .05); }
+.navbar.is-hidden { transform: translate(-50%, calc(100% + 40px)); opacity: 0; pointer-events: none; }
+@keyframes nav-rise { from { transform: translate(-50%, 120%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
 .navbar-content {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: calc(100% - 44px);
-  height: 48px;
+  width: calc(100% - 36px);
+  height: 50px;
+}
+
+/* Small accent dot that slides under the active tab */
+.nav-dot {
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  width: 18px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--color-blue-500);
+  box-shadow: 0 0 10px var(--color-blue-500);
+  transition: transform .5s cubic-bezier(.34, 1.5, .64, 1);
+  pointer-events: none;
 }
 
 .nav-item {
   position: relative;
-  width: 52px;
+  width: 54px;
+  height: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  gap: 3px;
+  color: var(--fg-4);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: color .25s ease, transform .25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.nav-item:active { transform: scale(0.9); }
+.nav-item:active { transform: scale(0.86); }
+.nav-item .nav-label { font-size: 10px; font-weight: 500; letter-spacing: -.01em; transition: font-weight .2s ease; }
+.nav-item.active { color: var(--fg); }
+.nav-item.active .nav-label { font-weight: 600; }
+@keyframes nav-pop { 0% { transform: scale(.7); } 45% { transform: scale(1.18) translateY(-2px); } 75% { transform: scale(.95); } 100% { transform: none; } }
+.nav-item.active .nav-icon { animation: nav-pop .5s cubic-bezier(.34, 1.56, .64, 1) both; }
 
-.nav-icon { width: 24px; height: 24px; }
-.nav-item .nav-icon { opacity: 0.45; filter: grayscale(1) brightness(1.6); transition: opacity 0.2s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease; }
-.nav-item .nav-label { font-size: 10px; font-weight: 500; margin-top: 3px; color: #8e8e93; transition: color 0.2s ease; }
-.nav-item.active .nav-icon { opacity: 1; filter: grayscale(1) brightness(2.4); transform: translateY(-1px); }
-.nav-item.active .nav-label { color: #fff; }
-.nav-dot { display: none; }
-
-/* Centre action */
+/* Centre action: the flat white brand disc. A tap twists it; while Quick actions is open it
+   turns a quarter and takes the accent colour. */
 .nav-logo {
-  height: 50px;
+  position: relative;
+  width: 48px;
+  height: 48px;
   background: none;
   border: 0;
   padding: 0;
   cursor: pointer;
+  border-radius: 50%;
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.nav-logo:active { transform: scale(0.88); }
-.nav-logo.is-open { transform: rotate(45deg) scale(0.95); }
+.nav-logo:active { transform: scale(0.86) rotate(-12deg); }
+.nav-logo.is-open { transform: rotate(90deg); }
 .action-icon {
+  position: relative;
   height: 48px;
   width: 48px;
   background-color: #fff;
   padding: 8px;
   border-radius: 50%;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: background-color .3s ease, box-shadow .3s ease;
 }
+.nav-logo.is-open .action-icon { background-color: var(--color-blue-500); box-shadow: 0 6px 20px -4px var(--color-blue-600); }
+/* A soft ripple every few seconds invites a tap. */
+.nav-logo::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: 0 0 0 0 rgba(255, 255, 255, .35); animation: nav-ripple 4.5s ease-out infinite 2s; pointer-events: none; }
+@keyframes nav-ripple { 0%, 70% { box-shadow: 0 0 0 0 rgba(255, 255, 255, .3); } 100% { box-shadow: 0 0 0 12px rgba(255, 255, 255, 0); } }
+html:root[data-mode="light"] .action-icon { box-shadow: 0 4px 14px rgba(20, 18, 24, .18), 0 0 0 1px rgba(20, 18, 24, .06); }
 
 /* Quick actions sheet */
+.qa-sheet {
+  background: color-mix(in oklab, var(--card) 92%, transparent);
+  -webkit-backdrop-filter: saturate(170%) blur(22px);
+  backdrop-filter: saturate(170%) blur(22px);
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .6);
+}
+.qa-tile { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--tone); background: color-mix(in oklab, var(--tone) 14%, transparent); border: 1px solid color-mix(in oklab, var(--tone) 22%, transparent); }
+.tone-blue { --tone: var(--color-blue-400); } .tone-violet { --tone: #a78bfa; } .tone-emerald { --tone: #34d399; } .tone-slate { --tone: var(--fg-3); }
+.tone-sky { --tone: #38bdf8; } .tone-amber { --tone: #fbbf24; } .tone-rose { --tone: #fb7185; }
+html:root[data-mode="light"] .tone-violet { --tone: #7c3aed; } html:root[data-mode="light"] .tone-emerald { --tone: #059669; } html:root[data-mode="light"] .tone-sky { --tone: #0284c7; }
+html:root[data-mode="light"] .tone-amber { --tone: #d97706; } html:root[data-mode="light"] .tone-rose { --tone: #e11d48; } html:root[data-mode="light"] .tone-blue { --tone: var(--color-blue-600); }
 @keyframes qa-fade-in { from { opacity: 0 } to { opacity: 1 } }
 @keyframes qa-fade-out { to { opacity: 0 } }
 @keyframes qa-sheet-in { 0% { opacity: 0; transform: translateY(40px) scale(.94) } 60% { opacity: 1; transform: translateY(-4px) scale(1.01) } 100% { transform: none } }
@@ -80,7 +125,8 @@
 .qa-item { animation: qa-item .4s cubic-bezier(.34,1.56,.64,1) both }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav-item, .nav-item .nav-icon, .nav-logo { transition: none }
+  .navbar, .nav-item, .nav-logo, .nav-dot { transition: none; animation: none; }
+  .nav-item.active .nav-icon, .nav-logo::after { animation: none; }
   .qa-fade-in, .qa-fade-out, .qa-sheet-in, .qa-sheet-out, .qa-item { animation: none }
 }
 

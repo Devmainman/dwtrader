@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
-import { getMode, setMode, onModeChange } from '../lib/theme';
+import { getMode, getModePref, setMode, onModeChange } from '../lib/theme';
 
-/** The user's light / dark choice: [mode, toggle, setMode]. */
+/**
+ * Light / dark mode: [mode on screen, cycle, setPref, pref].
+ * pref is 'system' (follow the device), 'light' or 'dark'. cycle goes system → light → dark.
+ */
 export default function useMode() {
-  const [mode, set] = useState(getMode);
-  useEffect(() => onModeChange(set), []);
-  return [mode, () => setMode(mode === 'dark' ? 'light' : 'dark'), setMode];
+  const [mode, setM] = useState(getMode);
+  const [pref, setP] = useState(getModePref);
+  useEffect(() => onModeChange((m, p) => { setM(m); setP(p); }), []);
+  const cycle = () => setMode(pref === 'system' ? 'light' : pref === 'light' ? 'dark' : 'system');
+  return [mode, cycle, setMode, pref];
 }

@@ -13,37 +13,57 @@ export function applyTheme(theme) {
   return t;
 }
 
-/* ---------------- Light / dark mode (the user's choice, dark by default) ---------------- */
+/* ---------------- Light / dark mode ----------------
+   The user picks 'system' (default: follow the device), 'light' or 'dark'.
+   getMode() is what is on screen; getModePref() is the choice. */
 const MODE_KEY = 'app:mode';
 const modeListeners = new Set();
+const mq = () => (typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(prefers-color-scheme: light)') : null);
+let forcedDark = false; // public pages always paint dark
 
+export function getModePref() {
+  try { const v = localStorage.getItem(MODE_KEY); return v === 'light' || v === 'dark' ? v : 'system'; } catch { return 'system'; }
+}
 export function getMode() {
-  try { return localStorage.getItem(MODE_KEY) === 'light' ? 'light' : 'dark'; } catch { return 'dark'; }
+  const p = getModePref();
+  if (p !== 'system') return p;
+  return mq()?.matches ? 'light' : 'dark';
 }
 
-/** Paint the page in `mode` ('light' | 'dark'). Public pages pass force='dark'. */
-export function paintMode(mode) {
+/** Paint the page in the given mode ('light' | 'dark'). */
+export function paintMode(mode, { force } = {}) {
+  if (force !== undefined) forcedDark = force;
+  const m = forcedDark ? 'dark' : mode;
   const root = document.documentElement;
-  if (root.dataset.mode === mode) return;
+  if (root.dataset.mode === m) return;
   root.classList.add('mode-switching');
-  root.dataset.mode = mode;
+  root.dataset.mode = m;
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', mode === 'light' ? '#f3f2f0' : '#161617');
+  if (meta) meta.setAttribute('content', m === 'light' ? '#f3f2f0' : '#161617');
   clearTimeout(paintMode.t);
   paintMode.t = setTimeout(() => root.classList.remove('mode-switching'), 360);
 }
 
-export function setMode(mode) {
-  const m = mode === 'light' ? 'light' : 'dark';
-  try { localStorage.setItem(MODE_KEY, m); } catch { /* private mode */ }
-  paintMode(m);
-  modeListeners.forEach((fn) => fn(m));
-  return m;
+const emit = () => { const m = getMode(); const p = getModePref(); modeListeners.forEach((fn) => fn(m, p)); };
+
+export function setMode(pref) {
+  const p = pref === 'light' || pref === 'dark' ? pref : 'system';
+  try { if (p === 'system') localStorage.removeItem(MODE_KEY); else localStorage.setItem(MODE_KEY, p); } catch { /* private mode */ }
+  paintMode(getMode());
+  emit();
+  return p;
 }
 
 export function onModeChange(fn) {
   modeListeners.add(fn);
   return () => modeListeners.delete(fn);
+}
+
+// When following the device, repaint as soon as the device switches.
+if (typeof window !== 'undefined') {
+  const m = mq();
+  const onSys = () => { if (getModePref() === 'system') { paintMode(getMode()); emit(); } };
+  if (m?.addEventListener) m.addEventListener('change', onSys); else m?.addListener?.(onSys);
 }
 
 export function initTheme() {
