@@ -143,3 +143,17 @@ export const smartBotsApi = {
   subscribe: (id, allocation) => unwrap(client.post(`/smart-bots/${id}/subscribe`, { allocation })),
   cancel: (id) => unwrap(client.post(`/smart-bots/subscriptions/${id}/cancel`))
 };
+
+/** Crypto wallets: balances at live prices, crypto deposits and fiat <-> crypto conversion. */
+export const cryptoApi = {
+  wallets: () => unwrap(client.get('/crypto/wallets')),
+  depositOptions: () => unwrap(client.get('/crypto/deposit-options')),
+  deposits: () => unwrap(client.get('/crypto/deposits')),
+  deposit: (formData) => unwrap(client.post('/crypto/deposits', formData, { timeout: 60000 })),
+  quote: (body) => unwrap(client.post('/crypto/convert/quote', body)),
+  convert: (body) => client.post('/crypto/convert', body).then((r) => r.data),
+  sparklines: (symbols) => unwrap(client.get('/crypto/sparklines', { params: { symbols: symbols.join(',') } })),
+  activity: (limit = 5) => unwrap(client.get('/account/transactions', { params: { limit } })),
+  markets: () => unwrap(client.get('/crypto/markets')),
+  history: (symbols, range) => unwrap(client.get('/crypto/history', { params: { symbols: symbols.join(','), range } }))
+};

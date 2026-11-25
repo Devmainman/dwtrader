@@ -19,12 +19,12 @@ function SelectWithdrawalMethod() {
       </h1>
 <StatisticsCards />
  <SignalStrengthBar />
-      <section className="bg-[#1D1D1F] rounded-xl mt-2 px- w-full flex justify-center">
+      <section className="bg-[var(--card)] rounded-xl mt-2 px- w-full flex justify-center">
 <WithdrawalSystem />
 
 {/* 
       {!activeTab && (
-        <section className="flex w-fulloverflow-hidden flex-col justify-center px-5 py-6 mt-5 rounded-xl bg-[#1D1D1F] max-w-auto max-md:pl-5 max-md:max-w-full">
+        <section className="flex w-fulloverflow-hidden flex-col justify-center px-5 py-6 mt-5 rounded-xl bg-[var(--card)] max-w-auto max-md:pl-5 max-md:max-w-full">
           <h2 className="text-sm font-medium tracking-normal leading-tight text-neutral-400 max-md:max-w-full">
             Select Withdrawal Method
           </h2>

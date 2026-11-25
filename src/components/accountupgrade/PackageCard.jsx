@@ -46,8 +46,8 @@ function PackageCard({ title, price, currency, features, isActive, onSubscribe, 
 
   return (
     <div
-      className={`snap-center h-auto flex-shrink-0 rounded-[20px] border border-[#505050] shadow-md px-3 py-3 text-white transition-all duration-300 ${
-        isActive ? "bg-[#1D1D1F] w-[286px]" : "bg-[#1D1D1F] w-[286px]"
+      className={`snap-center h-auto flex-shrink-0 rounded-[20px] border border-[var(--line-strong)] shadow-md px-3 py-3 text-white transition-all duration-300 ${
+        isActive ? "bg-[var(--card)] w-[286px]" : "bg-[var(--card)] w-[286px]"
       }`}
     >
       {/* Icon Section */}
@@ -107,7 +107,7 @@ function PackageCard({ title, price, currency, features, isActive, onSubscribe, 
         {isActive && (
           <button
             onClick={() => handleProceed()}
-            className="w-full text-[12px] bg-transparent border border-blue-500 text-[#F3F3F3] rounded-full py-2 mt-4 hover:bg-blue-500 hover:text-white transition-all"
+            className="w-full text-[12px] bg-transparent border border-blue-500 text-[var(--fg)] rounded-full py-2 mt-4 hover:bg-blue-500 hover:text-white transition-all"
           >
             Subscribe
           </button>

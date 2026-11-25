@@ -55,7 +55,7 @@ const PaymentMethodUI = ({ method, onBack, token }) => {
         <div className="bg-neutral-900 p-2 rounded-full">
           <img src={method.icon} alt={method.name} className="h-6 w-6" />
         </div>
-        <h2 className="ml-3 text-xl text-[#C7C7C7] font-medium">{method.name}</h2>
+        <h2 className="ml-3 text-xl text-[var(--fg-2)] font-medium">{method.name}</h2>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -64,7 +64,7 @@ const PaymentMethodUI = ({ method, onBack, token }) => {
             <div className="space-y-4 mb-6">
               <div className="flex justify-between items-center">
                 <label className="text-gray-400 text-sm">Bank Name:</label>
-                <div className="bg-[#1D1D1F] p-3 rounded-md text-sm">
+                <div className="bg-[var(--card)] p-3 rounded-md text-sm">
                   {method.details.bankName}
                 </div>
               </div>
@@ -81,7 +81,7 @@ const PaymentMethodUI = ({ method, onBack, token }) => {
               />
               <label 
                 htmlFor="proof-upload" 
-                className="block bg-[#1D1D1F] h-40 rounded-md flex items-center justify-center cursor-pointer"
+                className="block bg-[var(--card)] h-40 rounded-md flex items-center justify-center cursor-pointer"
               >
                 {file ? file.name : 'Select file'}
               </label>
@@ -91,7 +91,7 @@ const PaymentMethodUI = ({ method, onBack, token }) => {
 
         {method.type === 'crypto' && (
           <div className="mb-6">
-            <div className="bg-[#1D1D1F] p-3 rounded-md mb-4">
+            <div className="bg-[var(--card)] p-3 rounded-md mb-4">
               <p className="text-sm">Send to: {method.details.walletAddress}</p>
               <button 
                 type="button"
@@ -110,7 +110,7 @@ const PaymentMethodUI = ({ method, onBack, token }) => {
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="bg-[#1D1D1F] p-3 rounded-md w-full"
+            className="bg-[var(--card)] p-3 rounded-md w-full"
             required
           />
         </div>

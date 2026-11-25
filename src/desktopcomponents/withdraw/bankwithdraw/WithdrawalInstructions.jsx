@@ -17,7 +17,7 @@ function InstructionItem({ children }) {
 
 function WithdrawalInstructions() {
   return (
-    <aside className="flex overflow-hidden flex-col grow justify-center px-3.5 py-4 w-full rounded-xl bg-[#1D1D1F] max-md:mt-10">
+    <aside className="flex overflow-hidden flex-col grow justify-center px-3.5 py-4 w-full rounded-xl bg-[var(--card)] max-md:mt-10">
       <div className="w-full">
         <h3 className="flex-1 shrink gap-2.5 self-stretch w-full text-[14px] font-medium tracking-normal leading-tight basis-0 text-zinc-100">
           Withdrawal Instructions:

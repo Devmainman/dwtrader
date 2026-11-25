@@ -36,14 +36,14 @@ export default function NotificationDropdown({ className = '' }) {
       >
         <Bell className="w-[18px] h-[18px]" strokeWidth={2} />
         {unreadCount > 0 && (
-          <span key={unreadCount} className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-blue-600 text-white text-[9px] font-semibold flex items-center justify-center ring-2 ring-[#1D1D1F] animate-[notice-drop_500ms_cubic-bezier(0.22,1,0.36,1)_both]">
+          <span key={unreadCount} className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-blue-600 text-white text-[9px] font-semibold flex items-center justify-center ring-2 ring-[var(--card)] animate-[notice-drop_500ms_cubic-bezier(0.22,1,0.36,1)_both]">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="fixed left-3 right-3 top-16 md:absolute md:left-auto md:right-0 md:top-11 md:w-[360px] z-[9000] rounded-2xl bg-[#1D1D1F]/95 backdrop-blur-xl border border-white/10 shadow-[0_16px_48px_rgba(0,0,0,0.55)] overflow-hidden animate-[sheet-in_260ms_cubic-bezier(0.32,0.72,0,1)]">
+        <div className="fixed left-3 right-3 top-16 md:absolute md:left-auto md:right-0 md:top-11 md:w-[360px] z-[9000] rounded-2xl bg-[var(--card)]/95 backdrop-blur-xl border border-white/10 shadow-[0_16px_48px_rgba(0,0,0,0.55)] overflow-hidden animate-[sheet-in_260ms_cubic-bezier(0.32,0.72,0,1)]">
           <div className="flex items-center justify-between px-4 pt-3 pb-2">
             <p className="text-sm font-semibold text-zinc-100">Notifications</p>
             {unreadCount > 0 && (

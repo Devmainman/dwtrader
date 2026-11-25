@@ -151,10 +151,10 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
 
   return (
   <div className="space-y-4 ">
-    <h1 className="text-[35px] text-[#F3F3F3] font-medium mb-2">Welcome</h1>
-    <p className="text-[#F3F3F3] font-regular mb-6">You're a few steps to completing your profile</p>
+    <h1 className="text-[35px] text-[var(--fg)] font-medium mb-2">Welcome</h1>
+    <p className="text-[var(--fg)] font-regular mb-6">You're a few steps to completing your profile</p>
 
-    <div className="bg-[#1D1D1F] flex justify-center items-center h-[37px] w-[204px] rounded-[8px] p-2 mb-6">
+    <div className="bg-[var(--card)] flex justify-center items-center h-[37px] w-[204px] rounded-[8px] p-2 mb-6">
       <h2 className="text-[14px] ">Account Authentication</h2>
     </div>
 
@@ -169,7 +169,7 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
             value={formData.firstName}
             onChange={handleChange}
             placeholder="Enter your First Name"
-            className={`w-full h-[50px] bg-transparent border ${errors.firstName ? 'border-red-500' : 'border-[#505050]'} rounded-[8px] p-4 text-[#505050] text-[12px] focus:outline-none focus:border-white`}
+            className={`w-full h-[50px] bg-transparent border ${errors.firstName ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[var(--fg-4)] text-[12px] focus:outline-none focus:border-white`}
           />
           {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
 
@@ -180,12 +180,12 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
             value={formData.email}
             onChange={handleChange}
             disabled
-            className={`w-full bg-transparent border ${errors.email ? 'border-red-500' : 'border-[#505050]'} rounded-[8px] p-4 text-[#505050] text-[12px] focus:outline-none focus:border-white`}
+            className={`w-full bg-transparent border ${errors.email ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[var(--fg-4)] text-[12px] focus:outline-none focus:border-white`}
           />
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
 
           {/* Phone Number */}
-          <div className="w-full bg-transparent border border-[#505050] rounded-md p-4 text-gray-400 flex items-center">
+          <div className="w-full bg-transparent border border-[var(--line-strong)] rounded-md p-4 text-gray-400 flex items-center">
             <select
               value={selectedDialCode}
               onChange={(e) => setSelectedDialCode(e.target.value)}
@@ -212,12 +212,12 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
           {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>}
 
           {/* Currency */}
-          <div className="w-full bg-transparent border border-[#505050] rounded-md p-4 text-gray-400 flex justify-between">
+          <div className="w-full bg-transparent border border-[var(--line-strong)] rounded-md p-4 text-gray-400 flex justify-between">
             <select
               name="currency"
               value={formData.currency}
               onChange={handleChange}
-              className="bg-transparent text-[12px] text-[#505050] w-full"
+              className="bg-transparent text-[12px] text-[var(--fg-4)] w-full"
             >
               <option value="">Select Currency</option>
               {currencies.map((cur) => (
@@ -239,7 +239,7 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
             value={formData.lastName}
             onChange={handleChange}
             placeholder="Enter your Last Name"
-            className={`w-full h-[50px] bg-transparent border ${errors.lastName ? 'border-red-500' : 'border-[#505050]'} rounded-[8px] p-4 text-[#505050] text-[12px] focus:outline-none focus:border-white`}
+            className={`w-full h-[50px] bg-transparent border ${errors.lastName ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[var(--fg-4)] text-[12px] focus:outline-none focus:border-white`}
           />
           {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
 
@@ -252,7 +252,7 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
               setSelectedDialCode(selected?.dialCode || '+1');
               handleChange(e);
             }}
-            className="w-full bg-transparent border border-[#505050] rounded-md p-4 text-[#505050] text-[12px]"
+            className="w-full bg-transparent border border-[var(--line-strong)] rounded-md p-4 text-[var(--fg-4)] text-[12px]"
           >
             <option value="">Select Country</option>
             {countries.map((c) => (
@@ -264,12 +264,12 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
           {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
 
           {/* Gender */}
-          <div className="w-full bg-transparent border border-[#505050] rounded-md p-4 text-gray-400 flex justify-between">
+          <div className="w-full bg-transparent border border-[var(--line-strong)] rounded-md p-4 text-gray-400 flex justify-between">
             <select
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="bg-transparent text-[12px] text-[#505050] w-full"
+              className="bg-transparent text-[12px] text-[var(--fg-4)] w-full"
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>

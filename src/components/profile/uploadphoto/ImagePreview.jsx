@@ -3,7 +3,7 @@ import ActionButton from "./ActionButton";
 
 function ImagePreview({ imageSrc, onUploadClick, onSaveClick, isLoading }) {
   return (
-    <article className="flex overflow-hidden flex-col justify-center items-center px-16 w-full rounded-xl aspect-square bg-[#1D1D1F]">
+    <article className="flex overflow-hidden flex-col justify-center items-center px-16 w-full rounded-xl aspect-square bg-[var(--card)]">
       <div className="flex flex-col">
         <img
           src={imageSrc}

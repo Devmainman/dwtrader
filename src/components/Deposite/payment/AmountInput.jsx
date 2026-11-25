@@ -9,7 +9,7 @@ function AmountInput() {
       <input
         type="text"
         placeholder="Deposit Amount"
-        className="overflow-hidden flex-1 shrink gap-2.5 self-stretch px-2.5 py-5 my-auto rounded-lg basis-0 bg-[#1D1D1F] min-h-[52px] min-w-60 text-neutral-400"
+        className="overflow-hidden flex-1 shrink gap-2.5 self-stretch px-2.5 py-5 my-auto rounded-lg basis-0 bg-[var(--card)] min-h-[52px] min-w-60 text-neutral-400"
       />
     </div>
   );

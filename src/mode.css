@@ -1,0 +1,190 @@
+/* ---------------------------------------------------------------------------
+   Light / dark mode for the signed-in app. Dark is the default.
+   <html data-mode="dark|light"> is set by lib/theme.js (the user's choice); the
+   public pages (landing, blog, help, sign-in) always stay dark.
+
+   Semantic tokens used by the app:
+     --page / --page-deep        page backgrounds
+     --card / --card-2 / --card-3 raised surfaces (cards, inputs, chips)
+     --fg / --fg-2 / --fg-3 / --fg-4  text from strongest to faintest
+     --line / --line-strong      hairlines and borders
+     --shadow-card / --glass      depth and frosted surfaces
+   In dark mode they keep the exact colours the app used before.
+   --------------------------------------------------------------------------- */
+:root {
+  --page: #161617; --page-deep: #0b0b0c;
+  --card: #1d1d1f; --card-2: #242426; --card-3: #3a3a3c;
+  --fg: #f3f3f3; --fg-2: #c7c7c7; --fg-3: #9f9f9f; --fg-4: #787878;
+  --line: rgba(255, 255, 255, .06); --line-strong: #505050;
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, .04) inset, 0 12px 32px -18px rgba(0, 0, 0, .7);
+  --glass: rgba(29, 29, 31, .72);
+  --hero-from: color-mix(in oklab, var(--color-blue-600) 38%, #161617);
+  --hero-to: #161617;
+  color-scheme: dark;
+}
+
+/* Light mode. `html:root[...]` outranks the tone rules in themes.css. */
+html:root[data-mode="light"] {
+  color-scheme: light;
+  --page: #f3f2f0; --page-deep: #eceae7;
+  --card: #ffffff; --card-2: #f6f5f3; --card-3: #e7e4e0;
+  --fg: #17161a; --fg-2: #34323a; --fg-3: #6b6871; --fg-4: #8f8c95;
+  --line: rgba(20, 18, 24, .07); --line-strong: #d9d5cf;
+  --shadow-card: 0 1px 2px rgba(20, 18, 24, .04), 0 10px 28px -16px rgba(20, 18, 24, .18);
+  --glass: rgba(255, 255, 255, .78);
+  --hero-from: color-mix(in oklab, var(--color-blue-500) 22%, #ffffff);
+  --hero-to: #ffffff;
+  --surface-1: #ffffff; --surface-2: #f6f5f3; --surface-3: #efece8; --surface-4: #e2ded9;
+  --nav-bg: rgba(255, 255, 255, .86);
+
+  /* White and black trade places: white text, white overlays (bg-white/5, border-white/10)
+     and black overlays all flip, so the whole app reads on a light background. */
+  --color-white: #17161a;
+  --color-black: #ffffff;
+
+  /* Greys, lightest to darkest, mirrored. 900/950 are page backgrounds, 800 borders and
+     chips, 400-500 muted text, 100-300 strong text. */
+  --color-neutral-50: #17161a;  --color-zinc-50: #17161a;  --color-gray-50: #17161a;
+  --color-neutral-100: #1d1c21; --color-zinc-100: #1d1c21; --color-gray-100: #1d1c21;
+  --color-neutral-200: #2c2a31; --color-zinc-200: #2c2a31; --color-gray-200: #2c2a31;
+  --color-neutral-300: #45424b; --color-zinc-300: #45424b; --color-gray-300: #45424b;
+  --color-neutral-400: #66636d; --color-zinc-400: #66636d; --color-gray-400: #66636d;
+  --color-neutral-500: #8a8790; --color-zinc-500: #8a8790; --color-gray-500: #8a8790;
+  --color-neutral-600: #b3b0b7; --color-zinc-600: #b3b0b7; --color-gray-600: #b3b0b7;
+  --color-neutral-700: #d8d5d1; --color-zinc-700: #d8d5d1; --color-gray-700: #d8d5d1;
+  --color-neutral-800: #e9e6e2; --color-zinc-800: #e9e6e2; --color-gray-800: #e9e6e2;
+  --color-neutral-900: #f3f2f0; --color-zinc-900: #f3f2f0; --color-gray-900: #f3f2f0;
+  --color-neutral-950: #eceae7; --color-zinc-950: #eceae7; --color-gray-950: #eceae7;
+}
+
+/* Solid accent and status surfaces keep white text in light mode, and so does anything
+   painted with a gradient (card faces, hero art). */
+html:root[data-mode="light"] :is(
+  .bg-blue-500, .bg-blue-600, .bg-blue-700, .bg-emerald-500, .bg-emerald-600, .bg-green-500, .bg-green-600,
+  .bg-red-500, .bg-red-600, .bg-amber-500, .bg-orange-500, .bg-orange-600,
+  [class*="bg-[linear-gradient"], [class*="bg-gradient-to"], [class*="bg-[radial-gradient"], .keep-dark
+) {
+  --color-white: #ffffff;
+  --color-black: #000000;
+}
+
+/* Skeletons and scrollbars */
+html:root[data-mode="light"] .skeleton {
+  background: linear-gradient(90deg, rgba(0, 0, 0, .04) 0%, rgba(0, 0, 0, .08) 50%, rgba(0, 0, 0, .04) 100%);
+  background-size: 200% 100%;
+}
+html:root[data-mode="light"] body { background-color: var(--page); }
+@media (min-width: 1024px) {
+  html:root[data-mode="light"], html:root[data-mode="light"] body { background-color: var(--page); }
+}
+
+/* The mode switch animates the whole page once, softly. */
+html.mode-switching, html.mode-switching * { transition: background-color 320ms ease, color 320ms ease, border-color 320ms ease !important; }
+
+/* ---- Premium surfaces used by the dashboard and wallet ---- */
+.ui-card { background: var(--card); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow-card); }
+.ui-glass { background: var(--glass); backdrop-filter: saturate(160%) blur(18px); -webkit-backdrop-filter: saturate(160%) blur(18px); }
+.ui-hero {
+  position: relative; overflow: hidden; border-radius: 28px; border: 1px solid var(--line);
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--color-blue-500) 32%, transparent) 0%, transparent 55%),
+    radial-gradient(90% 80% at 100% 0%, color-mix(in oklab, var(--color-blue-300) 14%, transparent) 0%, transparent 60%),
+    linear-gradient(180deg, var(--hero-from) 0%, var(--hero-to) 100%);
+  box-shadow: var(--shadow-card);
+}
+.ui-hero::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35; mix-blend-mode: overlay;
+  background-image: radial-gradient(rgba(255, 255, 255, .5) 1px, transparent 1px); background-size: 3px 3px;
+  mask-image: linear-gradient(180deg, #000, transparent 70%);
+}
+html:root[data-mode="light"] .ui-hero::after { opacity: .12; mix-blend-mode: multiply; }
+.ui-row { transition: background-color 160ms ease, transform 160ms ease; }
+.ui-row:hover { background: color-mix(in oklab, var(--fg) 4%, transparent); }
+.ui-row:active { transform: scale(.99); }
+@keyframes ui-count { from { opacity: 0; transform: translateY(6px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+.ui-count { animation: ui-count 560ms cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes ui-stagger { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.ui-stagger > * { animation: ui-stagger 460ms cubic-bezier(.22, 1, .36, 1) both; }
+.ui-stagger > *:nth-child(2) { animation-delay: 40ms; } .ui-stagger > *:nth-child(3) { animation-delay: 80ms; }
+.ui-stagger > *:nth-child(4) { animation-delay: 120ms; } .ui-stagger > *:nth-child(5) { animation-delay: 160ms; }
+.ui-stagger > *:nth-child(6) { animation-delay: 200ms; } .ui-stagger > *:nth-child(n+7) { animation-delay: 240ms; }
+@media (prefers-reduced-motion: reduce) { .ui-count, .ui-stagger > * { animation: none !important; } }
+
+/* White line icons (svg images) read dark on light surfaces. */
+html:root[data-mode="light"] img.mode-icon { filter: invert(1) brightness(.35); }
+/* Older cards built from the --card token get the same soft depth as .ui-card. */
+.bg-\[var\(--card\)\]:is(.rounded-2xl, .rounded-3xl, .rounded-xl) { box-shadow: var(--shadow-card); }
+
+/* Bottom nav: its white svg icons read dark in light mode. */
+html:root[data-mode="light"] .nav-item .nav-icon { filter: invert(1) brightness(.3); }
+html:root[data-mode="light"] .nav-item.active .nav-label { color: var(--fg); }
+html:root[data-mode="light"] .nav-item .nav-label { color: var(--fg-4); }
+
+/* ---------- Dashboard ---------- */
+:root { --dash-up: #2fd39a; --dash-down: #ff6b6b; --dash-panel: #1b1b1e; --dash-page: #121214; }
+html:root[data-mode="light"] { --dash-up: #0f9f6e; --dash-down: #e5484d; --dash-panel: #ffffff; --dash-page: #f4f3f0; }
+/* One surface style for every block: flat, hairline edge, no glow. */
+.dash-panel { background: var(--dash-panel); border: 1px solid var(--line); border-radius: 22px; position: relative; overflow: hidden; }
+html:root[data-mode="light"] .dash-panel { box-shadow: 0 1px 2px rgba(20, 18, 24, .04); }
+.dash-page { background: var(--dash-page); }
+/* Chart: line draws in, fill fades in, the live point breathes. */
+@keyframes dash-draw { from { stroke-dasharray: 1; stroke-dashoffset: 1; } to { stroke-dasharray: 1; stroke-dashoffset: 0; } }
+.dash-draw { animation: dash-draw 900ms cubic-bezier(.33, 1, .68, 1) both; }
+@keyframes dash-fade { from { opacity: 0; } }
+.dash-fade { animation: dash-fade 900ms ease 200ms both; }
+@keyframes dash-pulse { 0%, 100% { r: 3; opacity: 1; } 50% { r: 5; opacity: .55; } }
+.dash-pulse { animation: dash-pulse 2.4s ease-in-out infinite; }
+@keyframes dash-rise { from { opacity: 0; transform: translateY(4px); } }
+.dash-rise > * { animation: dash-rise 360ms cubic-bezier(.22, 1, .36, 1) both; }
+.dash-rise > *:nth-child(2) { animation-delay: 30ms; } .dash-rise > *:nth-child(3) { animation-delay: 60ms; }
+.dash-rise > *:nth-child(4) { animation-delay: 90ms; } .dash-rise > *:nth-child(n+5) { animation-delay: 120ms; }
+@media (prefers-reduced-motion: reduce) { .dash-draw, .dash-fade, .dash-pulse, .dash-rise > * { animation: none !important; } }
+/* Live dot next to the balance */
+.dash-live { display: inline-block; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--dash-up); box-shadow: 0 0 0 0 color-mix(in oklab, var(--dash-up) 60%, transparent); animation: dash-live 2s ease-out infinite; }
+@keyframes dash-live { 0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--dash-up) 55%, transparent); } 80%, 100% { box-shadow: 0 0 0 6px transparent; } }
+/* Price ticks: a short tint when a live value moves */
+.dash-flash { border-radius: 6px; transition: color .9s ease, background-color .9s ease; }
+.dash-flash-up { color: var(--dash-up) !important; background-color: color-mix(in oklab, var(--dash-up) 12%, transparent); transition: none; }
+.dash-flash-down { color: var(--dash-down) !important; background-color: color-mix(in oklab, var(--dash-down) 12%, transparent); transition: none; }
+/* Rows: gentle press */
+.dash-row { transition: transform .15s ease, opacity .15s ease; -webkit-tap-highlight-color: transparent; }
+.dash-row:active { transform: scale(.985); opacity: .85; }
+@media (hover: hover) { .dash-row:hover { opacity: .88; } }
+@media (prefers-reduced-motion: reduce) { .dash-live { animation: none; } }
+
+/* ---------- Account-limit banner (under the top bar) ---------- */
+.limit-banner {
+  position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px;
+  padding: 10px 10px 10px 12px; border-radius: 18px; color: #fff;
+  box-shadow: 0 10px 26px -14px var(--limit-glow), 0 1px 0 rgba(255, 255, 255, .22) inset;
+  animation: limit-hop 2.8s cubic-bezier(.3, 0, .3, 1) infinite;
+}
+.limit-exhausted { --limit-glow: rgba(229, 72, 77, .9); background: linear-gradient(115deg, #e5484d 0%, #c2262e 55%, #9f1d25 100%); }
+.limit-warning { --limit-glow: rgba(245, 158, 11, .9); background: linear-gradient(115deg, #f5a524 0%, #e07a0b 60%, #c2620a 100%); }
+.limit-near { --limit-glow: color-mix(in oklab, var(--color-blue-600) 90%, transparent); background: linear-gradient(115deg, var(--color-blue-500), color-mix(in oklab, var(--color-blue-700) 85%, #000)); }
+/* A short hop every few seconds, then rest: noticeable without being frantic. */
+@keyframes limit-hop {
+  0%, 62%, 100% { transform: translateY(0); }
+  70% { transform: translateY(-6px); }
+  78% { transform: translateY(0); }
+  84% { transform: translateY(-2.5px); }
+  90% { transform: translateY(0); }
+}
+/* Light sweeping across the banner */
+.limit-shine { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .28) 50%, transparent 65%);
+  background-size: 250% 100%; animation: limit-shine 2.8s ease-in-out infinite; }
+@keyframes limit-shine { 0%, 40% { background-position: 150% 0; } 100% { background-position: -100% 0; } }
+/* Icon with a ring that keeps pulsing out */
+.limit-icon { position: relative; flex: none; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, .2); }
+.limit-icon::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .55); animation: limit-ring 1.8s ease-out infinite; }
+@keyframes limit-ring { from { transform: scale(1); opacity: .9; } to { transform: scale(1.65); opacity: 0; } }
+/* Call to action: white pill, the arrow nudges forward */
+.limit-cta { position: relative; flex: none; display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; border-radius: 999px;
+  background: #fff; color: #17161a; font-size: 12px; font-weight: 700; transition: transform .15s ease; }
+.limit-cta:hover { transform: scale(1.04); }
+.limit-cta:active { transform: scale(.96); }
+.limit-exhausted .limit-cta { color: #c2262e; } .limit-warning .limit-cta { color: #b45309; }
+.limit-arrow { animation: limit-nudge 1.4s ease-in-out infinite; }
+@keyframes limit-nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+@media (prefers-reduced-motion: reduce) { .limit-banner, .limit-shine, .limit-icon::after, .limit-arrow { animation: none !important; } }

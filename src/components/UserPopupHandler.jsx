@@ -559,7 +559,7 @@ export default function UserPopupHandler() {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-[#1D1D1F] rounded-[20px] text-stone-300 p-4 w-full max-w-md border-2 border-zinc-900">
+      <div className="bg-[var(--card)] rounded-[20px] text-stone-300 p-4 w-full max-w-md border-2 border-zinc-900">
         {error && <div className="bg-red-500 p-2 mb-3 rounded text-xs">{error}</div>}
         {currentAssignment && (
           <>
@@ -581,7 +581,7 @@ export default function UserPopupHandler() {
             )}
             {currentAssignment.type === 'popup_invoice' && (
               <form onSubmit={handleInvoicePayment}>
-                <p className="text-[#A3A0A4] mb-3 text-[10px] text-left">{currentAssignment.itemId?.description}</p>
+                <p className="text-[var(--fg-3)] mb-3 text-[10px] text-left">{currentAssignment.itemId?.description}</p>
                 <p className="mb-3 text-[16px] font-semibold text-left">
                   Amount: {currentAssignment.itemId?.amount} {currentAssignment.itemId?.currency}
                 </p>

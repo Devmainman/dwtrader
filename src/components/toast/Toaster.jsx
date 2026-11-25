@@ -66,7 +66,7 @@ function ToastItem({ t, index, total }) {
       }}
       className={`pointer-events-auto touch-none select-none w-full max-w-[380px] ${t.leaving ? 'animate-[toast-out_200ms_ease-in_forwards]' : 'animate-[toast-in_420ms_cubic-bezier(0.22,1.2,0.36,1)_both]'}`}
     >
-      <div key={t.bump} className="flex items-center gap-2.5 rounded-[20px] bg-[#1D1D1F]/92 backdrop-blur-xl border border-white/10 shadow-[0_10px_32px_rgba(0,0,0,0.5)] pl-2.5 pr-3 py-2 animate-[toast-bump_260ms_ease-out]">
+      <div key={t.bump} className="flex items-center gap-2.5 rounded-[20px] bg-[var(--card)]/92 backdrop-blur-xl border border-white/10 shadow-[0_10px_32px_rgba(0,0,0,0.5)] pl-2.5 pr-3 py-2 animate-[toast-bump_260ms_ease-out]">
         <span className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${s.tint}`}>
           <Icon className={`w-3.5 h-3.5 ${t.type === 'loading' ? 'animate-spin' : ''}`} strokeWidth={3} />
         </span>

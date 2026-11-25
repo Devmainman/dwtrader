@@ -87,7 +87,7 @@ const BankTransferForm = ({ onBack, bankDetails }) => {
           <div className="bg-gray-100 p-2 rounded-full">
             <img src={bankIcon} alt="Bank" className="h-6 w-6" />
           </div>
-          <h2 className="ml-3 text-xl text-[#C7C7C7] font-medium">Bank</h2>
+          <h2 className="ml-3 text-xl text-[var(--fg-2)] font-medium">Bank</h2>
         </div>
       </div>
       
@@ -108,21 +108,21 @@ const BankTransferForm = ({ onBack, bankDetails }) => {
         <div className="space-y-4 mb-6">
           <div className="flex justify-between">
             <label className="block text-gray-400 text-[10px] mt-2">Bank Name:</label>
-            <div className="bg-[#1D1D1F] p-3 rounded-md text-[10px] h-[36px] w-[243px]">
+            <div className="bg-[var(--card)] p-3 rounded-md text-[10px] h-[36px] w-[243px]">
               {bankDetails.bankName}
             </div>
           </div>
           
           <div className="flex justify-between">
             <label className="block text-gray-400 text-[10px] mt-2">Account Name:</label>
-            <div className="bg-[#1D1D1F] p-3 text-[10px] rounded-md h-[36px] w-[243px]">
+            <div className="bg-[var(--card)] p-3 text-[10px] rounded-md h-[36px] w-[243px]">
               {bankDetails.accountName}
             </div>
           </div>
           
           <div className="flex justify-between">
             <label className="block text-gray-400 text-[10px] mt-2">Account Number:</label>
-            <div className="bg-[#1D1D1F] p-3 rounded-md flex justify-between text-[10px] items-center h-[36px] w-[243px]">
+            <div className="bg-[var(--card)] p-3 rounded-md flex justify-between text-[10px] items-center h-[36px] w-[243px]">
               {bankDetails.accountNumber}
               <button 
                 type="button"
@@ -138,7 +138,7 @@ const BankTransferForm = ({ onBack, bankDetails }) => {
             <label className="block text-gray-400 text-[10px] mt-4">Amount (NGN)</label>
             <input
               type="number"
-              className="bg-[#1D1D1F] p-3 rounded-md text-white text-[10px] flex placeholder-gray-500 h-[52px] w-[261px]"
+              className="bg-[var(--card)] p-3 rounded-md text-white text-[10px] flex placeholder-gray-500 h-[52px] w-[261px]"
               placeholder="Deposit Amount"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -150,8 +150,8 @@ const BankTransferForm = ({ onBack, bankDetails }) => {
         {/* Upload Payment Proof Section */}
         <div className="mb-6">
           <label className="block text-gray-400 text-[10px] mb-2">Upload payment proof</label>
-          <div className="bg-[#1D1D1F] h-[172px] w-full rounded-md p-4">
-            <div className="bg-[#242426] p-6 h-[138px] rounded-md flex flex-col items-center justify-center">
+          <div className="bg-[var(--card)] h-[172px] w-full rounded-md p-4">
+            <div className="bg-[var(--card-2)] p-6 h-[138px] rounded-md flex flex-col items-center justify-center">
               <div className="rounded-full mb-2">
                 <img
                   src={cloud}
@@ -190,16 +190,16 @@ const BankTransferForm = ({ onBack, bankDetails }) => {
         </button>
         
         {/* Instructions Panel */}
-        <div className="mt-6 bg-[#1D1D1F] rounded-[10px] p-4">
+        <div className="mt-6 bg-[var(--card)] rounded-[10px] p-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-[14px] font-medium F3F3F3">Lets Proceed with that Deposit</h3>
             <ChevronRight className="h-5 w-5" />
           </div>
-          <p className="text-[#9F9F9F] text-[10px] mb-3">To make a deposit, please follow these simple steps:</p>
+          <p className="text-[var(--fg-3)] text-[10px] mb-3">To make a deposit, please follow these simple steps:</p>
           
           <div className="flex mb-2">
             <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0 mt-1" />
-            <p className="text-[#9F9F9F] text-[10px]">
+            <p className="text-[var(--fg-3)] text-[10px]">
               <span className="font-medium">Payment Information:</span> Initiate the payment by transferring 
               the funds to the provided payment details.
             </p>
@@ -207,7 +207,7 @@ const BankTransferForm = ({ onBack, bankDetails }) => {
           
           <div className="flex">
             <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0 mt-1" />
-            <p className="text-[#9F9F9F] text-[10px]">
+            <p className="text-[var(--fg-3)] text-[10px]">
               <span className="font-medium">Proof of Payment:</span> After making the payment, upload the 
               proof of payment in the designated section. This ensures a 
               seamless update to your account.

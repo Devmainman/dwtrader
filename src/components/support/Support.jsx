@@ -71,7 +71,7 @@ const Support1 = () => {
             ) : error ? (
               <p className="mt-5 text-xs text-red-400">{error} <button type="button" onClick={load} className="underline">Retry</button></p>
             ) : !tickets.length ? (
-              <div className="mt-5 px-3 py-8 rounded-xl bg-[#1D1D1F] text-center">
+              <div className="mt-5 px-3 py-8 rounded-xl bg-[var(--card)] text-center">
                 <p className="text-[14px] text-zinc-100">No tickets yet</p>
                 <p className="mt-1 text-[10px] text-neutral-400">Need help? Open a new ticket and our team will reply here.</p>
               </div>

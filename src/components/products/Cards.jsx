@@ -409,7 +409,7 @@ function RequestItem({ r, onChanged, onOpen }) {
   const s = STAGE[r.stage] || STAGE.rejected;
   const rejected = r.stage === 'purchase_unpaid' ? r.purchase?.status === 'rejected' && r.purchase?.note : r.stage === 'activation_unpaid' ? r.activation?.status === 'rejected' && r.activation?.note : null;
   return (
-    <div className="rounded-xl border border-neutral-800 bg-[#1D1D1F] p-4 grid sm:grid-cols-[220px_1fr] gap-4">
+    <div className="rounded-xl border border-neutral-800 bg-[var(--card)] p-4 grid sm:grid-cols-[220px_1fr] gap-4">
       <button type="button" onClick={onOpen} aria-label={`Open ${r.product?.name || 'card'}`} className="block w-full text-left rounded-xl transition hover:scale-[1.01] active:scale-[0.99]">
         <CardArt product={r.product} holder={r.card?.holderName || r.holder?.fullName} last4={r.card?.last4} expiry={r.card?.expiry} dim={r.stage !== 'active'} />
       </button>
@@ -489,7 +489,7 @@ export default function Cards() {
                 {items.map((p) => {
                   const open = openByProduct.has(String(p._id));
                   return (
-                    <div key={p._id} className="rounded-xl border border-neutral-800 bg-[#1D1D1F] p-4 space-y-3">
+                    <div key={p._id} className="rounded-xl border border-neutral-800 bg-[var(--card)] p-4 space-y-3">
                       <CardArt product={p} />
                       <div>
                         <p className="text-sm font-semibold text-zinc-100">{p.name}</p>

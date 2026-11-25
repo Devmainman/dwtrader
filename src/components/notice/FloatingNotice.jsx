@@ -40,7 +40,7 @@ export default function FloatingNotice({ icon: Icon, tone = 'info', title, messa
         role="status"
         aria-live="polite"
         onClick={onTap}
-        className={`pointer-events-auto w-full max-w-[420px] rounded-[22px] bg-[#1D1D1F]/90 backdrop-blur-xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)] px-3.5 py-3 ${onTap ? 'cursor-pointer' : ''} ${leaving ? 'animate-[notice-lift_240ms_ease-in_forwards]' : 'animate-[notice-drop_700ms_cubic-bezier(0.22,1,0.36,1)_both]'}`}
+        className={`pointer-events-auto w-full max-w-[420px] rounded-[22px] bg-[var(--card)]/90 backdrop-blur-xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)] px-3.5 py-3 ${onTap ? 'cursor-pointer' : ''} ${leaving ? 'animate-[notice-lift_240ms_ease-in_forwards]' : 'animate-[notice-drop_700ms_cubic-bezier(0.22,1,0.36,1)_both]'}`}
       >
         <div className="flex items-start gap-3">
           {Icon && (
@@ -86,7 +86,7 @@ export function NoticePill({ icon: Icon, tone = 'critical', label, onOpen }) {
       <button
         type="button"
         onClick={onOpen}
-        className="pointer-events-auto inline-flex items-center gap-1.5 h-7 pl-1.5 pr-3 rounded-full bg-[#1D1D1F]/90 backdrop-blur-xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.45)] text-[11px] font-medium text-zinc-100 animate-[notice-drop_600ms_cubic-bezier(0.22,1,0.36,1)_both]"
+        className="pointer-events-auto inline-flex items-center gap-1.5 h-7 pl-1.5 pr-3 rounded-full bg-[var(--card)]/90 backdrop-blur-xl border border-white/10 shadow-[0_6px_20px_rgba(0,0,0,0.45)] text-[11px] font-medium text-zinc-100 animate-[notice-drop_600ms_cubic-bezier(0.22,1,0.36,1)_both]"
       >
         <span className={`w-5 h-5 rounded-full flex items-center justify-center ${t.icon}`}>{Icon && <Icon className="w-3 h-3" strokeWidth={2.5} />}</span>
         {label}

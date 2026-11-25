@@ -34,7 +34,7 @@ function Group({ title, children, action }) {
           {action}
         </div>
       )}
-      <div className="rounded-2xl bg-[#1C1C1E] overflow-hidden">{children}</div>
+      <div className="rounded-2xl bg-[var(--card)] overflow-hidden">{children}</div>
     </section>
   );
 }
@@ -117,13 +117,13 @@ export default function Assets() {
 
           {/* Holdings */}
           <div className="flex flex-col gap-3">
-            <div className="flex gap-1 p-[3px] rounded-[10px] bg-[#1C1C1E] overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-1 p-[3px] rounded-[10px] bg-[var(--card)] overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {[{ key: 'all', label: 'All' }, ...data.groups].map((g) => (
                 <button
                   key={g.key}
                   type="button"
                   onClick={() => setFilter(g.key)}
-                  className={`shrink-0 h-8 px-3.5 rounded-[8px] text-[13px] font-medium transition-all duration-200 ${filter === g.key ? 'bg-[#3A3A3C] text-white shadow-[0_1px_3px_rgba(0,0,0,0.4)]' : 'text-neutral-400 hover:text-neutral-200'}`}
+                  className={`shrink-0 h-8 px-3.5 rounded-[8px] text-[13px] font-medium transition-all duration-200 ${filter === g.key ? 'bg-[var(--card-3)] text-white shadow-[0_1px_3px_rgba(0,0,0,0.4)]' : 'text-neutral-400 hover:text-neutral-200'}`}
                 >
                   {g.label}
                 </button>
@@ -131,7 +131,7 @@ export default function Assets() {
             </div>
 
             {!items.length ? (
-              <div className="rounded-2xl bg-[#1C1C1E]"><Empty icon={PieChart} title="Nothing here yet" text="Invest, stake or trade and it will show up here." /></div>
+              <div className="rounded-2xl bg-[var(--card)]"><Empty icon={PieChart} title="Nothing here yet" text="Invest, stake or trade and it will show up here." /></div>
             ) : (
               <Group title={filter === 'all' ? `${items.length} holding${items.length === 1 ? '' : 's'}` : data.groups.find((g) => g.key === filter)?.label}
                 action={<button type="button" onClick={reload} className="text-[13px] text-[#0A84FF] hover:opacity-80">Refresh</button>}>

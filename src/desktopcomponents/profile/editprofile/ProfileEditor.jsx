@@ -6,7 +6,7 @@ import Button from "./Button";
 
 function ProfileEditor() {
   return (
-    <section className="flex overflow-hidden flex-col px-5 py-6 rounded-xl h-[357px] w-[545px] bg-[#1D1D1F] max-md:px-5">
+    <section className="flex overflow-hidden flex-col px-5 py-6 rounded-xl h-[357px] w-[545px] bg-[var(--card)] max-md:px-5">
   <header className="text-[14px] mb-6 font-medium tracking-normal leading-tight text-neutral-400 max-md:max-w-full">
     Edit Profile Information
   </header>

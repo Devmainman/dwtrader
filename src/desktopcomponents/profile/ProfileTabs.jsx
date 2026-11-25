@@ -21,7 +21,7 @@ function ProfileTabs({ onTabChange }) {
           }}
           className={`flex-1 shrink gap-1.5 self-stretch px-4 py-2.5 my-auto whitespace-nowrap rounded-3xl border-solid basis-0 min-h-[29px] min-w-60 ${
             activeTab === tab
-              ? "bg-blue-600 border-[1.5px] border-[#242426]"
+              ? "bg-blue-600 border-[1.5px] border-[var(--card-2)]"
               : "border-2 border-neutral-800"
           }`}
         >

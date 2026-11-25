@@ -14,7 +14,7 @@ const NotificationList = () => {
   });
 
   return (
-    <section className="flex overflow-hidden w-[1080px] gap-2.5 justify-center items-center p-4 mt-5 rounded-xl border border-solid bg-[#1D1D1F] border-neutral-600">
+    <section className="flex overflow-hidden w-[1080px] gap-2.5 justify-center items-center p-4 mt-5 rounded-xl border border-solid bg-[var(--card)] border-neutral-600">
       <div className="flex-1 shrink self-stretch my-auto w-full basis-0 min-w-60 max-md:max-w-full">
         {/* If a notification is selected, show NotificationBody */}
         {selectedNotification ? (

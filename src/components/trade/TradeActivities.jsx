@@ -77,7 +77,7 @@ function TradeActivities() {
 
   if (loading) {
     return (
-      <section className="flex flex-col gap-4 justify-center items-center px-4 py-5 w-full rounded-3xl bg-[#1D1D1F] max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1229px] overflow-hidden">
+      <section className="flex flex-col gap-4 justify-center items-center px-4 py-5 w-full rounded-3xl bg-[var(--card)] max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1229px] overflow-hidden">
         <div className="w-full flex flex-col gap-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="w-full px-3 py-3 rounded-xl bg-neutral-800 animate-pulse h-20" />
@@ -89,14 +89,14 @@ function TradeActivities() {
 
   if (error) {
     return (
-      <section className="flex flex-col gap-4 justify-center items-center px-4 py-5 w-full rounded-3xl bg-[#1D1D1F] max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1229px] overflow-hidden">
+      <section className="flex flex-col gap-4 justify-center items-center px-4 py-5 w-full rounded-3xl bg-[var(--card)] max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1229px] overflow-hidden">
         <div className="text-red-500 text-sm">{error}</div>
       </section>
     );
   }
 
   return (
-    <section className="flex flex-col gap-4 justify-center items-center px-4 py-5 w-full rounded-3xl bg-[#1D1D1F] max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1229px] overflow-hidden">
+    <section className="flex flex-col gap-4 justify-center items-center px-4 py-5 w-full rounded-3xl bg-[var(--card)] max-w-full sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1229px] overflow-hidden">
       <div className="w-full flex flex-col">
         {/* Header */}
         <div className="flex flex-wrap justify-between items-center w-full gap-4">

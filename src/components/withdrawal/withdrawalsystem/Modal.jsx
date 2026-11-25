@@ -4,10 +4,10 @@ const Modal = ({ isOpen, onClose, title, message, type = 'info', buttonLabel = '
   if (!isOpen) return null;
 
   const colorThemes = {
-    success: 'bg-[#161617] text-green-500',
-    error: 'bg-[#161617] text-red-500',
-    warning: 'bg-[#161617] text-yellow-500',
-    info: 'bg-[#161617] text-blue-500',
+    success: 'bg-[var(--page)] text-green-500',
+    error: 'bg-[var(--page)] text-red-500',
+    warning: 'bg-[var(--page)] text-yellow-500',
+    info: 'bg-[var(--page)] text-blue-500',
   };
 
   return (

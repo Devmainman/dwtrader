@@ -18,7 +18,7 @@ function PasswordChangeForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex overflow-hidden flex-col items-start py-8 pr-10 pl-9 rounded-xl bg-[#1D1D1F] h-[359px] w-[545px] max-w-auto max-md:px-5"
+      className="flex overflow-hidden flex-col items-start py-8 pr-10 pl-9 rounded-xl bg-[var(--card)] h-[359px] w-[545px] max-w-auto max-md:px-5"
     >
       <FormHeading />
 

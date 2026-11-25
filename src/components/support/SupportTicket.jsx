@@ -13,7 +13,7 @@ const SupportTicket = ({ title, timestamp, priority, status, iconUrl }) => {
   const isOpen = status.toLowerCase() === "open";
 
   return (
-    <article className="flex flex-col px-3 py-4 w-full rounded-xl border-r bg-[#1D1D1F] border-neutral-600 mb-5 last:mb-0">
+    <article className="flex flex-col px-3 py-4 w-full rounded-xl border-r bg-[var(--card)] border-neutral-600 mb-5 last:mb-0">
       <div className="flex gap-3">
         <div className="flex flex-col grow  w-fit">
           <h3 className="text-[14px] tracking-normal leading-tight text-zinc-100">

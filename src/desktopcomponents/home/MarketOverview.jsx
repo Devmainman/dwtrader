@@ -157,7 +157,7 @@ function MarketOverview() {
 
   /* ================= UI (UNCHANGED) ================= */
   return (
-    <section className="overflow-hidden px-3 py-4 w-full rounded-xl bg-[#1D1D1F]">
+    <section className="overflow-hidden px-3 py-4 w-full rounded-xl bg-[var(--card)]">
       <div className="w-full">
         <div className="flex items-center w-full text-[14px] font-medium tracking-normal leading-tight text-zinc-100">
           <h3 className="flex-1 shrink self-stretch my-auto basis-0">

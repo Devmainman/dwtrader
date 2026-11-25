@@ -39,15 +39,15 @@ export default function IDVerificationStep3({ onBack, onContinue }) {
  return (
   <div className="md:flex md:items-start md:justify-center md:gap-4">
     {/* LEFT PANEL */}
-    <div className="md:w-[866px] lg:h-[603px] rounded-[10px] md:p-6 lg:bg-[#1D1D1F] md:flex md:flex-col md:gap-6">
+    <div className="md:w-[866px] lg:h-[603px] rounded-[10px] md:p-6 lg:bg-[var(--card)] md:flex md:flex-col md:gap-6">
       
       {/* Header (on top of column 1 + 2) */}
       <div className="hidden md:block w-full mb-1">
-        <h1 className="text-[35px] text-[#F3F3F3] font-medium mb-2">Welcome</h1>
-        <p className="text-[#F3F3F3] font-regular mb-6">
+        <h1 className="text-[35px] text-[var(--fg)] font-medium mb-2">Welcome</h1>
+        <p className="text-[var(--fg)] font-regular mb-6">
           You're a few steps to completing your profile
         </p>
-        <div className="bg-[#242426] flex justify-center items-center h-[37px] w-[204px] rounded-[8px] p-2 mb-1">
+        <div className="bg-[var(--card-2)] flex justify-center items-center h-[37px] w-[204px] rounded-[8px] p-2 mb-1">
           <h2 className="text-[14px]">Account Authentication</h2>
         </div>
       </div>
@@ -56,8 +56,8 @@ export default function IDVerificationStep3({ onBack, onContinue }) {
       <div className="md:flex md:justify-between md:gap-6">
         {/* Column 1 */}
         <div className="md:w-[350px] flex flex-col">
-          <h1 className="text-[18px] text-[#F3F3F3] font-medium">Additional Verification</h1>
-          <p className="text-[#787878] text-[12px] mb-4 md:text-[14px]">
+          <h1 className="text-[18px] text-[var(--fg)] font-medium">Additional Verification</h1>
+          <p className="text-[var(--fg-4)] text-[12px] mb-4 md:text-[14px]">
             Upload an additional identity document
           </p>
 

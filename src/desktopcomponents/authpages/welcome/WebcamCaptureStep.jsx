@@ -105,10 +105,10 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
 
   const renderInstructions = () => (
   <>
-    <p className="text-[10px] font-regular text-[#9F9F9F] mb-2">
+    <p className="text-[10px] font-regular text-[var(--fg-3)] mb-2">
       Welcome to our secure and advanced facial verification system! To ensure the highest level of security and identity verification, we kindly request you to undergo facial recognition.
     </p>
-    <p className="text-[#9F9F9F] text-[10px] mb-3">To get started, please follow these steps:</p>
+    <p className="text-[var(--fg-3)] text-[10px] mb-3">To get started, please follow these steps:</p>
 
     {[
       'Find a well-lit area with minimal shadows for the best results.',
@@ -118,14 +118,14 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
     ].map((item, idx) => (
       <div className="flex mb-2 items-center" key={idx}>
         <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0" />
-        <p className="text-[#9F9F9F] text-[10px]">{item}</p>
+        <p className="text-[var(--fg-3)] text-[10px]">{item}</p>
       </div>
     ))}
 
-    <p className="text-[#9F9F9F] text-[10px] mb-3">
+    <p className="text-[var(--fg-3)] text-[10px] mb-3">
       Your facial data will be handled confidentially and securely stored in compliance with privacy policies.
     </p>
-    <p className="text-[#9F9F9F] text-[10px] mb-3">
+    <p className="text-[var(--fg-3)] text-[10px] mb-3">
       For any issues, our support team is available to assist you.
     </p>
   </>
@@ -134,7 +134,7 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
   return (
   <div className="md:flex md:items-start md:justify-center md:gap-6">
     {/* LEFT PANEL (Camera + Actions) */}
-    <div className="w-full md:w-[866px] lg:h-[603px] rounded-[10px] md:p-6 lg:bg-[#1D1D1F] flex flex-col md:flex-row md:gap-6">
+    <div className="w-full md:w-[866px] lg:h-[603px] rounded-[10px] md:p-6 lg:bg-[var(--card)] flex flex-col md:flex-row md:gap-6">
       
       {/* Camera Section (Top on mobile, Right on desktop) */}
       <div className="w-[242px] aspect-square bg-black relative overflow-hidden self-center md:self-start mb-6 md:mb-0">
@@ -172,8 +172,8 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
 
       {/* Buttons and Text Content */}
       <div className="flex-1 flex flex-col justify-start space-y-4">
-        <h1 className="text-[18px] font-medium text-[#F3F3F3]">Webcam Capture</h1>
-        <p className="text-[#787878] text-[12px]">
+        <h1 className="text-[18px] font-medium text-[var(--fg)]">Webcam Capture</h1>
+        <p className="text-[var(--fg-4)] text-[12px]">
           We will need to authenticate your account credibility details with a Face Capture
         </p>
 
@@ -257,13 +257,13 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
 
     {/* Desktop Instruction Panel */}
     <div className="hidden md:block md:w-[403px] md:h-[603px]">
-      <div className="bg-[#1D1D1F] rounded-[10px] p-4 sticky top-4 overflow-y-auto h-full">
+      <div className="bg-[var(--card)] rounded-[10px] p-4 sticky top-4 overflow-y-auto h-full">
         {renderInstructions()}
       </div>
     </div>
 
     {/* Mobile Instruction Panel */}
-    <div className="md:hidden mt-6 bg-[#1D1D1F] rounded-[10px] p-4">
+    <div className="md:hidden mt-6 bg-[var(--card)] rounded-[10px] p-4">
       {renderInstructions()}
     </div>
   </div>

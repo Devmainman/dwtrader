@@ -43,7 +43,7 @@ function QuickSheet({ sheet, onClose, onGo }) {
   return createPortal(
     <div className="fixed inset-0 z-[9000] flex items-end md:items-center justify-center" role="dialog" aria-modal="true" aria-label={sheet.title}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-[fade-in_200ms_ease_both]" onClick={onClose} />
-      <div className="relative w-full md:max-w-sm bg-[#1C1C1E] border border-white/10 rounded-t-[28px] md:rounded-[28px] shadow-2xl animate-[sheet-in_420ms_cubic-bezier(0.22,1,0.36,1)_both]">
+      <div className="relative w-full md:max-w-sm bg-[var(--card)] border border-white/10 rounded-t-[28px] md:rounded-[28px] shadow-2xl animate-[sheet-in_420ms_cubic-bezier(0.22,1,0.36,1)_both]">
         <div className="mx-auto mt-2 w-9 h-1 rounded-full bg-white/20 md:hidden" />
         <div className="flex items-center justify-between px-5 pt-3 pb-2">
           <div>
@@ -273,7 +273,7 @@ function WalletSection() {
       {showCurrencyDropdown && createPortal(
         <div className="fixed inset-0 z-[9000] flex items-end md:items-center justify-center" role="dialog" aria-modal="true">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-[fade-in_200ms_ease_both]" onClick={() => setShowCurrencyDropdown(false)} />
-          <div className="relative w-full md:max-w-sm max-h-[80dvh] flex flex-col bg-[#1C1C1E] border border-white/10 rounded-t-[28px] md:rounded-[28px] shadow-2xl animate-[sheet-in_420ms_cubic-bezier(0.22,1,0.36,1)_both]">
+          <div className="relative w-full md:max-w-sm max-h-[80dvh] flex flex-col bg-[var(--card)] border border-white/10 rounded-t-[28px] md:rounded-[28px] shadow-2xl animate-[sheet-in_420ms_cubic-bezier(0.22,1,0.36,1)_both]">
             <div className="mx-auto mt-2 w-9 h-1 rounded-full bg-white/20 md:hidden" />
             <div className="flex items-center justify-between px-5 pt-3 pb-2">
               <div>

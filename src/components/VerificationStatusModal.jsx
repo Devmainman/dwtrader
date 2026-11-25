@@ -6,7 +6,7 @@ const VerificationStatusModal = ({ show, onClose, emailRequested, phoneRequested
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 bg-opacity-60 flex items-center justify-center">
-      <div className="bg-[#1D1D1F] text-white rounded-2xl shadow-2xl w-[90%] max-w-md p-6 relative">
+      <div className="bg-[var(--card)] text-white rounded-2xl shadow-2xl w-[90%] max-w-md p-6 relative">
         {/* Close icon */}
         <button
           onClick={onClose}

@@ -15,7 +15,7 @@ export default function PopupInvoiceModal({ popup, onComplete }) {
   
     return (
       <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center p-4">
-        <div className="bg-[#282F36] rounded-lg max-w-md w-full p-6">
+        <div className="bg-[var(--card-2)] rounded-lg max-w-md w-full p-6">
           <h3 className="text-xl font-semibold text-white mb-4">{popup.title}</h3>
           <div className="text-gray-300 mb-6">
             <p>Amount: {popup.metadata?.amount}</p>

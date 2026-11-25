@@ -58,7 +58,7 @@ function ChartModal({ show, onClose, selectedPair, priceFeed, chartTimeframe, se
       
       {/* Chart Container */}
       <div className="relative h-screen w-full flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div className="relative w-full h-[85vh] sm:h-[80vh] max-w-6xl bg-[#1D1D1F] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col">
+        <div className="relative w-full h-[85vh] sm:h-[80vh] max-w-6xl bg-[var(--card)] rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col">
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-6 border-b border-neutral-800">
             <div className="flex items-center gap-3 mb-3 sm:mb-0">
@@ -140,7 +140,7 @@ function ChartModal({ show, onClose, selectedPair, priceFeed, chartTimeframe, se
           </div>
 
           {/* Market Stats */}
-          <div className="p-4 border-t border-neutral-800 bg-[#1D1D1F]">
+          <div className="p-4 border-t border-neutral-800 bg-[var(--card)]">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-neutral-400 text-xs sm:text-sm">24h High</p>

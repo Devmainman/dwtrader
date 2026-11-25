@@ -84,7 +84,7 @@ export default function VerificationStatus() {
 
   if (loading) {
     return (
-      <section className="flex flex-col justify-center px-5 py-4 mt-5 rounded-xl border border-solid bg-[#1D1D1F] border-neutral-800 text-neutral-400 overflow-x-auto hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
+      <section className="flex flex-col justify-center px-5 py-4 mt-5 rounded-xl border border-solid bg-[var(--card)] border-neutral-800 text-neutral-400 overflow-x-auto hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
         <div className="flex flex-nowrap gap-5 items-center whitespace-nowrap min-w-max">
           {[1, 2, 3].map((_, index) => (
             <div key={index} className="flex flex-col justify-center items-center self-stretch my-auto">
@@ -98,7 +98,7 @@ export default function VerificationStatus() {
   }
 
   return (
-    <section className="flex flex-col  text-[10px] justify-center px-5 py-4 mt-5 rounded-xl border border-solid bg-[#1D1D1F] border-neutral-800 text-neutral-400 overflow-x-auto hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
+    <section className="flex flex-col  text-[10px] justify-center px-5 py-4 mt-5 rounded-xl border border-solid bg-[var(--card)] border-neutral-800 text-neutral-400 overflow-x-auto hide-scrollbar hover:scrollbar-thin hover:scrollbar-thumb-neutral-700 hover:scrollbar-track-transparent">
       <div className="flex flex-nowrap gap-5 items-center whitespace-nowrap min-w-max">
         {Object.entries(verificationStatus).map(([key, item]) => (
           <div 

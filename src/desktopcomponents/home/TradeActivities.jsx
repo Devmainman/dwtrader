@@ -2,7 +2,7 @@ import React from "react";
 
 function TradeActivities() {
   return (
-    <section className="flex overflow-hidden gap-2.5 justify-center items-center p-4 mt-2.5 rounded-xl border border-solid bg-[#1D1D1F] border-neutral-600">
+    <section className="flex overflow-hidden gap-2.5 justify-center items-center p-4 mt-2.5 rounded-xl border border-solid bg-[var(--card)] border-neutral-600">
       <div className="flex-1 shrink self-stretch my-auto w-full basis-0 min-w-60">
         <div className="w-full">
           <div className="w-full">

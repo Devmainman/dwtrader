@@ -65,7 +65,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
       ].map((text, index) => (
         <div className="flex mb-2 items-center" key={index}>
           <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0" />
-          <p className="text-[#9F9F9F] text-[10px]">{text}</p>
+          <p className="text-[var(--fg-3)] text-[10px]">{text}</p>
         </div>
       ))}
     </>
@@ -74,15 +74,15 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
  return (
   <div className="md:flex md:items-start md:justify-center md:gap-6">
     {/* LEFT PANEL */}
-    <div className="w-full md:w-[820px] md:h-[574px] rounded-[10px] md:p-6 md:bg-[#1D1D1F] md:flex md:flex-col md:gap-4">
+    <div className="w-full md:w-[820px] md:h-[574px] rounded-[10px] md:p-6 md:bg-[var(--card)] md:flex md:flex-col md:gap-4">
       
       {/* Desktop Header */}
       <div className="hidden md:block mb-1">
-        <h1 className="text-[35px] text-[#F3F3F3] font-medium mb-2">Welcome</h1>
-        <p className="text-[#F3F3F3] font-regular mb-4">
+        <h1 className="text-[35px] text-[var(--fg)] font-medium mb-2">Welcome</h1>
+        <p className="text-[var(--fg)] font-regular mb-4">
           You're a few steps to completing your profile
         </p>
-        <div className="bg-[#242426] flex justify-center items-center h-[37px] w-[204px] rounded-[8px] p-2 mb-1">
+        <div className="bg-[var(--card-2)] flex justify-center items-center h-[37px] w-[204px] rounded-[8px] p-2 mb-1">
           <h2 className="text-[14px] text-white">Account Authentication</h2>
         </div>
       </div>
@@ -91,16 +91,16 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
       <div className="flex-1 space-y-4">
         {/* Mobile Header */}
         <div className="md:hidden">
-          <h1 className="text-[18px] text-[#F3F3F3] font-medium">Address Verification</h1>
-          <p className="text-[#F3F3F3] text-[12px] mb-4">
+          <h1 className="text-[18px] text-[var(--fg)] font-medium">Address Verification</h1>
+          <p className="text-[var(--fg)] text-[12px] mb-4">
             We will need to authenticate your account credibility details with Your Address
           </p>
         </div>
 
         {/* Desktop Subheading */}
         <div className="hidden md:block">
-          <h2 className="text-[18px] text-[#F3F3F3] font-medium">Address Verification</h2>
-          <p className="text-[#F3F3F3] text-[12px] mb-4">
+          <h2 className="text-[18px] text-[var(--fg)] font-medium">Address Verification</h2>
+          <p className="text-[var(--fg)] text-[12px] mb-4">
             We will need to authenticate your account credibility details with Your Address
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
                 value={formData[name]}
                 onChange={handleChange}
                 placeholder={placeholder}
-                className={`w-full bg-transparent border ${errors[name] ? 'border-red-500' : 'border-[#505050]'} rounded-[8px] p-4 text-[12px] text-[#9F9F9F]`}
+                className={`w-full bg-transparent border ${errors[name] ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[12px] text-[var(--fg-3)]`}
               />
               {errors[name] && <p className="text-red-500 text-sm">{errors[name]}</p>}
             </div>
@@ -131,7 +131,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
               name="country"
               value={formData.country}
               onChange={handleChange}
-              className={`w-full bg-transparent border ${errors.country ? 'border-red-500' : 'border-[#505050]'} rounded-[8px] p-4 text-[12px] text-[#9F9F9F]`}
+              className={`w-full bg-transparent border ${errors.country ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[12px] text-[var(--fg-3)]`}
             >
               <option value="">Select Country</option>
               <option value="US">United States</option>
@@ -163,7 +163,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
 
     {/* RIGHT COLUMN (Instructions - Desktop Only) */}
         <div className="hidden md:block md:w-[403px] md:h-full">
-          <div className="bg-[#1D1D1F] rounded-[10px] p-4 overflow-y-auto h-full">
+          <div className="bg-[var(--card)] rounded-[10px] p-4 overflow-y-auto h-full">
             {renderInstructions()}
           </div>
            <div className="flex gap-4 mt-6">
@@ -181,7 +181,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
         </div>
 
     {/* Mobile Instructions */}
-    <div className="md:hidden mt-6 bg-[#1D1D1F] rounded-[10px] p-4">
+    <div className="md:hidden mt-6 bg-[var(--card)] rounded-[10px] p-4">
       {renderInstructions()}
     </div>
   </div>

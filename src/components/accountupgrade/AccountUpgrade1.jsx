@@ -82,7 +82,7 @@ useEffect(() => {
 
   const blockedSheet = blocked && (
     <div className="fixed inset-0 z-[9600] flex items-end sm:items-center justify-center bg-black/60 p-4" onClick={() => setBlocked(null)}>
-      <div className="w-full max-w-[380px] rounded-2xl bg-[#1D1D1F] border border-white/10 p-5 text-white" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-[380px] rounded-2xl bg-[var(--card)] border border-white/10 p-5 text-white" onClick={(e) => e.stopPropagation()}>
         {blocked.reason === 'signal' ? (
           <>
             <p className="text-[15px] font-semibold">Signal strength too low</p>

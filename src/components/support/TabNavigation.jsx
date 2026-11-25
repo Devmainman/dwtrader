@@ -11,7 +11,7 @@ import React from "react";
  */
 const TabNavigation = ({ activeTab, tabs, onTabChange }) => {
   return (
-    <nav className="flex justify-center px-1 items-center w-full text-[12px] px-1 tracking-normal leading-none text-center bg-[#1D1D1F] min-h-[48px] rounded-full text-zinc-100">
+    <nav className="flex justify-center px-1 items-center w-full text-[12px] px-1 tracking-normal leading-none text-center bg-[var(--card)] min-h-[48px] rounded-full text-zinc-100">
       {tabs.map((tab) => (
         <button
           key={tab.id}

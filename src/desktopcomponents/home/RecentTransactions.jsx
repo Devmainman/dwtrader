@@ -38,7 +38,7 @@ function TransactionCard({ type, status, showProof = false }) {
   const statusColor = status === "Pending" ? "bg-yellow-700" : "bg-green-700";
 
   return (
-    <article className="flex overflow-hidden flex-col justify-center p-2.5 mt-1.5 w-full rounded-xl bg-[#1D1D1F] min-h-[123px]">
+    <article className="flex overflow-hidden flex-col justify-center p-2.5 mt-1.5 w-full rounded-xl bg-[var(--card)] min-h-[123px]">
       <div className="w-full">
         <div className="flex justify-between items-center w-full">
           <div className="flex gap-1.5 items-end self-stretch my-auto">

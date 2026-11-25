@@ -57,7 +57,7 @@ function Splash({ detail, onDone }) {
       role="status"
       aria-live="polite"
       onClick={finish}
-      className={`fixed inset-0 z-[12000] flex items-center justify-center bg-[#0b0b0c] cursor-pointer ${leaving ? 'wx-curtain' : ''}`}
+      className={`fixed inset-0 z-[12000] flex items-center justify-center bg-[var(--page-deep)] cursor-pointer ${leaving ? 'wx-curtain' : ''}`}
     >
       <div className="flex flex-col items-center text-center px-6">
         <img src={logo} alt="" className="w-11 h-11 mb-8 brand-logo wx-unveil" />
@@ -120,7 +120,7 @@ function Onboarding({ onClose }) {
     <div className={`fixed inset-0 z-[11000] flex items-end md:items-center justify-center ${leaving ? 'wx-fade-out' : ''}`} role="dialog" aria-modal="true" aria-label="Welcome tour">
       <div className="absolute inset-0 bg-black/75 wx-fade" onClick={() => close()} />
       <div
-        className="relative w-full md:max-w-[400px] bg-[#141414] rounded-t-[28px] md:rounded-[28px] shadow-2xl overflow-hidden wx-sheet"
+        className="relative w-full md:max-w-[400px] bg-[var(--page)] rounded-t-[28px] md:rounded-[28px] shadow-2xl overflow-hidden wx-sheet"
         onPointerDown={() => setPaused(true)}
         onPointerUp={() => setPaused(false)}
         onPointerLeave={() => setPaused(false)}
@@ -145,11 +145,11 @@ function Onboarding({ onClose }) {
         <button type="button" onClick={() => close()} className="absolute top-7 right-4 z-10 text-xs text-neutral-300 hover:text-white px-2 py-1">Skip</button>
 
         {/* the real screen, slowly panning */}
-        <div className="relative h-[300px] md:h-[320px] overflow-hidden bg-[#0b0b0c]">
+        <div className="relative h-[300px] md:h-[320px] overflow-hidden bg-[var(--page-deep)]">
           <div key={i} className="absolute inset-x-10 top-12 bottom-0 rounded-t-[22px] overflow-hidden ring-1 ring-white/10 wx-swap">
             <img src={s.shot} alt="" className="w-full wx-pan" draggable="false" />
           </div>
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#141414] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[var(--page)] to-transparent" />
         </div>
 
         <div key={`t-${i}`} className="px-7 pt-5 pb-5 wx-text">

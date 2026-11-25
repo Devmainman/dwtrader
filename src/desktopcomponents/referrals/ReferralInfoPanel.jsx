@@ -42,7 +42,7 @@ const ReferralInfoPanel = () => {
   ];
 
   return (
-    <aside className="overflow-hidden grow shrink px-4 py-8 rounded-xl bg-[#1D1D1F] min-w-60 w-[231px]">
+    <aside className="overflow-hidden grow shrink px-4 py-8 rounded-xl bg-[var(--card)] min-w-60 w-[231px]">
       <h2 className="text-[14px] font-medium tracking-normal leading-tight text-zinc-100">
         Refer Your Friends
       </h2>

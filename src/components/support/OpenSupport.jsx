@@ -21,10 +21,10 @@ function UploadAttachment({ onFileSelect, file }) {
   return (
     <section className="mt-5 w-full">
       <p className="text-xs text-neutral-500">
-        <span className="font-semibold text-[#C7C7C7]">Upload attachment</span> (optional)
+        <span className="font-semibold text-[var(--fg-2)]">Upload attachment</span> (optional)
       </p>
 
-      <div className="flex flex-col justify-center px-4 py-4 mt-3 w-full rounded-xl bg-[#1D1D1F]">
+      <div className="flex flex-col justify-center px-4 py-4 mt-3 w-full rounded-xl bg-[var(--card)]">
         <div className="flex flex-col items-center px-6 py-3 rounded-xl bg-neutral-800">
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/6ec391f010ecf0794dc64df30ced5c6e4bd82f56d00ad2c01f0ad19a49756de6?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
@@ -74,7 +74,7 @@ function FormField({ label, type, name, value, onChange, options, placeholder })
 
       {type === "select" ? (
         <select
-          className="w-[243px] px-2.5 py-3 rounded-md bg-[#1D1D1F] text-neutral-400 outline-none"
+          className="w-[243px] px-2.5 py-3 rounded-md bg-[var(--card)] text-neutral-400 outline-none"
           name={name}
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -87,7 +87,7 @@ function FormField({ label, type, name, value, onChange, options, placeholder })
         </select>
       ) : type === "textarea" ? (
         <textarea
-          className="w-[243px] px-2.5 py-3 rounded-md bg-[#1D1D1F] text-neutral-400 resize-none outline-none"
+          className="w-[243px] px-2.5 py-3 rounded-md bg-[var(--card)] text-neutral-400 resize-none outline-none"
           name={name}
           value={value}
           placeholder={placeholder}
@@ -100,7 +100,7 @@ function FormField({ label, type, name, value, onChange, options, placeholder })
           value={value}
           placeholder={placeholder}
           onChange={(e) => onChange(e.target.value)}
-          className="w-[243px] px-2.5 py-3 rounded-md bg-[#1D1D1F] text-neutral-400 outline-none"
+          className="w-[243px] px-2.5 py-3 rounded-md bg-[var(--card)] text-neutral-400 outline-none"
         />
       )}
     </div>
@@ -183,7 +183,7 @@ function Support3({ onCreated }) {
   <textarea
     placeholder="Message"
     maxLength={4000}
-    className="w-[243px] h-[102px] px-2.5 py-3 rounded-md bg-[#1D1D1F] text-neutral-400 resize-none outline-none"
+    className="w-[243px] h-[102px] px-2.5 py-3 rounded-md bg-[var(--card)] text-neutral-400 resize-none outline-none"
     value={formData.message}
     onChange={(e) => handleChange("message", e.target.value)}
     rows="4"

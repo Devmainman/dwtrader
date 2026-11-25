@@ -70,7 +70,7 @@ function StatisticsCards() {
         {[1, 2, 3].map((_, i) => (
           <div
             key={i}
-            className="flex flex-col gap-4 p-5 rounded-xl border border-neutral-600 bg-[#1D1D1F] text-white flex-1 min-w-[280px] max-w-full"
+            className="flex flex-col gap-4 p-5 rounded-xl border border-neutral-600 bg-[var(--card)] text-white flex-1 min-w-[280px] max-w-full"
           >
             <div className="flex gap-3 items-center">
               <div className="w-10 h-10 bg-neutral-700 rounded-full"></div>
@@ -123,7 +123,7 @@ function StatisticsCards() {
 
 function StatCard({ icon, title, amount, currency, percentage, status }) {
   return (
-    <article className="flex flex-col justify-between gap-4 p-5 rounded-xl border border-neutral-600 bg-[#1D1D1F] text-white flex-1 min-w-[280px] max-w-full">
+    <article className="flex flex-col justify-between gap-4 p-5 rounded-xl border border-neutral-600 bg-[var(--card)] text-white flex-1 min-w-[280px] max-w-full">
       <div className="flex gap-3 items-center">
         <img src={icon} alt={title} className="w-10 h-10 object-contain" />
         <span className="text-base font-medium text-stone-300">{title}</span>

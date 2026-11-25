@@ -19,7 +19,7 @@ const ProfileTabs = () => {
             key={index}
             className={`gap-1.5 self-stretch px-4  my-auto whitespace-nowrap rounded-3xl border-solid ${
               activeTab === tab
-                ? "bg-blue-600 border-[1.5px] border-[#242426]"
+                ? "bg-blue-600 border-[1.5px] border-[var(--card-2)]"
                 : "border-2 border-neutral-800"
             } min-h-[29px]`}
             onClick={() => setActiveTab(tab)}

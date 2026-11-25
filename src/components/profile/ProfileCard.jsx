@@ -6,7 +6,7 @@ import UserProfileSection from "../referrals/UserProfileSection";
 function ProfileCard() {
   return (
    
-      <div className="flex flex-col justify-center px-2.5 py-1 rounded-3xl bg-[#1D1D1F] min-h-[194px]">
+      <div className="flex flex-col justify-center px-2.5 py-1 rounded-3xl bg-[var(--card)] min-h-[194px]">
         <div className="flex flex-col justify-center w-full">
           <UserProfileSection
             avatarSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/9855861c82e24f2b25334a5d3f5796d4f90361b305891ddd5ccfc7c1dab288e7?placeholderIfAbsent=true&apiKey=f833d316d5594ebfbfc925eb76aa82b8"
@@ -15,7 +15,7 @@ function ProfileCard() {
             accountType="Basic"
           />
           {/* Horizontal Line */}
-          <hr className="border-t-[0.1px] mb-3 border-[#787878]" />
+          <hr className="border-t-[0.1px] mb-3 border-[var(--line-strong)]" />
 
           
         </div>

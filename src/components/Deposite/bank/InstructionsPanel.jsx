@@ -2,7 +2,7 @@ import React from "react";
 
 function InstructionsPanel() {
   return (
-    <article className="overflow-hidden px-3 py-4 mt-8 w-full rounded-xl bg-[#1D1D1F]">
+    <article className="overflow-hidden px-3 py-4 mt-8 w-full rounded-xl bg-[var(--card)]">
       <div className="w-full font-medium">
         <div className="flex gap-2.5 items-center w-full text-[14px] tracking-normal leading-tight text-zinc-100">
           <h3 className="flex-1 shrink self-stretch my-auto basis-0">

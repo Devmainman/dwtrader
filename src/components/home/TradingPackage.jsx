@@ -115,29 +115,29 @@ function TradingPackage() {
   const ICON_DROPDOWN = "https://cdn.builder.io/api/v1/image/assets/TEMP/ca387fb10bcfc33fffcf6905fbc9e1feac1c3e02413c04ee641f2748544d5264?placeholderIfAbsent=true";
 
   return (
-    <section ref={containerRef} className="overflow-visible px-3.5 py-4 mt-7 w-full rounded-xl bg-black bg-opacity-80 max-w-[480px] relative border border-white/5 lg:mt-0 lg:max-w-none lg:rounded-2xl lg:p-5">
+    <section ref={containerRef} className="dash-panel !overflow-visible p-4 w-full relative lg:p-5">
       <div className="w-full whitespace-nowrap">
-        <h2 className="text-[clamp(11px,2vw,14px)] tracking-normal leading-tight text-zinc-100 mb-2">
+        <h2 className="text-[13px] font-semibold tracking-[-0.01em] text-zinc-100 mb-2.5">
           Package
         </h2>
 
         {/* First Row: Package Selection & Trade Type */}
-        <div className="flex gap-3 justify-between items-center w-full text-[clamp(10px,2.5vw,13px)]">
+        <div className="flex gap-3 justify-between items-center w-full text-[12px]">
           
           {/* PACKAGE DROPDOWN */}
           <div className="relative flex-1">
             <div
-              className="flex justify-between items-center px-3 py-2.5 rounded-lg border bg-neutral-900 border-neutral-600 cursor-pointer hover:border-neutral-500 transition-colors"
+              className="flex justify-between items-center px-3 py-2.5 rounded-xl border bg-[var(--card-2)] border-white/10 cursor-pointer hover:border-neutral-500 transition-colors"
               onClick={() => setOpenDropdown(openDropdown === 'package' ? null : 'package')}
             >
               <div className="text-white truncate">
                 {selectedPackage ? selectedPackage.name : "Select Package"}
               </div>
-              <img src={ICON_DROPDOWN} className={`w-4 transition-transform ${openDropdown === 'package' ? 'rotate-180' : ''}`} alt="arrow" />
+              <img src={ICON_DROPDOWN} className={`mode-icon w-4 transition-transform ${openDropdown === 'package' ? 'rotate-180' : ''}`} alt="arrow" />
             </div>
 
             {openDropdown === 'package' && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-600 rounded-lg z-[100] shadow-2xl max-h-48 overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--card)] border border-white/10 rounded-lg z-[100] shadow-2xl max-h-48 overflow-y-auto">
                 {packages.length > 0 ? (
                   packages.map(pkg => (
                     <div
@@ -163,15 +163,15 @@ Min: {pkg.minAmount} {user?.currency} | Max: {pkg.maxAmount} {user?.currency}
           {/* TRADE TYPE DROPDOWN */}
           <div className="relative min-w-[140px]">
             <div
-              className="flex gap-2.5 items-center p-2.5 rounded-lg border border-solid bg-neutral-900 border-neutral-600 cursor-pointer hover:border-neutral-500 transition-colors"
+              className="flex gap-2.5 items-center p-2.5 rounded-xl border border-solid bg-[var(--card-2)] border-white/10 cursor-pointer hover:border-neutral-500 transition-colors"
               onClick={() => setOpenDropdown(openDropdown === 'tradeType' ? null : 'tradeType')}
             >
-              <img src={ICON_DROPDOWN} className="w-3.5 aspect-square" alt="dropdown" />
+              <img src={ICON_DROPDOWN} className="mode-icon w-3.5 aspect-square" alt="dropdown" />
               <span className="text-neutral-300">{tradeType}</span>
             </div>
 
             {openDropdown === 'tradeType' && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-600 rounded-lg z-[100] shadow-2xl">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--card)] border border-white/10 rounded-lg z-[100] shadow-2xl">
                 {["Buy/Long", "Sell/Short"].map(type => (
                   <div 
                     key={type}
@@ -191,10 +191,10 @@ Min: {pkg.minAmount} {user?.currency} | Max: {pkg.maxAmount} {user?.currency}
       </div>
 
       {/* Second Row: Amount + Duration */}
-      <div className="flex gap-4 justify-between items-end mt-5">
+      <div className="flex gap-4 justify-between items-end mt-4">
         {/* Amount Input */}
         <div className="flex-1">
-          <label className="text-[clamp(11px,2vw,13px)] tracking-normal leading-tight text-zinc-100 block mb-1">
+          <label className="text-[11px] text-neutral-400 block mb-1.5">
             Amount {selectedPackage ? `(${user?.currency
 })` : ""}
           </label>
@@ -203,7 +203,7 @@ Min: {pkg.minAmount} {user?.currency} | Max: {pkg.maxAmount} {user?.currency}
             placeholder="0.00"
             value={amount}
             onChange={handleAmountChange}
-            className="px-3 py-2.5 w-full text-[clamp(10px,2vw,13px)] rounded-lg border border-solid bg-neutral-900 border-neutral-800 text-neutral-300 focus:border-neutral-500 outline-none transition-colors"
+            className="px-3 py-2.5 w-full text-[12px] rounded-xl border border-solid bg-[var(--card-2)] border-white/10 text-neutral-300 focus:border-neutral-500 outline-none transition-colors"
             disabled={!selectedPackage}
           />
           {selectedPackage && (
@@ -217,19 +217,19 @@ Min: {pkg.minAmount} {user?.currency} | Max: {pkg.maxAmount} {user?.currency}
 
         {/* Duration Dropdown */}
         <div className="flex-1">
-          <label className="text-[clamp(11px,2vw,13px)] tracking-normal leading-tight text-zinc-100 block mb-1">
+          <label className="text-[11px] text-neutral-400 block mb-1.5">
             Duration
           </label>
           <div className="relative">
             <div
-              className="flex gap-2.5 items-center p-2.5 w-full text-[clamp(10px,2vw,13px)] rounded-lg border border-solid bg-neutral-900 border-neutral-800 text-neutral-300 min-h-[38px] cursor-pointer hover:border-neutral-500 transition-colors"
+              className="flex gap-2.5 items-center p-2.5 w-full text-[12px] rounded-xl border border-solid bg-[var(--card-2)] border-white/10 text-neutral-300 min-h-[38px] cursor-pointer hover:border-neutral-500 transition-colors"
               onClick={() => selectedPackage && setOpenDropdown(openDropdown === 'duration' ? null : 'duration')}
               style={{ 
                 cursor: selectedPackage ? 'pointer' : 'not-allowed',
                 opacity: selectedPackage ? 1 : 0.5
               }}
             >
-              <img src={ICON_DROPDOWN} className="w-3.5" alt="clock" />
+              <img src={ICON_DROPDOWN} className="mode-icon w-3.5" alt="clock" />
               <span>
                 {selectedDuration
                   ? `${selectedDuration} hours`
@@ -240,7 +240,7 @@ Min: {pkg.minAmount} {user?.currency} | Max: {pkg.maxAmount} {user?.currency}
             </div>
 
             {openDropdown === 'duration' && selectedPackage && getDurationOptions().length > 1 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-600 rounded-lg z-[100] shadow-2xl">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--card)] border border-white/10 rounded-lg z-[100] shadow-2xl">
                 {durations.map(duration => (
                   <div 
                     key={duration}
@@ -263,15 +263,15 @@ Min: {pkg.minAmount} {user?.currency} | Max: {pkg.maxAmount} {user?.currency}
       <button 
         onClick={handleTrade}
         disabled={loading || !selectedPackage || !amount || fetchingPackages}
-        className={`mt-7 px-2.5 py-3.5 w-full text-[clamp(11px,2vw,14px)] font-bold rounded-3xl min-h-[42px] transition-all active:scale-[0.98] ${
+        className={`mt-5 px-2.5 py-3 w-full text-[13px] font-semibold rounded-2xl min-h-[44px] transition-all active:scale-[0.98] ${
           loading || !selectedPackage || !amount || fetchingPackages
-            ? 'bg-blue-800 cursor-not-allowed opacity-70'
-            : 'bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-900/20'
+            ? 'bg-white/[.06] text-neutral-500 cursor-not-allowed'
+            : 'bg-blue-600 text-white hover:bg-blue-500'
         }`}
       >
         {loading ? (
           <span className="flex items-center justify-center">
-            <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+            <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
             </svg>

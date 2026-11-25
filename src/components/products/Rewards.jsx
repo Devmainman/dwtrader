@@ -28,7 +28,7 @@ function MilestoneCard({ m, cur, onClaim, busy, onCancel }) {
   const claim = m.claim;
   const st = claim ? STAGE[claim.stage] : null;
   return (
-    <div className={`rounded-2xl border p-4 space-y-3 ${m.achieved ? 'border-emerald-500/30 bg-emerald-500/[.04]' : 'border-neutral-800 bg-[#1D1D1F]'}`}>
+    <div className={`rounded-2xl border p-4 space-y-3 ${m.achieved ? 'border-emerald-500/30 bg-emerald-500/[.04]' : 'border-neutral-800 bg-[var(--card)]'}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${m.achieved ? 'bg-emerald-500/15 text-emerald-400' : 'bg-neutral-800 text-neutral-500'}`}>

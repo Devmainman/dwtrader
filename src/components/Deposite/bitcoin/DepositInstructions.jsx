@@ -5,7 +5,7 @@ const DepositInstructions = () => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
-    <section className="p-4 w-full rounded-xl bg-[#1D1D1F]">
+    <section className="p-4 w-full rounded-xl bg-[var(--card)]">
       <div className="flex flex-col gap-3 mb-4">
         <div className="flex gap-2.5 items-center">
           <h2 className="flex-1 text-[14px] font-medium tracking-normal leading-4 text-zinc-100">

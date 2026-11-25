@@ -28,7 +28,7 @@ const UploadProof = ({ onFileUpload, selectedFile }) => {
       <label className="text-[10px] font-medium text-neutral-400">
         Upload payment proof
       </label>
-      <div className="px-3.5 py-4 w-full rounded-xl bg-[#1D1D1F]">
+      <div className="px-3.5 py-4 w-full rounded-xl bg-[var(--card)]">
         <div className="flex flex-col gap-2 justify-center items-center p-2 w-full rounded-xl bg-neutral-800 h-[138px]">
           {selectedFile ? (
             <div className="flex flex-col items-center gap-2">

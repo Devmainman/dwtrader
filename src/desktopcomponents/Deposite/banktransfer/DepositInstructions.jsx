@@ -2,7 +2,7 @@ import React from "react";
 
 function DepositInstructions() {
   return (
-    <aside className="flex overflow-hidden flex-col justify-center px-3 py-3 mx-auto w-full rounded-xl bg-[#1D1D1F] min-h-[352px] max-md:mt-10">
+    <aside className="flex overflow-hidden flex-col justify-center px-3 py-3 mx-auto w-full rounded-xl bg-[var(--card)] min-h-[352px] max-md:mt-10">
       <div className="w-full font-medium">
         <h2 className="flex-1 shrink gap-2.5 self-stretch w-full text-[14px] tracking-normal leading-4 basis-0 text-zinc-100">
           Lets Proceed with that Deposit

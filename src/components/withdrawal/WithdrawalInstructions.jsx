@@ -25,7 +25,7 @@ function WithdrawalInstructions() {
   ];
 
   return (
-    <section className="px-3.5 py-4 rounded-xl bg-[#1D1D1F]">
+    <section className="px-3.5 py-4 rounded-xl bg-[var(--card)]">
       <div className="flex flex-col gap-3.5">
         <div className="flex justify-between items-center">
           <h2 className="text-sm font-medium tracking-normal leading-4 text-zinc-100">

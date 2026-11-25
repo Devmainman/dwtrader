@@ -49,14 +49,14 @@ function PhoneVerification() {
             Verify your Phone Number
           </h2>
           <p className="mt-2.5 text-xs tracking-normal leading-4 text-neutral-400">
-            <span className="font-medium text-sm leading-[17px] tracking-[-0.14px] text-[#9f9f9f]">
+            <span className="font-medium text-sm leading-[17px] tracking-[-0.14px] text-[var(--fg-3)]">
               We will send you a verification OTP to your Phone number{" "}
             </span>
             <span className="font-medium text-base leading-[19px] tracking-[0.16px] text-blue-600">
               +23482006466489.
             </span>
             <br />
-            <span className="font-medium text-sm leading-[17px] tracking-[-0.14px] text-[#9f9f9f]">
+            <span className="font-medium text-sm leading-[17px] tracking-[-0.14px] text-[var(--fg-3)]">
               Enter the 6 digit code sent to your phone number
             </span>
           </p>

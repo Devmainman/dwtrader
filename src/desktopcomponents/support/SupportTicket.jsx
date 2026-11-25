@@ -39,7 +39,7 @@ function SupportTicket() {
         <SignalStrengthBar />
       </div>
 
-      <section className="flex flex-col px-5 py-6 mt-5 rounded-xl bg-[#1D1D1F] max-w-[1128px] w-full mx-auto">
+      <section className="flex flex-col px-5 py-6 mt-5 rounded-xl bg-[var(--card)] max-w-[1128px] w-full mx-auto">
         <div className="flex justify-between items-center gap-4 flex-wrap">
           <h2 className="text-sm font-medium text-neutral-400">Support Tickets</h2>
           <Button variant="primary">Open New Ticket</Button>
@@ -99,7 +99,7 @@ function SupportTicket() {
         <SignalStrengthBar />
       </div>
 
-      <div className="flex justify-between items-center mt-6 bg-[#1D1D1F] rounded-xl p-6 text-[#F3F3F3] w-full max-w-[1128px] mx-auto">
+      <div className="flex justify-between items-center mt-6 bg-[var(--card)] rounded-xl p-6 text-[var(--fg)] w-full max-w-[1128px] mx-auto">
         <h2 className="text-sm font-semibold">Support Tickets</h2>
         <button
           className="bg-[#EB252F] text-[12px] text-white px-4 py-2 rounded-full hover:bg-red-700"
@@ -109,8 +109,8 @@ function SupportTicket() {
         </button>
       </div>
 
-      <div className="bg-[#1D1D1F] rounded-xl px-4 py-4 mt-4 max-w-[1128px] mx-auto w-full">
-        <div className="p-6 flex flex-col text-[#F3F3F3] bg-[#242426] rounded-lg">
+      <div className="bg-[var(--card)] rounded-xl px-4 py-4 mt-4 max-w-[1128px] mx-auto w-full">
+        <div className="p-6 flex flex-col text-[var(--fg)] bg-[var(--card-2)] rounded-lg">
           <div className="flex justify-between items-center mb-3">
             <p className="text-sm">Priority:</p>
             <div className="text-xs rounded px-2 py-0.5 bg-[var(--color-blue-600)] text-white">
@@ -118,13 +118,13 @@ function SupportTicket() {
             </div>
           </div>
 
-          <p className="text-xs text-[#C7C7C7] mb-4">{selectedTicketData?.priority}</p>
+          <p className="text-xs text-[var(--fg-2)] mb-4">{selectedTicketData?.priority}</p>
 
           <p className="text-sm mt-2">Subject:</p>
-          <p className="text-xs text-[#C7C7C7]">{selectedTicketData?.title}</p>
+          <p className="text-xs text-[var(--fg-2)]">{selectedTicketData?.title}</p>
 
           <p className="text-sm mt-4">Date:</p>
-          <p className="text-xs text-[#C7C7C7]">{selectedTicketData?.createdAt}</p>
+          <p className="text-xs text-[var(--fg-2)]">{selectedTicketData?.createdAt}</p>
         </div>
       </div>
 

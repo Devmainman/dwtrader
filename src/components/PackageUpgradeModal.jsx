@@ -117,7 +117,7 @@ const PackageUpgradeModal = ({ show, onClose }) => {
           <div className="w-full">
             {!selectedMethod ? (
               <>
-              <div className="w-full bg-[#1D1D1F] p-4 rounded-lg border border-gray-700 flex justify-between items-center text-[10px] mb-4">
+              <div className="w-full bg-[var(--card)] p-4 rounded-lg border border-gray-700 flex justify-between items-center text-[10px] mb-4">
               <div>
                 <div className="text-gray-400">Package</div>
                 <div className="font-semibold">{pending.name}</div>

@@ -90,7 +90,7 @@ function TicketDetails({ ticket }) {
         <label className="self-stretch my-auto text-xs font-semibold text-neutral-400">
           Priority:
         </label>
-        <div className="flex gap-2.5 items-center self-stretch px-2.5 py-2.5 my-auto rounded-md border border-solid bg-neutral-900 border-[#1D1D1F] min-h-9 min-w-60 w-[281px]">
+        <div className="flex gap-2.5 items-center self-stretch px-2.5 py-2.5 my-auto rounded-md border border-solid bg-neutral-900 border-[var(--card)] min-h-9 min-w-60 w-[281px]">
           <span className="flex-1 shrink self-stretch my-auto text-xs basis-5 text-neutral-600">
             {ticket.priority}
           </span>
@@ -104,7 +104,7 @@ function TicketDetails({ ticket }) {
         <label className="self-stretch my-auto font-semibold text-neutral-400">
           Subject:
         </label>
-        <div className="gap-2.5 self-stretch px-2.5 py-3.5 my-auto rounded-md border border-solid bg-neutral-900 border-[#1D1D1F] min-h-[38px] min-w-60 text-neutral-600 w-[281px] break-words">
+        <div className="gap-2.5 self-stretch px-2.5 py-3.5 my-auto rounded-md border border-solid bg-neutral-900 border-[var(--card)] min-h-[38px] min-w-60 text-neutral-600 w-[281px] break-words">
           {ticket.subject}
         </div>
       </div>
@@ -113,7 +113,7 @@ function TicketDetails({ ticket }) {
         <label className="self-stretch my-auto font-semibold text-neutral-400">
           Date:
         </label>
-        <div className="flex-1 shrink gap-2.5 self-stretch px-2.5 py-3 my-auto rounded-md border border-solid basis-0 bg-neutral-900 border-[#1D1D1F] min-h-9 min-w-60 text-neutral-600 w-[281px]">
+        <div className="flex-1 shrink gap-2.5 self-stretch px-2.5 py-3 my-auto rounded-md border border-solid basis-0 bg-neutral-900 border-[var(--card)] min-h-9 min-w-60 text-neutral-600 w-[281px]">
           {ticketDate(ticket.createdAt)}
         </div>
       </div>
@@ -223,7 +223,7 @@ function NewMessageForm({ ticketId, onSent }) {
           value={message}
           maxLength={4000}
           onChange={(e) => setMessage(e.target.value)}
-          className="gap-2.5 self-stretch px-2.5 py-5 my-auto rounded-3xl bg-[#1D1D1F] min-h-[49px] min-w-60 w-[303px] lg:w-full lg:flex-1 text-[10px] text-zinc-100"
+          className="gap-2.5 self-stretch px-2.5 py-5 my-auto rounded-3xl bg-[var(--card)] min-h-[49px] min-w-60 w-[303px] lg:w-full lg:flex-1 text-[10px] text-zinc-100"
         />
         <input ref={fileRef} type="file" accept="image/*,application/pdf" className="hidden" onChange={pick} />
         <button type="button" aria-label="Attach file" onClick={() => fileRef.current?.click()}>

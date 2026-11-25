@@ -36,7 +36,7 @@ function BalanceModal({ show, onClose, user, userCurrency, conversionRate, onTop
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="bg-[#1D1D1F] rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--card)] rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>

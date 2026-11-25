@@ -35,7 +35,7 @@ function DepositeStage4() {
               <label className="self-stretch my-auto text-[10px] font-semibold text-neutral-400">
                 Wallet Address:
               </label>
-              <div className="flex overflow-hidden shrink gap-2.5 items-center self-stretch px-2.5 py-2 my-auto rounded-md basis-0 bg-[#1D1D1F] min-h-9 min-w-60">
+              <div className="flex overflow-hidden shrink gap-2.5 items-center self-stretch px-2.5 py-2 my-auto rounded-md basis-0 bg-[var(--card)] min-h-9 min-w-60">
                 <p className="overflow-hidden flex-1 shrink self-stretch my-auto text-[10px] whitespace-nowrap text-zinc-100">
                   7n82dh87b2bg738dgx78b2dgb872uyhy8xn
                 </p>
@@ -58,7 +58,7 @@ function DepositeStage4() {
             <input
               type="text"
               placeholder="Deposit Amount"
-              className="overflow-hidden flex-1 shrink gap-2.5 self-stretch px-2.5 py-5 my-auto rounded-lg basis-0 bg-[#1D1D1F] min-h-[52px] min-w-60 text-neutral-400"
+              className="overflow-hidden flex-1 shrink gap-2.5 self-stretch px-2.5 py-5 my-auto rounded-lg basis-0 bg-[var(--card)] min-h-[52px] min-w-60 text-neutral-400"
             />
           </div>
         </form>

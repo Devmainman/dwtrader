@@ -4,7 +4,7 @@ function TicketCard({ title, date, priority, status, iconSrc, }) {
   const isOpen = status === "Open";
 
   return (
-    <article className="flex flex-col items-start self-stretch px-3 py-5 my-auto rounded-xl border border-solid bg-[#1D1D1F] border-neutral-600 min-w-60 w-[334px]">
+    <article className="flex flex-col items-start self-stretch px-3 py-5 my-auto rounded-xl border border-solid bg-[var(--card)] border-neutral-600 min-w-60 w-[334px]">
       <h3 className="text-[14px] tracking-normal leading-tight text-zinc-100">
         {title}
       </h3>

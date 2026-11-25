@@ -126,7 +126,7 @@ export default function NotificationCenter() {
       <Tabs value={filter} onChange={setFilter} tabs={[{ value: 'all', label: 'All' }, { value: 'unread', label: unreadCount ? `Unread (${unreadCount})` : 'Unread' }]} />
 
       {loading && !notifications.length ? <Loading /> : error && !notifications.length ? <ErrorState message={error} onRetry={fetchNotifications} /> : visible.length === 0 ? (
-        <div className="rounded-xl bg-[#1D1D1F] border border-neutral-800">
+        <div className="rounded-xl bg-[var(--card)] border border-neutral-800">
           <Empty icon={Bell} title={filter === 'unread' ? 'No unread notifications' : 'No notifications yet'} text="Deposits, withdrawals, trades and account alerts will show up here." />
         </div>
       ) : (
@@ -134,7 +134,7 @@ export default function NotificationCenter() {
           {groups.map((g) => (
             <section key={g.label}>
               <h2 className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 px-1 mb-1.5">{g.label}</h2>
-              <ul className="rounded-xl bg-[#1D1D1F] border border-neutral-800 divide-y divide-neutral-800 overflow-hidden">
+              <ul className="rounded-xl bg-[var(--card)] border border-neutral-800 divide-y divide-neutral-800 overflow-hidden">
                 {g.items.map((n) => <Row key={n.id} n={n} expanded={openId === n.id} onToggle={() => toggle(n)} />)}
               </ul>
             </section>

@@ -62,7 +62,7 @@ function SubscriptionCard({ s, onChanged }) {
   const { busy, run } = useAction();
   const pct = Math.round((s.tradesUsed / Math.max(1, s.tradeLimit)) * 100);
   return (
-    <div className="rounded-xl border border-neutral-800 bg-[#1D1D1F] p-4 space-y-4">
+    <div className="rounded-xl border border-neutral-800 bg-[var(--card)] p-4 space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <ProgressRing value={pct} size={52}><span className="text-[11px] font-semibold">{pct}%</span></ProgressRing>
@@ -133,7 +133,7 @@ export default function SmartTrader() {
             : (
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3">
                 {bots.data.items.map((b) => (
-                  <div key={b._id} className="rounded-xl border border-neutral-800 bg-[#1D1D1F] p-4 space-y-3">
+                  <div key={b._id} className="rounded-xl border border-neutral-800 bg-[var(--card)] p-4 space-y-3">
                     <div className="flex items-center gap-3">
                       <span className="w-10 h-10 rounded-xl bg-blue-600/15 text-blue-400 flex items-center justify-center shrink-0"><Bot className="w-5 h-5" /></span>
                       <div className="min-w-0"><p className="text-sm font-semibold text-zinc-100 truncate">{b.name}</p><p className="text-[11px] text-neutral-400">{b.strategy}</p></div>

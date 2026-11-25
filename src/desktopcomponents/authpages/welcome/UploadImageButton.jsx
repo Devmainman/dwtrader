@@ -40,7 +40,7 @@ function UploadImageButton({ label, onChange, preview, onRemove }) {
 
   return (
     <div className="space-y-2">
-      <label className="block text-[12px] font-regular text-[#787878]">{label}</label>
+      <label className="block text-[12px] font-regular text-[var(--fg-4)]">{label}</label>
       
       {selectedFile ? (
         <div className="relative">
@@ -57,8 +57,8 @@ function UploadImageButton({ label, onChange, preview, onRemove }) {
           </button>
         </div>
       ) : (
-        <div className="bg-[#1D1D1F]  lg:bg-neutral-900  rounded-[10px] h-[172px] p-4 text-center">
-          <div className="bg-[#242426] rounded-[10px] h-[138px] p-4 text-center">
+        <div className="bg-[var(--card)]  lg:bg-neutral-900  rounded-[10px] h-[172px] p-4 text-center">
+          <div className="bg-[var(--card-2)] rounded-[10px] h-[138px] p-4 text-center">
           <div className="rounded-full flex justify-center mb-2">
               <img
             src={cloud}

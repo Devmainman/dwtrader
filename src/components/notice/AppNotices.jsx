@@ -1,7 +1,7 @@
 // Account-limit warning + live notification banner, both using FloatingNotice.
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, Gauge, Info, Bell, ShieldAlert, ArrowDownLeft, ArrowUpRight, Users, Layers, Building2, CreditCard, Mail, Sparkles } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AlertTriangle, Gauge, Info, ArrowRight, X, Bell, ShieldAlert, ArrowDownLeft, ArrowUpRight, Users, Layers, Building2, CreditCard, Mail, Sparkles } from 'lucide-react';
 import FloatingNotice, { NoticePill } from './FloatingNotice';
 import { useNotificationStore } from '../../context/NotificationContext';
 
@@ -49,6 +49,50 @@ export function AccountLimitNotice({ info }) {
       action={{ label: 'Upgrade account', onClick: () => { storage.set(key, '1'); setState(level === 'exhausted' ? 'pill' : 'hidden'); navigate('/accountupgrade'); } }}
       onDismiss={() => { storage.set(key, '1'); setState(level === 'exhausted' ? 'pill' : 'hidden'); }}
     />
+  );
+}
+
+/**
+ * The account-limit banner that sits under the top bar on every app page and stays in view
+ * while scrolling. It hops gently every few seconds so it is hard to miss. At 100% it can't
+ * be dismissed; at 60-99% it can be hidden for this session.
+ */
+export function LimitBanner({ info }) {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const level = info?.exhausted ? 'exhausted' : info?.warning ? 'warning' : info?.nearLimit ? 'near' : null;
+  const key = level ? `notice:limit-banner:${level}` : null;
+  const [hidden, setHidden] = useState(() => !!(key && storage.get(key)));
+  useEffect(() => { setHidden(!!(key && storage.get(key))); }, [key]);
+
+  if (!level || hidden || pathname.startsWith('/accountupgrade')) return null;
+  const pct = Math.min(100, Math.round(info.usagePercent || 0));
+  const copy = {
+    exhausted: { icon: AlertTriangle, title: 'Account limit reached', text: 'Deposits and withdrawals are paused until you upgrade.' },
+    warning: { icon: Gauge, title: `${pct}% of your account limit used`, text: 'Upgrade now to avoid interruptions.' },
+    near: { icon: Info, title: `${pct}% of your account limit used`, text: 'Upgrade to raise your limit.' }
+  }[level];
+  const Icon = copy.icon;
+  return (
+    <div className="sticky top-0 lg:top-[62px] z-[700] px-3 sm:px-5 lg:px-8 pt-2.5 pb-1 pointer-events-none">
+      <div role="alert" className={`limit-banner limit-${level} keep-dark pointer-events-auto mx-auto max-w-[1280px]`}>
+        <span className="limit-shine" aria-hidden />
+        <span className="limit-icon"><Icon className="w-4 h-4" strokeWidth={2.2} /></span>
+        <div className="flex-1 min-w-0">
+          <p className="text-[12px] font-semibold leading-tight truncate">{copy.title}</p>
+          <p className="text-[11px] leading-snug opacity-90 line-clamp-2">{copy.text}</p>
+          {level !== 'exhausted' && <div className="mt-1.5 h-1 rounded-full bg-white/25 overflow-hidden"><span className="block h-full rounded-full bg-white" style={{ width: `${pct}%` }} /></div>}
+        </div>
+        <button type="button" data-no-busy onClick={() => navigate('/accountupgrade')} className="limit-cta">
+          Upgrade<ArrowRight className="w-3.5 h-3.5 limit-arrow" />
+        </button>
+        {level !== 'exhausted' && (
+          <button type="button" data-no-busy onClick={() => { storage.set(key, '1'); setHidden(true); }} aria-label="Hide for now" className="shrink-0 -mr-1 w-7 h-7 rounded-full flex items-center justify-center opacity-70 hover:opacity-100 hover:bg-white/15 transition">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 

@@ -76,7 +76,7 @@ function ProfileForm() {
 
   if (loading) {
     return (
-      <article className="relative p-7 w-full rounded-xl bg-[#1D1D1F] h-[488px]">
+      <article className="relative p-7 w-full rounded-xl bg-[var(--card)] h-[488px]">
         <header className="mb-5 text-sm font-medium text-neutral-400">Edit Profile Information</header>
         <div className="flex flex-col gap-4 mx-auto w-[245px]">
           {[...Array(5)].map((_, i) => (
@@ -110,7 +110,7 @@ function ProfileForm() {
   );
 
   return (
-    <article className="relative p-7 pb-12 w-full rounded-xl bg-[#1D1D1F] h-auto min-h-[488px]">
+    <article className="relative p-7 pb-12 w-full rounded-xl bg-[var(--card)] h-auto min-h-[488px]">
       <header className="mb-5 text-sm font-medium text-neutral-400">Edit Profile Information</header>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4 mx-auto w-[245px]">

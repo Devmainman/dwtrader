@@ -58,7 +58,7 @@ function LanguageDropdown({ variant = "compact" }) {
       {isOpen && (
         <ul
           role="listbox"
-          className="absolute z-50 mt-1.5 min-w-full w-max max-h-72 overflow-y-auto bg-[#1D1D1F]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.5)] p-1 animate-[sheet-in_220ms_cubic-bezier(0.32,0.72,0,1)] [scrollbar-width:thin] [scrollbar-color:#3f3f46_transparent]"
+          className="absolute z-50 mt-1.5 min-w-full w-max max-h-72 overflow-y-auto bg-[var(--card)]/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.5)] p-1 animate-[sheet-in_220ms_cubic-bezier(0.32,0.72,0,1)] [scrollbar-width:thin] [scrollbar-color:#3f3f46_transparent]"
         >
           {languages.map((lang) => (
             <li key={lang.code}>

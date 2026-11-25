@@ -1,59 +1,55 @@
 "use client";
 import React from "react";
 
-import WalletSection from "./WalletSection";
+import { Portfolio, ActionBar, Assets, Markets, Activity } from "./Dash";
 import MarketOverview from "./MarketOverview";
 import TradingChart from "./TradingChart";
 import TradingPackage from "./TradingPackage";
-import CryptoList from "./CryptoList";
-import EarnProducts from "./EarnProducts";
-import TradingNFTs from "./TradingNFTs";
-import { useDesktop, DesktopStats, DesktopPositions, DesktopActivity, DesktopAllocation, DesktopQuickActions } from "../desktop/DashboardExtras";
+import { useDesktop, DesktopPositions } from "../desktop/DashboardExtras";
 
-const card = "bg-[#1D1D1F] rounded-2xl p-5 border border-white/5";
+const Label = ({ children }) => <p className="px-1 pt-2 text-[10px] font-medium uppercase tracking-[0.1em] text-neutral-500">{children}</p>;
 
+// Every block shows live data: wallets, Binance prices and history, the ledger, positions.
 function HomeDashboard() {
   const desktop = useDesktop();
 
-  // Desktop (1024px+): its own layout, two independent columns so cards stack without gaps,
-  // plus desktop-only stats and panels.
   if (desktop) {
     return (
-      <section className="w-full max-w-[1400px] mx-auto px-6 py-6 pb-10 text-white">
-        <DesktopStats />
-        <div className="mt-5 flex gap-5 items-start">
-          <div className="flex-1 min-w-0 space-y-5">
-            <div className={`${card} p-6`}><WalletSection /></div>
+      <section className="w-full max-w-[1280px] mx-auto px-6 py-6 pb-10 text-white">
+        <div className="flex gap-4 items-start">
+          <div className="flex-1 min-w-0 space-y-4">
+            <Portfolio chartHeight={230} />
+            <div className="grid grid-cols-2 gap-4 items-start">
+              <Assets limit={6} />
+              <Markets rows={7} />
+            </div>
+            <Label>Trade</Label>
             <TradingChart />
             <DesktopPositions />
-            <DesktopAllocation />
-            <div className={card}><CryptoList /></div>
-            <div className={card}><TradingNFTs /></div>
           </div>
-          <div className="w-[360px] xl:w-[400px] shrink-0 space-y-5">
-            <div className="flex"><MarketOverview /></div>
+          <div className="w-[340px] xl:w-[360px] shrink-0 space-y-4 lg:sticky lg:top-[84px]">
+            <ActionBar />
+            <Activity limit={7} />
+            <MarketOverview />
             <TradingPackage />
-            <DesktopQuickActions />
-            <DesktopActivity />
-            <div className={card}><EarnProducts /></div>
           </div>
         </div>
       </section>
     );
   }
 
-  // Phones and tablets: unchanged.
   return (
-    <section className="overflow-x-hidden px-4 sm:px-5 pb-35 py-4 sm:py-6 mx-auto w-full max-w-[390px] md:max-w-[640px] lg:max-w-[1400px] lg:px-6 lg:pb-10 bg-neutral-900 rounded-3xl text-white">
-      {/* Phones: one column (unchanged). Desktop: the same sections in a two-column grid. */}
-      <div className="space-y-4 w-full lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-5 lg:items-stretch">
-        <div className="lg:col-span-7 xl:col-span-8 lg:bg-[#1D1D1F] lg:rounded-2xl lg:p-5 lg:border lg:border-white/5 lg:p-6"><WalletSection /></div>
-        <div className="lg:col-span-5 xl:col-span-4 lg:flex"><MarketOverview /></div>
-        <div className="lg:col-span-7 xl:col-span-8"><TradingChart /></div>
-        <div className="lg:col-span-5 xl:col-span-4 lg:self-start"><TradingPackage /></div>
-        <div className="lg:col-span-7 xl:col-span-8 lg:bg-[#1D1D1F] lg:rounded-2xl lg:p-5 lg:border lg:border-white/5"><CryptoList /></div>
-        <div className="lg:col-span-5 xl:col-span-4 lg:bg-[#1D1D1F] lg:rounded-2xl lg:p-5 lg:border lg:border-white/5"><EarnProducts /></div>
-        <div className="lg:col-span-12 lg:bg-[#1D1D1F] lg:rounded-2xl lg:p-5 lg:border lg:border-white/5"><TradingNFTs /></div>
+    <section className="overflow-x-hidden px-4 sm:px-5 pb-35 pt-3 sm:pt-5 mx-auto w-full max-w-[440px] md:max-w-[640px] text-white">
+      <div className="space-y-3 w-full">
+        <Portfolio />
+        <ActionBar />
+        <Assets limit={4} />
+        <Markets />
+        <Activity limit={5} />
+        <Label>Trade</Label>
+        <MarketOverview />
+        <TradingChart />
+        <TradingPackage />
       </div>
     </section>
   );

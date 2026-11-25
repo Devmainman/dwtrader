@@ -52,7 +52,7 @@ const ReferralBenefitsSection = () => {
   ];
 
   return (
-    <section className="overflow-hidden px-5 py-4 mt-2.5 w-full rounded-xl bg-[#1D1D1F]">
+    <section className="overflow-hidden px-5 py-4 mt-2.5 w-full rounded-xl bg-[var(--card)]">
       <header className="flex gap-10 justify-between items-center text-[14px] font-medium text-zinc-100">
         <h3>Refer Your Friends</h3>
         <img

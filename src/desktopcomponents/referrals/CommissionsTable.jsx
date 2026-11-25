@@ -6,7 +6,7 @@ const CommissionsTable = () => {
   // Sample data for commission entries
  
   return (
-    <section className="flex overflow-hidden grow shrink gap-2.5 justify-center items-center p-4 rounded-xl border border-solid bg-[#1D1D1F] border-neutral-600 min-w-60 w-[776px] max-md:max-w-full">
+    <section className="flex overflow-hidden grow shrink gap-2.5 justify-center items-center p-4 rounded-xl border border-solid bg-[var(--card)] border-neutral-600 min-w-60 w-[776px] max-md:max-w-full">
       <div className="flex-1 shrink self-stretch my-auto w-full basis-0 min-w-60 max-md:max-w-full">
         <div className="w-full max-md:max-w-full">
           <div className="w-full max-md:max-w-full">

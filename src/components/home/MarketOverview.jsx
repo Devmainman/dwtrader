@@ -188,14 +188,14 @@ function MarketOverview() {
   }, [token, userCurrency]);
 
   return (
-    <section className="overflow-hidden px-4 py-4 mt-6 w-full rounded-xl bg-[#1D1D1F] lg:mt-0 lg:rounded-2xl lg:p-5 lg:border lg:border-white/5 lg:flex lg:flex-col lg:justify-between">
+    <section className="dash-panel p-4 w-full lg:p-5 lg:flex lg:flex-col lg:justify-between">
       <div className="w-full max-w-full">
         {/* Header */}
-        <div className="flex items-center w-full text-sm sm:text-base font-medium tracking-normal leading-tight text-zinc-100">
+        <div className="flex items-center w-full text-[13px] font-semibold tracking-[-0.01em] text-zinc-100">
           <h2 className="flex-1 shrink self-stretch my-auto basis-0">Market Overview</h2>
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/4f29bb5fdb59afdeebe8eb2f7dbdce570d858c4d7fca74a16cbd8af02a6a2de0?placeholderIfAbsent=true"
-            className="object-contain shrink-0 self-stretch my-auto w-4 h-4"
+            className="mode-icon object-contain shrink-0 self-stretch my-auto w-4 h-4"
             alt="Arrow icon"
           />
         </div>
@@ -203,13 +203,13 @@ function MarketOverview() {
         {/* Signal Bar */}
         <div className="flex gap-1 items-center mt-2 w-full">
           <div className="w-full">
-            <div className="flex justify-between text-[8px] sm:text-sm text-neutral-400">
+            <div className="flex justify-between text-[10px] text-neutral-400">
               <p>Signal strength</p>
-              <p className="text-yellow-700">{signalStrength}%</p>
+              <p className="text-blue-400 font-semibold">{signalStrength}%</p>
             </div>
-            <div className="w-full mt-0.5 bg-zinc-100 h-1.5 rounded-none rounded-br-md">
+            <div className="w-full mt-1 bg-white/10 h-1.5 rounded-full overflow-hidden">
               <div
-                className="h-full bg-yellow-700 rounded-none rounded-br-md"
+                className="h-full bg-blue-500 rounded-full"
                 style={{ width: `${Math.min(signalStrength, 100)}%` }}
               />
             </div>
@@ -218,8 +218,8 @@ function MarketOverview() {
       </div>
 
       {/* Crypto Cards */}
-      <div className="mt-2.5 font-medium leading-tight overflow-x-auto">
-        <div className="flex gap-1.5 min-w-max">
+      <div className="mt-3 font-medium leading-tight">
+        <div className="grid grid-cols-3 gap-2">
           {loading ? (
             // Show loading state with user's currency
             cryptoSymbols.map((symbol, index) => (

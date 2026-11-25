@@ -25,8 +25,8 @@ function TradingNFTs() {
   ];
 
   return (
-    <section className="mt-8 w-full max-w-[480px] lg:mt-0 lg:max-w-none">
-      <div className="flex items-center w-full text-sm font-medium tracking-normal leading-tight text-zinc-100">
+    <section className="w-full">
+      <div className="flex items-center w-full text-[13px] font-semibold tracking-[-0.01em] text-zinc-100">
         <h2 className="flex-1 shrink self-stretch my-auto basis-0">
           Trading NFTs
         </h2>

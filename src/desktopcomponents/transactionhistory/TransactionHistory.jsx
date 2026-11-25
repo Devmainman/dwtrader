@@ -25,7 +25,7 @@ function TransactionHistory() {
         <SignalStrengthBar />
       
 
-      <div className="flex overflow-hidden w-full gap-2.5 justify-center items-center p-4 mt-5 rounded-xl border border-solid bg-[#1D1D1F] border-neutral-600">
+      <div className="flex overflow-hidden w-full gap-2.5 justify-center items-center p-4 mt-5 rounded-xl border border-solid bg-[var(--card)] border-neutral-600">
         <div className="flex-1 shrink self-stretch my-auto w-full basis-0 min-w-60 max-md:max-w-full">
           <div className="w-full max-md:max-w-full">
             <div className="w-full max-md:max-w-full">

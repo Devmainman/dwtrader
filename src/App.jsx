@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useUserAuth } from './context/UserAuthContext';
 import axios from 'axios';
 import { API_BASE_URL } from './api/config';
+import { paintMode, getMode } from './lib/theme';
 
 // Mobile Components
 import HomeDashboardMobile from "./components/home/HomeDashboard";
@@ -15,7 +16,10 @@ import OpenSupportMobile from "./components/support/OpenSupport";
 import SideBarMobile from "./components/sidebar/SideBar";
 import DesktopSidebar from "./components/desktop/DesktopSidebar";
 import NotificationMobile from "./components/notification/index";
-import DepositeStageMobile from "./components/Deposite/payment/PaymentSystem";
+import DepositeStageMobile from "./components/wallet/DepositChooser";
+import WalletPage from "./components/wallet/WalletPage";
+import CryptoDeposit from "./components/wallet/CryptoDeposit";
+import Convert from "./components/wallet/Convert";
 import WithdrawPage from "./components/withdrawal/withdrawalsystem/WithdrawalSystem";
 import TransactionHistoryMobile from "./components/transactionhistory/TransactionHistoryScreen";
 import AccountUpgradeMobile from "./components/accountupgrade/AccountUpgrade1";
@@ -70,7 +74,7 @@ import UserPopupHandler from './components/UserPopupHandler';
 import Navbar from "./Navbar";
 import VerificationStatusModal from './components/VerificationStatusModal';
 import BlockedNoticeModal from './components/BlockedNoticeModal';
-import { AccountLimitNotice, LiveNotificationBanner } from './components/notice/AppNotices';
+import { LimitBanner, LiveNotificationBanner } from './components/notice/AppNotices';
 
 import PackageUpgradeModal from './components/PackageUpgradeModal';
 import PaymentSystem from './components/subscribe/PaymentSystem';
@@ -190,6 +194,10 @@ useEffect(() => {
   const isAuthRoute = ['/auth', '/signup', '/welcome'].includes(location.pathname);
   const isSignupRoute = location.pathname === '/signup';
   const isWelcomeRoute = location.pathname === '/welcome';
+  // Light mode is for the signed-in app; public pages (landing, blog, help, sign-in) stay dark.
+  const publicPage = !token || isAuthRoute || ['/', '/landing'].includes(location.pathname)
+    || location.pathname.startsWith('/blog') || location.pathname.startsWith('/help');
+  useEffect(() => { paintMode(publicPage ? 'dark' : getMode()); }, [publicPage]);
 
   // 1. Global loading first
   if (loading.global) {
@@ -204,7 +212,7 @@ useEffect(() => {
 
   if (loggingOut) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#1D1D1F] text-white">
+      <div className="flex items-center justify-center min-h-screen bg-[var(--card)] text-white">
         <div className="text-center space-y-3">
           <div className="animate-spin h-10 w-10 border-t-2 border-b-2 border-pink-500 rounded-full mx-auto"></div>
           <p className="text-lg font-semibold">Logging you out...</p>
@@ -254,7 +262,6 @@ useEffect(() => {
       {user?.status === 'Inactive' && (
     <BlockedNoticeModal reason={user?.blockReason || 'Your account has been restricted temporarily.'} />
   )}
-      <AccountLimitNotice info={user?.thresholdInfo} />
       <LiveNotificationBanner />
       {isMobile ? (
         <>
@@ -284,6 +291,7 @@ useEffect(() => {
           <DesktopSidebar />
           <div className="lg:pl-[248px]">
           <TopNavBarMobile />
+          <LimitBanner info={user?.thresholdInfo} />
           <section key={location.pathname} className="flex flex-col overflow-y-auto min-h-screen bg-neutral-900 page-enter app-main">
             <Routes>{appRoutes()}</Routes>
           </section>
@@ -339,6 +347,9 @@ function appRoutes() {
       <Route path="/opensupport" element={<OpenSupportMobile />} />
       <Route path="/notification" element={<NotificationMobile />} />
       <Route path="/deposite" element={<DepositeStageMobile />} />
+      <Route path="/deposit/crypto" element={<CryptoDeposit />} />
+      <Route path="/wallet" element={<WalletPage />} />
+      <Route path="/convert" element={<Convert />} />
       <Route path="/withdraw" element={<WithdrawPage />} />
       <Route path="/transactionhistory" element={<TransactionHistoryMobile />} />
       <Route path="/accountupgrade" element={<AccountUpgradeMobile />} />

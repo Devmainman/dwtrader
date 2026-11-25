@@ -30,7 +30,7 @@ const CryptoFormFields = ({ formData, onInputChange }) => {
           id="cryptoName"
           value={formData.cryptoName}
           onChange={(e) => onInputChange("cryptoName", e.target.value)}
-          className="gap-2.5 p-2.5 h-9 text-[10px] rounded-md bg-[#1D1D1F] text-zinc-100 w-[243px]"
+          className="gap-2.5 p-2.5 h-9 text-[10px] rounded-md bg-[var(--card)] text-zinc-100 w-[243px]"
           readOnly
         />
       </div>
@@ -43,7 +43,7 @@ const CryptoFormFields = ({ formData, onInputChange }) => {
           >
             Wallet Address:
           </label>
-          <div className="flex flex-1 gap-2.5 items-center p-2.5 h-9 rounded-md bg-[#1D1D1F]">
+          <div className="flex flex-1 gap-2.5 items-center p-2.5 h-9 rounded-md bg-[var(--card)]">
             <input
               type="text"
               id="walletAddress"
@@ -96,7 +96,7 @@ const CryptoFormFields = ({ formData, onInputChange }) => {
           placeholder="Deposit Amount"
           value={formData.amount}
           onChange={(e) => onInputChange("amount", e.target.value)}
-          className="flex-1 p-2.5 text-[10px] rounded-lg bg-[#1D1D1F] h-[52px] text-zinc-100 placeholder:text-neutral-400"
+          className="flex-1 p-2.5 text-[10px] rounded-lg bg-[var(--card)] h-[52px] text-zinc-100 placeholder:text-neutral-400"
         />
       </div>
     </div>

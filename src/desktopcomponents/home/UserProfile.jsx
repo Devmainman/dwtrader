@@ -59,7 +59,7 @@ function UserProfile() {
   if (!userData) return null;
 
   return (
-    <section className="w-full max-w-[866px] rounded-[20px] px-5 py-7 border border-neutral-600 bg-[#1D1D1F] text-white">
+    <section className="w-full max-w-[866px] rounded-[20px] px-5 py-7 border border-neutral-600 bg-[var(--card)] text-white">
       <div className="flex flex-col gap-6">
         {/* Top Row */}
         <div className="flex flex-wrap justify-between items-start gap-6">

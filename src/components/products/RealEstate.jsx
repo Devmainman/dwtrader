@@ -63,7 +63,7 @@ function ProjectCard({ p, currency, onInvest }) {
   const navigate = useNavigate();
   const open = p.status === 'open';
   return (
-    <div className="rounded-xl bg-[#1D1D1F] border border-neutral-800 overflow-hidden flex flex-col hover:border-neutral-700 transition">
+    <div className="rounded-xl bg-[var(--card)] border border-neutral-800 overflow-hidden flex flex-col hover:border-neutral-700 transition">
       <button type="button" onClick={() => navigate(projectPath(p))} className="text-left flex-1 flex flex-col">
         <div className="aspect-[16/9] bg-neutral-800 relative w-full">
           {p.images?.[0] ? <img src={p.images[0]} alt="" className="w-full h-full object-cover" loading="lazy" /> : <Building2 className="w-10 h-10 text-neutral-500 absolute inset-0 m-auto" />}

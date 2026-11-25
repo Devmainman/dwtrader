@@ -38,7 +38,7 @@ function NFTCard({ image, title, floorPrice, volume, isLast = false }) {
         isLast ? " pt-3" : ""
       } ${
         !isLast ? "mt-2.5" : "mt-2.5"
-      }  w-full rounded-xl bg-[#1D1D1F] min-h-[161px] max-md:px-5`}
+      }  w-full rounded-xl bg-[var(--card)] min-h-[161px] max-md:px-5`}
     >
       <div className="flex gap-2.5 w-full text-sm font-semibold tracking-normal leading-4 min-h-[34px] text-zinc-100">
         <img

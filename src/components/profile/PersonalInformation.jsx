@@ -47,7 +47,7 @@ function PersonalInformation() {
   };
 
   return (
-    <section className="flex overflow-hidden flex-col items-start px-9 pt-7 pb-3.5 mt-2.5 w-full rounded-xl bg-[#1D1D1F]">
+    <section className="flex overflow-hidden flex-col items-start px-9 pt-7 pb-3.5 mt-2.5 w-full rounded-xl bg-[var(--card)]">
       <h3 className="text-sm font-medium tracking-normal leading-tight text-neutral-400">
         Personal Information
       </h3>

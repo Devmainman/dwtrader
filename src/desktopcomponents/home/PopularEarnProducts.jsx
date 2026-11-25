@@ -37,7 +37,7 @@ function PopularEarnProducts() {
 
 function EarnProductCard({ icon, name, description, apy, type, secondType }) {
   return (
-    <article className="flex overflow-hidden flex-col grow shrink items-start self-stretch py-3 pr-9 pl-4 my-auto rounded-xl bg-[#1D1D1F] w-[145px] max-md:pr-5">
+    <article className="flex overflow-hidden flex-col grow shrink items-start self-stretch py-3 pr-9 pl-4 my-auto rounded-xl bg-[var(--card)] w-[145px] max-md:pr-5">
       <div className="flex gap-2 items-center">
         <img
           src={icon}

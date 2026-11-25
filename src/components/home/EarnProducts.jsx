@@ -23,8 +23,8 @@ function EarnProducts() {
   ];
 
   return (
-    <section className="mt-8 w-full overflow-x-auto whitespace-nowrap leading-tight max-w-[480px] lg:mt-0 lg:max-w-none lg:whitespace-normal">
-      <div className="flex items-center w-full text-sm font-medium tracking-normal text-zinc-100">
+    <section className="w-full overflow-x-auto whitespace-nowrap leading-tight lg:whitespace-normal">
+      <div className="flex items-center w-full text-[13px] font-semibold tracking-[-0.01em] text-zinc-100">
         <h2 className="flex-1 shrink self-stretch my-auto basis-0">
           Popular Earn product
         </h2>

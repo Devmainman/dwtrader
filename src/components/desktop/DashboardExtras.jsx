@@ -45,10 +45,10 @@ function useDesktopData() {
 }
 
 const Card = ({ title, action, children, className = "" }) => (
-  <section className={`rounded-2xl bg-[#1D1D1F] border border-white/5 p-5 ${className}`}>
+  <section className={`dash-panel p-5 ${className}`}>
     {(title || action) && (
       <div className="flex items-center justify-between mb-4">
-        {title && <h2 className="text-sm font-semibold text-zinc-100">{title}</h2>}
+        {title && <h2 className="text-[13px] font-semibold tracking-[-0.01em] text-zinc-100">{title}</h2>}
         {action}
       </div>
     )}
@@ -56,7 +56,7 @@ const Card = ({ title, action, children, className = "" }) => (
   </section>
 );
 const More = ({ to, label = "View all" }) => (
-  <Link to={to} className="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300">{label}<ArrowRight className="w-3.5 h-3.5" /></Link>
+  <Link to={to} className="inline-flex items-center gap-1 text-[11px] text-neutral-400 hover:text-zinc-100">{label}<ArrowRight className="w-3.5 h-3.5" /></Link>
 );
 const pnlOf = (p) => {
   if (typeof p.unrealizedPnl === "number") return p.unrealizedPnl;
@@ -83,7 +83,7 @@ function DesktopStatsInner() {
   return (
     <div className="grid grid-cols-4 gap-5">
       {items.map(({ icon: Icon, label, value, note, tone }) => (
-        <div key={label} className="rounded-2xl bg-[#1D1D1F] border border-white/5 p-5">
+        <div key={label} className="rounded-2xl bg-[var(--card)] border border-white/5 p-5">
           <div className="flex items-center justify-between">
             <p className="text-xs text-neutral-400">{label}</p>
             <span className="w-8 h-8 rounded-xl bg-blue-600/15 text-blue-400 flex items-center justify-center"><Icon className="w-4 h-4" strokeWidth={1.9} /></span>
@@ -105,7 +105,7 @@ function DesktopPositionsInner() {
     <Card title="Open positions" action={<More to="/trademain" label="Trade" />} className="h-full">
       {!d ? <div className="h-24 rounded-xl bg-neutral-800/60 animate-pulse" /> : open.length === 0 ? (
         <div className="py-8 text-center">
-          <p className="text-sm text-neutral-400">No open trades</p>
+          <p className="text-[12px] text-neutral-500">No open trades</p>
           <Link to="/trademain" className="inline-block mt-3 text-xs font-medium px-4 h-8 leading-8 rounded-full bg-blue-600 text-white">Open a trade</Link>
         </div>
       ) : (
@@ -157,7 +157,7 @@ function DesktopActivityInner() {
   return (
     <Card title="Recent activity" action={<More to="/notification" />} className="h-full">
       {!items ? <div className="h-24 rounded-xl bg-neutral-800/60 animate-pulse" /> : items.length === 0 ? (
-        <p className="py-8 text-center text-sm text-neutral-400">Nothing yet</p>
+        <p className="py-8 text-center text-[12px] text-neutral-500">Nothing yet</p>
       ) : (
         <ul className="space-y-3">
           {items.slice(0, 5).map((n) => (

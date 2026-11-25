@@ -4,7 +4,7 @@ import Button from "./Button";
 
 function WithdrawalForm() {
   return (
-    <article className="flex overflow-hidden flex-col px-5 pt-6 pb-11 mx-auto w-full rounded-xl bg-[#1D1D1F] max-md:px-5 max-md:mt-10 max-md:max-w-full">
+    <article className="flex overflow-hidden flex-col px-5 pt-6 pb-11 mx-auto w-full rounded-xl bg-[var(--card)] max-md:px-5 max-md:mt-10 max-md:max-w-full">
       <h2 className="self-start text-sm font-medium tracking-normal leading-tight text-neutral-400">
         Make Withdrawal
       </h2>

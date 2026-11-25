@@ -54,17 +54,17 @@ function QuickActions({ onClose }) {
   return (
     <div className="fixed inset-0 z-[1100]" role="dialog" aria-modal="true" aria-label="Quick actions">
       <div className={`absolute inset-0 bg-black/60 backdrop-blur-sm ${leaving ? "qa-fade-out" : "qa-fade-in"}`} onClick={() => close()} />
-      <div className={`absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+112px)] mx-auto max-w-[360px] rounded-[28px] bg-[#1C1C1E] shadow-2xl p-5 ${leaving ? "qa-sheet-out" : "qa-sheet-in"}`}>
+      <div className={`absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+112px)] mx-auto max-w-[360px] rounded-[28px] bg-[var(--card)] shadow-2xl p-5 ${leaving ? "qa-sheet-out" : "qa-sheet-in"}`}>
         <div className="flex items-center justify-between mb-3 px-1">
           <p className="text-[17px] font-semibold text-white">Quick actions</p>
-          <button type="button" onClick={() => close()} className="w-[30px] h-[30px] rounded-full bg-[#2C2C2E] flex items-center justify-center text-[#8E8E93]" aria-label="Close"><X className="w-3.5 h-3.5" /></button>
+          <button type="button" onClick={() => close()} className="w-[30px] h-[30px] rounded-full bg-[var(--card-2)] flex items-center justify-center text-[var(--fg-3)]" aria-label="Close"><X className="w-3.5 h-3.5" /></button>
         </div>
         <div className="grid grid-cols-4 gap-y-4 gap-x-2">
           {ACTIONS.map((a, i) => (
             <button key={a.to + a.label} type="button" onClick={() => close(a.to)}
               className="flex flex-col items-center gap-1.5 qa-item active:scale-90 transition-transform" style={{ animationDelay: `${60 + i * 22}ms` }}>
-              <span className="w-[52px] h-[52px] rounded-[16px] flex items-center justify-center bg-[#2C2C2E] text-white"><a.icon className="w-[22px] h-[22px]" strokeWidth={1.8} /></span>
-              <span className="text-[11px] text-[#EBEBF5]/70">{a.label}</span>
+              <span className="w-[52px] h-[52px] rounded-[16px] flex items-center justify-center bg-[var(--card-2)] text-white"><a.icon className="w-[22px] h-[22px]" strokeWidth={1.8} /></span>
+              <span className="text-[11px] text-[var(--fg)]/70">{a.label}</span>
             </button>
           ))}
         </div>

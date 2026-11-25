@@ -1,7 +1,8 @@
 /* Import font and Tailwind CSS */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @import "./themes.css";
+@import "./mode.css";
 
 /* ---------------------------------------------------------------------------
    Default tone: amber. Dark mode stays: page backgrounds (900/950, black,
@@ -51,7 +52,7 @@
 
 /* General font style */
 * {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Montserrat', system-ui, sans-serif;
 }
 
 /* Phones: keep text at its set size when turned sideways (iOS inflates it),

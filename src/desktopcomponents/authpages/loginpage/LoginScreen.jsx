@@ -97,7 +97,7 @@ const [shake, setShake] = useState(false);
 
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#161617] text-white px-6 pt-8 md:px-12 md:pt-10">
+    <div className="flex flex-col min-h-screen bg-[var(--page)] text-white px-6 pt-8 md:px-12 md:pt-10">
       {/* Header with logo and language selector */}
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center">

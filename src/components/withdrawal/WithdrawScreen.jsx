@@ -47,7 +47,7 @@ const WithdrawScreen = () => {
             {/* From Section */}
             <div>
               <label className="text-xs text-neutral-400">From</label>
-              <div className="flex justify-between items-center px-4 py-6 rounded-xl border border-[#505050] bg-neutral-800">
+              <div className="flex justify-between items-center px-4 py-6 rounded-xl border border-[var(--line-strong)] bg-neutral-800">
                 <div className="flex gap-2.5 items-center">
                   <CurrencyIcon type="balance" />
                   <p className="text-xs font-semibold text-zinc-100">Balance</p>

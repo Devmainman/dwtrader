@@ -144,7 +144,7 @@ export default function TradingHub() {
       ) : (
         <div className="flex gap-3 overflow-x-auto pb-1 mb-5 -mx-3 px-3 snap-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {packages.data.packages.map((p, i) => (
-            <div key={p.id} {...stagger(i)} className={`${stagger(i).className} snap-start shrink-0 w-[230px] rounded-xl bg-[#1D1D1F] border border-neutral-800 p-4 flex flex-col`}>
+            <div key={p.id} {...stagger(i)} className={`${stagger(i).className} snap-start shrink-0 w-[230px] rounded-xl bg-[var(--card)] border border-neutral-800 p-4 flex flex-col`}>
               <p className="text-sm font-semibold">{p.name}</p>
               <p className="text-2xl font-semibold text-emerald-400 mt-2 tabular-nums">{p.totalReturnPercent}%</p>
               <p className="text-[10px] text-neutral-500">over {p.duration} hour{p.duration === 1 ? '' : 's'} · {p.rate}% per {INTERVAL[p.interval] || p.interval}</p>

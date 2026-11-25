@@ -21,7 +21,7 @@ function UploadSection() {
       <h2 className="text-xs font-medium text-neutral-400">
         Upload payment proof
       </h2>
-      <div className="flex flex-col justify-center px-3.5 py-4 mt-3 max-w-full text-center rounded-xl bg-[#1D1D1F] w-[350px]">
+      <div className="flex flex-col justify-center px-3.5 py-4 mt-3 max-w-full text-center rounded-xl bg-[var(--card)] w-[350px]">
         <div className="flex overflow-hidden flex-col justify-center items-center px-9 py-2.5 rounded-xl bg-neutral-800">
           <div className="flex flex-col max-w-full w-[137px]">
             <div className="flex flex-col w-full">

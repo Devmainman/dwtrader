@@ -8,10 +8,10 @@ const PaymentMethodSelector = ({ methods, onSelect }) => {
 
   return (
     <div className="py-6 mx-5 lg:mx-[0px] lg:w-[1060px]">
-      <h2 className="text-base text-[#C7C7C7] mb-6">Select Payment Method</h2>
+      <h2 className="text-base text-[var(--fg-2)] mb-6">Select Payment Method</h2>
 
       {methods && methods.length > 0 ? (
-        <div className="grid gap-4 text-[#C7C7C7] text-sm sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 text-[var(--fg-2)] text-sm sm:grid-cols-2 lg:grid-cols-3">
           {methods.map((method) => {
             // Fix icon URL: Use STATIC_BASE_URL and handle /icons prefix
             const iconUrl = method.icon 
@@ -26,7 +26,7 @@ const PaymentMethodSelector = ({ methods, onSelect }) => {
                   console.log('Selected method:', method.methodId);
                   onSelect(method.methodId);
                 }}
-                className="p-4 rounded-xl h-[80px] border border-[#505050] bg-[#242426] hover:bg-gray-700 cursor-pointer transition-colors"
+                className="p-4 rounded-xl h-[80px] border border-[var(--line-strong)] bg-[var(--card-2)] hover:bg-gray-700 cursor-pointer transition-colors"
               >
                 <div className="flex items-center">
                   <div className="bg-gray-700 p-2 rounded-full">

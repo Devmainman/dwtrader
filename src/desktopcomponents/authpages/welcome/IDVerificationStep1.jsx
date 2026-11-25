@@ -44,11 +44,11 @@ export default function IDVerificationStep1({ onBack, onContinue }) {
   return (
     <div className="md:flex md:items-center md:justify-center md:gap-6">
       {/* LEFT SIDE (Form + Upload) */}
-      <div className="w-full md:w-[570px] md:h-[574px] rounded-[10px] md:p-6 md:bg-[#1D1D1F] md:flex md:flex-col space-y-4">
+      <div className="w-full md:w-[570px] md:h-[574px] rounded-[10px] md:p-6 md:bg-[var(--card)] md:flex md:flex-col space-y-4">
         {/* Header */}
         <div>
-          <h1 className="text-[18px] text-[#F3F3F3] font-medium">Proof of Address</h1>
-          <p className="text-[#787878] text-[12px] mb-2">Upload a document that verifies your address</p>
+          <h1 className="text-[18px] text-[var(--fg)] font-medium">Proof of Address</h1>
+          <p className="text-[var(--fg-4)] text-[12px] mb-2">Upload a document that verifies your address</p>
         </div>
 
         {/* Centered Form Area */}
@@ -95,7 +95,7 @@ export default function IDVerificationStep1({ onBack, onContinue }) {
 
       {/* Instructions (optional for later re-enable)
       <div className="hidden md:block md:w-[403px] md:h-full">
-        <div className="bg-[#1D1D1F] rounded-[10px] p-4 overflow-y-auto h-full">
+        <div className="bg-[var(--card)] rounded-[10px] p-4 overflow-y-auto h-full">
           {renderInstructions()}
         </div>
       </div> */}

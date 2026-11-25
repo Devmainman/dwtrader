@@ -32,7 +32,7 @@ export function ImageUploader() {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center max-w-auto h-[357px] w-[545px] bg-[#1D1D1F] p-6 rounded-xl"> {/* Background and padding */}
+    <section className="flex flex-col items-center justify-center max-w-auto h-[357px] w-[545px] bg-[var(--card)] p-6 rounded-xl"> {/* Background and padding */}
       <div className="w-[212px] pl- rounded-lg"> {/* Background for the image section */}
         <img
           src={imageUrl}

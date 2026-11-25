@@ -18,7 +18,7 @@ const WithdrawalMethod = ({ methods, onSelect }) => {
                     console.log('Selected method:', method.methodId); // Verify selection
                     onSelect(method.methodId);
                   }}
-                  className="p-4 rounded-lg border border-[#505050] bg-[#242426] hover:bg-gray-700 cursor-pointer"
+                  className="p-4 rounded-lg border border-[var(--line-strong)] bg-[var(--card-2)] hover:bg-gray-700 cursor-pointer"
                 >
                   <div className="flex items-center">
                     <div className="bg-gray-700 p-2 rounded-full">

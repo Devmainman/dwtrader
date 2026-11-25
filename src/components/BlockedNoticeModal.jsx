@@ -4,7 +4,7 @@ import { AlertTriangle } from "lucide-react";
 function BlockedNoticeModal({ reason = "Your account has been suspended due to a violation of our terms." }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-      <div className="bg-[#1D1D1F] border border-neutral-700 rounded-3xl p-6 max-w-md w-full text-center shadow-xl text-white relative">
+      <div className="bg-[var(--card)] border border-neutral-700 rounded-3xl p-6 max-w-md w-full text-center shadow-xl text-white relative">
         {/* Alert Icon */}
         <div className="flex justify-center mb-4">
           <div className="bg-yellow-500/10 p-4 rounded-full">

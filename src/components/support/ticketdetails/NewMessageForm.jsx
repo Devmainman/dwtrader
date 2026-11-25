@@ -26,7 +26,7 @@ function NewMessageForm() {
           placeholder="Type in Text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="gap-2.5 self-stretch px-2.5 py-5 my-auto rounded-3xl bg-[#1D1D1F] min-h-[49px] min-w-60 w-[303px] text-[10px]"
+          className="gap-2.5 self-stretch px-2.5 py-5 my-auto rounded-3xl bg-[var(--card)] min-h-[49px] min-w-60 w-[303px] text-[10px]"
         />
         <button type="button" aria-label="Attach file">
           <img

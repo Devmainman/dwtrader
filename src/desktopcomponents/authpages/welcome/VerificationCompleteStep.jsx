@@ -31,9 +31,9 @@ export default function VerificationCompleteStep() {
       <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4">
         <Check size={32} />
       </div>
-      <h2 className="text-[22px] text-[#F3F3F3] font-medium">Verification Complete!</h2>
-      <p className="text-[#787878] text-[18px] mb-4">Your account has been successfully verified.</p>
-      <p className="text-[#787878] text-[10px] mb-4">Redirecting in {countdown} seconds...</p>
+      <h2 className="text-[22px] text-[var(--fg)] font-medium">Verification Complete!</h2>
+      <p className="text-[var(--fg-4)] text-[18px] mb-4">Your account has been successfully verified.</p>
+      <p className="text-[var(--fg-4)] text-[10px] mb-4">Redirecting in {countdown} seconds...</p>
     </div>
   );
 }

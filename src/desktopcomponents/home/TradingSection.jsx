@@ -34,7 +34,7 @@ function TradingSection() {
   }, []);
 
   return (
-    <section className="w-full max-w-[866px] rounded-[20px] border border-neutral-600 bg-[#1D1D1F]">
+    <section className="w-full max-w-[866px] rounded-[20px] border border-neutral-600 bg-[var(--card)]">
       <nav className="flex flex-wrap gap-10 justify-between items-center px-6 py-3 text-xs border-b border-neutral-600 text-neutral-400">
         <span className="text-blue-600">Chart</span>
         <span>Market</span>

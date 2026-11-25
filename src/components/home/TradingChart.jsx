@@ -1,6 +1,7 @@
 // Dashboard market chart: pick a coin and a timeframe, see the live price,
 // the TradingView chart, and the day's open / high / low / volume underneath.
 // Everything stays inside the card on any screen width.
+import useMode from "../../hooks/useMode";
 import { useEffect, useRef, useState } from "react";
 
 const COINS = [
@@ -64,7 +65,8 @@ function TradingChart() {
     return () => { alive = false; clearInterval(id); };
   }, [coin]);
 
-  // TradingView chart, rebuilt when the coin or timeframe changes.
+  // TradingView chart, rebuilt when the coin, timeframe or light/dark mode changes.
+  const [mode] = useMode();
   useEffect(() => {
     let cancelled = false;
     const el = holder.current;
@@ -72,7 +74,7 @@ function TradingChart() {
     setChartReady(false);
     const id = `tv-${coin}-${frame}-${Date.now()}`;
     el.innerHTML = `<div id="${id}" style="width:100%;height:100%"></div>`;
-    const surface = getComputedStyle(document.documentElement).getPropertyValue("--surface-1").trim() || "#1d1d1f";
+    const surface = getComputedStyle(document.documentElement).getPropertyValue("--dash-panel").trim() || "#1d1d1f";
     loadTradingView()
       .then(() => {
         if (cancelled || !window.TradingView) return;
@@ -82,11 +84,11 @@ function TradingChart() {
           symbol: `BINANCE:${coin}USDT`,
           interval: frame,
           timezone: "Etc/UTC",
-          theme: "dark",
+          theme: mode === "light" ? "light" : "dark",
           style: "1",
           locale: "en",
           backgroundColor: surface,
-          gridColor: "rgba(255,255,255,0.04)",
+          gridColor: mode === "light" ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.04)",
           hide_top_toolbar: true,
           hide_side_toolbar: true,
           hide_legend: true,
@@ -104,34 +106,34 @@ function TradingChart() {
       })
       .catch(() => {});
     return () => { cancelled = true; if (el) el.innerHTML = ""; };
-  }, [coin, frame]);
+  }, [coin, frame, mode]);
 
   const up = (stats?.change ?? 0) >= 0;
   const tone = up ? "text-emerald-400" : "text-red-400";
 
   return (
-    <section className="mt-6 lg:mt-0 w-full min-w-0 rounded-2xl bg-[#1D1D1F] overflow-hidden">
+    <section className="dash-panel w-full min-w-0">
       {/* coin + timeframe, one row */}
-      <div className="flex items-center gap-2 px-3 pt-2.5">
-        <div className="flex-1 min-w-0 flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex items-center gap-2 px-3 pt-3">
+        <div className="flex-1 min-w-0 flex gap-1 overflow-x-auto pr-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(90deg,#000_80%,transparent)]">
           {COINS.map((c) => (
             <button
               key={c.sym}
               type="button"
               onClick={() => setCoin(c.sym)}
-              className={`shrink-0 h-7 px-3 rounded-full text-[11px] font-medium transition ${coin === c.sym ? "bg-neutral-600 text-white" : "bg-neutral-800 text-neutral-400 hover:text-zinc-200"}`}
+              className={`shrink-0 h-7 px-3 rounded-full text-[11px] font-medium transition ${coin === c.sym ? "bg-white/[.08] text-zinc-100" : "text-neutral-500 hover:text-zinc-200"}`}
             >
               {c.sym}
             </button>
           ))}
         </div>
-        <div className="flex shrink-0 rounded-full bg-neutral-800 p-0.5">
+        <div className="flex shrink-0">
           {FRAMES.map((f) => (
             <button
               key={f.tv}
               type="button"
               onClick={() => setFrame(f.tv)}
-              className={`h-6 px-2 rounded-full text-[10px] font-medium transition ${frame === f.tv ? "bg-neutral-600 text-white" : "text-neutral-400"}`}
+              className={`h-7 px-2 rounded-full text-[10px] font-semibold uppercase transition ${frame === f.tv ? "bg-white/[.08] text-zinc-100" : "text-neutral-500 hover:text-zinc-200"}`}
             >
               {f.label}
             </button>
@@ -141,7 +143,7 @@ function TradingChart() {
 
       {/* price on one line */}
       <div className="flex items-baseline gap-2 px-4 pt-2 min-w-0">
-        <p className="text-[17px] font-semibold tracking-tight tabular-nums text-white truncate">{stats ? `$${money(stats.price)}` : "—"}</p>
+        <p className="text-[15px] font-medium tracking-[-0.02em] tabular-nums text-zinc-100 truncate">{stats ? `$${money(stats.price)}` : "—"}</p>
         {stats && (
           <p className={`text-[11px] font-medium tabular-nums shrink-0 ${tone}`}>{up ? "+" : ""}{stats.pct.toFixed(2)}% today</p>
         )}

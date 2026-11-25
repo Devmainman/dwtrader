@@ -12,7 +12,7 @@ function PersonalInformation() {
   ];
 
   return (
-    <section className="overflow-hidden grow px-9 py-3.5 rounded-xl w-[545px] bg-[#1D1D1F] min-h-[358px] max-md:px-5 max-md:mt-3 max-md:max-w-full">
+    <section className="overflow-hidden grow px-9 py-3.5 rounded-xl w-[545px] bg-[var(--card)] min-h-[358px] max-md:px-5 max-md:mt-3 max-md:max-w-full">
       <h3 className="text-sm font-medium tracking-normal leading-tight text-neutral-400 max-md:max-w-full">
         Personal Information
       </h3>

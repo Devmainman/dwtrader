@@ -48,7 +48,7 @@ const WithdrawalForm = ({ method = { methodId: 1, title: 'Bitcoin' }, onBack = (
   };
 
   return (
-    <div className="bg-[#1A1A1A] min-h-screen text-white">
+    <div className="bg-[var(--card)] min-h-screen text-white">
     
 
       {/* Main Content */}
@@ -74,7 +74,7 @@ const WithdrawalForm = ({ method = { methodId: 1, title: 'Bitcoin' }, onBack = (
               type="text"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full bg-[#2A2A2A] text-white p-4 rounded-lg border-none outline-none"
+              className="w-full bg-[var(--card-2)] text-white p-4 rounded-lg border-none outline-none"
             />
           </div>
 
@@ -85,7 +85,7 @@ const WithdrawalForm = ({ method = { methodId: 1, title: 'Bitcoin' }, onBack = (
               type="text"
               value={withdrawalAmount}
               onChange={(e) => setWithdrawalAmount(e.target.value)}
-              className="w-full bg-[#2A2A2A] text-white p-4 rounded-lg border-none outline-none"
+              className="w-full bg-[var(--card-2)] text-white p-4 rounded-lg border-none outline-none"
             />
           </div>
 
@@ -97,7 +97,7 @@ const WithdrawalForm = ({ method = { methodId: 1, title: 'Bitcoin' }, onBack = (
               value={walletAddress}
               onChange={(e) => setWalletAddress(e.target.value)}
               placeholder="..."
-              className="w-full bg-[#2A2A2A] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
+              className="w-full bg-[var(--card-2)] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
             />
           </div>
 
@@ -109,7 +109,7 @@ const WithdrawalForm = ({ method = { methodId: 1, title: 'Bitcoin' }, onBack = (
               value={withdrawalToken}
               onChange={(e) => setWithdrawalToken(e.target.value)}
               placeholder="Enter Withdrawal Token"
-              className="w-full bg-[#2A2A2A] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
+              className="w-full bg-[var(--card-2)] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
             />
           </div>
         </div>

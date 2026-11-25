@@ -13,7 +13,43 @@ export function applyTheme(theme) {
   return t;
 }
 
+/* ---------------- Light / dark mode (the user's choice, dark by default) ---------------- */
+const MODE_KEY = 'app:mode';
+const modeListeners = new Set();
+
+export function getMode() {
+  try { return localStorage.getItem(MODE_KEY) === 'light' ? 'light' : 'dark'; } catch { return 'dark'; }
+}
+
+/** Paint the page in `mode` ('light' | 'dark'). Public pages pass force='dark'. */
+export function paintMode(mode) {
+  const root = document.documentElement;
+  if (root.dataset.mode === mode) return;
+  root.classList.add('mode-switching');
+  root.dataset.mode = mode;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', mode === 'light' ? '#f3f2f0' : '#161617');
+  clearTimeout(paintMode.t);
+  paintMode.t = setTimeout(() => root.classList.remove('mode-switching'), 360);
+}
+
+export function setMode(mode) {
+  const m = mode === 'light' ? 'light' : 'dark';
+  try { localStorage.setItem(MODE_KEY, m); } catch { /* private mode */ }
+  paintMode(m);
+  modeListeners.forEach((fn) => fn(m));
+  return m;
+}
+
+export function onModeChange(fn) {
+  modeListeners.add(fn);
+  return () => modeListeners.delete(fn);
+}
+
 export function initTheme() {
+  const p = window.location.pathname;
+  const publicPage = p === '/' || p === '/landing' || p.startsWith('/blog') || p.startsWith('/help') || ['/auth', '/signup', '/welcome'].includes(p);
+  document.documentElement.dataset.mode = publicPage ? 'dark' : getMode();
   let cached = 'amber';
   try { cached = localStorage.getItem(KEY) || 'amber'; } catch { /* private mode */ }
   applyTheme(cached);

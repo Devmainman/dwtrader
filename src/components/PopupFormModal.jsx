@@ -176,7 +176,7 @@ export default function PopupFormModal({ popup, onComplete, onClose }) {
   if (submitSuccess) {
     return (
       <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center p-4">
-        <div className="bg-[#282F36] rounded-lg max-w-md w-full p-6">
+        <div className="bg-[var(--card-2)] rounded-lg max-w-md w-full p-6">
           <h3 className="text-xl font-semibold text-white mb-4">Success!</h3>
           <p className="text-gray-300 mb-6">
             {popup.successMessage || 'Your form has been submitted successfully.'}
@@ -196,7 +196,7 @@ export default function PopupFormModal({ popup, onComplete, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center p-4">
-      <div className="bg-[#282F36] rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--card-2)] rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold text-white">{popup.title}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white">

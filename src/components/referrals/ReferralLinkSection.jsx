@@ -59,7 +59,7 @@ const ReferralLinkSection = () => {
       <div className="flex overflow-hidden flex-col justify-center self-stretch px-4 py-2 my-auto text-[12px] tracking-normal leading-none bg-blue-600 rounded-3xl border border-solid border-[color:var(--Primary-Blue,var(--color-blue-600))] text-zinc-100 w-[127px]">
         <span className="gap-1.5 self-stretch">Referral link</span>
       </div>
-      <div className="flex lg:w-full overflow-hidden gap-2.5 items-center self-stretch px-2.5 py-2 my-auto text-[8px] whitespace-nowrap rounded-md bg-[#1D1D1F] min-h-7 text-zinc-100 w-[232px]">
+      <div className="flex lg:w-full overflow-hidden gap-2.5 items-center self-stretch px-2.5 py-2 my-auto text-[8px] whitespace-nowrap rounded-md bg-[var(--card)] min-h-7 text-zinc-100 w-[232px]">
         <span
           className={`flex-1 shrink self-stretch my-auto basis-0 overflow-hidden text-ellipsis ${
             referralLink.includes("Error") ? "text-red-400" : ""

@@ -52,18 +52,18 @@ const StatusModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="w-full max-w-sm rounded-xl p-5 bg-[#161617] shadow-lg">
+      <div className="w-full max-w-sm rounded-xl p-5 bg-[var(--page)] shadow-lg">
         <div className="flex items-start justify-between">
           <div className="flex items-start">
             <Icon className={`w-6 h-6 mr-3 mt-1 ${color}`} />
             <div>
               <h2 className={`text-lg font-semibold mb-1 ${color}`}>{resolvedTitle}</h2>
-              <p className="text-sm text-[#e0e0e0]">{message}</p>
+              <p className="text-sm text-[var(--fg)]">{message}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="ml-4 text-[#a0a0a0] hover:text-white"
+            className="ml-4 text-[var(--fg-3)] hover:text-white"
           >
             <X className="w-5 h-5" />
           </button>

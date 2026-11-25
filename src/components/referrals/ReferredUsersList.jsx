@@ -12,7 +12,7 @@ const ReferredUser = ({ user, currency }) => {
   }).format(user.bonusEarned || 0);
 
   return (
-    <div className="flex overflow-hidden flex-col justify-center items-start px-5 py-2.5 w-full rounded-md bg-[#1D1D1F]">
+    <div className="flex overflow-hidden flex-col justify-center items-start px-5 py-2.5 w-full rounded-md bg-[var(--card)]">
       <div className="flex gap-2 items-center">
         <img
           src={user.avatar || "/default-avatar.png"}

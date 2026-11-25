@@ -86,7 +86,7 @@ const WithdrawalForm = ({ method, onBack }) => {
   };
 
   return (
-    <div className="bg-[#161617] w-full min-h-screen text-white p-4 lg:max-w-[760px] lg:mx-auto lg:pt-8">
+    <div className="bg-[var(--page)] w-full min-h-screen text-white p-4 lg:max-w-[760px] lg:mx-auto lg:pt-8">
       <Modal
   isOpen={modal.isOpen}
   title={modal.title}
@@ -96,7 +96,7 @@ const WithdrawalForm = ({ method, onBack }) => {
 />  
     <div className="lg:flex lg:justify-between">
       {/* left side */}
-    <div className="lg:flex lg:bg-[#1D1D1F] lg:rounded-xl lg:p-6 lg:items-center lg:w-[800px] lg:justify-between mb-6">
+    <div className="lg:flex lg:bg-[var(--card)] lg:rounded-xl lg:p-6 lg:items-center lg:w-[800px] lg:justify-between mb-6">
       <div className="lg:w-[390px]">
         <button 
           onClick={onBack}
@@ -109,20 +109,20 @@ const WithdrawalForm = ({ method, onBack }) => {
         </button>
 
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-[16px] font-medium text-[#C7C7C7]">Make Withdrawal</h1>
+          <h1 className="text-[16px] font-medium text-[var(--fg-2)]">Make Withdrawal</h1>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full flex items-center justify-center">
               <img
                 src={iconUrl}
                 alt={`${method.title} icon`}
-                className="w-full h-full object-contain rounded-full bg-[#2A2A2A] p-1"
+                className="w-full h-full object-contain rounded-full bg-[var(--card-2)] p-1"
                 onError={(e) => {
                   console.log('Form Icon load error:', iconUrl);
                   e.target.src = '/icons/default.png';
                 }}
               />
             </div>
-            <span className="text-[#C7C7C7] text-[12px] font-medium">{method.title}</span>
+            <span className="text-[var(--fg-2)] text-[12px] font-medium">{method.title}</span>
           </div>
         </div>
 
@@ -134,7 +134,7 @@ const WithdrawalForm = ({ method, onBack }) => {
               name="amount"
               value={formData.amount}
               onChange={handleChange}
-              className="w-[243px] h-[36px] bg-[#2A2A2A] text-[10px] text-white p-4 rounded-lg border-none outline-none"
+              className="w-[243px] h-[36px] bg-[var(--card-2)] text-[10px] text-white p-4 rounded-lg border-none outline-none"
               min={method.minAmount}
               max={method.maxAmount}
               placeholder={`${currency} ${method.minAmount} - ${method.maxAmount}`}
@@ -151,7 +151,7 @@ const WithdrawalForm = ({ method, onBack }) => {
                 value={formData[detail.label.toLowerCase().replace(/\s+/g, '_')]}
                 onChange={handleChange}
                 placeholder={`Enter ${detail.label}`}
-                className="w-[243px] h-[36px] bg-[#2A2A2A] text-[10px] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
+                className="w-[243px] h-[36px] bg-[var(--card-2)] text-[10px] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
                 required
               />
             </div>
@@ -165,7 +165,7 @@ const WithdrawalForm = ({ method, onBack }) => {
               value={formData.withdrawalToken}
               onChange={handleChange}
               placeholder="Enter Withdrawal Token"
-              className="w-[243px] h-[36px] bg-[#2A2A2A] text-[10px] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
+              className="w-[243px] h-[36px] bg-[var(--card-2)] text-[10px] text-white p-4 rounded-lg border-none outline-none placeholder-gray-500"
               required
             />
           </div>
@@ -209,7 +209,7 @@ const WithdrawalForm = ({ method, onBack }) => {
         </div>
     </div>
     {/* right side */}
-  <article className="overflow-hidden px-3 py-4 mt-2 lg:w-[350px] w-full rounded-xl bg-[#1D1D1F]">
+  <article className="overflow-hidden px-3 py-4 mt-2 lg:w-[350px] w-full rounded-xl bg-[var(--card)]">
     <header className="w-full font-medium">
       <div className="flex gap-2.5 items-center w-full text-[14px] tracking-normal leading-tight text-zinc-100">
         <h2 className="flex-1 shrink self-stretch my-auto basis-0">Withdrawal Instructions:</h2>
@@ -339,7 +339,7 @@ const WithdrawalInterface = () => {
   }
 
  return (
-  <div className="bg-[#1D1D1F] md:rounded-[20px] text-white min-h-screen w-full px-4 py-6 md:px-5 lg:max-w-[760px] lg:mx-auto lg:my-8 lg:min-h-0 lg:rounded-2xl lg:border lg:border-white/5 lg:p-8">
+  <div className="bg-[var(--card)] md:rounded-[20px] text-white min-h-screen w-full px-4 py-6 md:px-5 lg:max-w-[760px] lg:mx-auto lg:my-8 lg:min-h-0 lg:rounded-2xl lg:border lg:border-white/5 lg:p-8">
     <div className="w-full mx-auto">
       {!selectedMethod ? (
         <>
@@ -357,7 +357,7 @@ const WithdrawalInterface = () => {
           {/* From Balance Section */}
           <div className="mb-6  md:w-[350px]">
             <div className="text-[12px] text-gray-400 mb-1">From</div>
-            <div className="bg-[#242426] border border-[#505050] rounded-[10px] w-full h-[80px] p-4 flex items-center justify-between">
+            <div className="bg-[var(--card-2)] border border-[var(--line-strong)] rounded-[10px] w-full h-[80px] p-4 flex items-center justify-between">
               <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mr-3">
                   <img src={Logo} alt="Logo" />
@@ -387,7 +387,7 @@ const WithdrawalInterface = () => {
                   return (
                     <div
                       key={method._id}
-                      className="bg-[#242426] border border-[#505050] rounded-[10px] w-full md:w-[calc(33.333%-1rem)] h-[80px] p-4 flex items-center justify-between cursor-pointer hover:bg-gray-750 transition-colors"
+                      className="bg-[var(--card-2)] border border-[var(--line-strong)] rounded-[10px] w-full md:w-[calc(33.333%-1rem)] h-[80px] p-4 flex items-center justify-between cursor-pointer hover:bg-gray-750 transition-colors"
                       onClick={() => setSelectedMethod(method)}
                     >
                       <div className="flex items-center">
@@ -395,7 +395,7 @@ const WithdrawalInterface = () => {
                           <img
                             src={iconUrl}
                             alt={`${method.title} icon`}
-                            className="w-full h-full object-contain rounded-full bg-[#2A2A2A] p-1"
+                            className="w-full h-full object-contain rounded-full bg-[var(--card-2)] p-1"
                             onError={(e) => {
                               e.target.src = '/icons/default.png';
                             }}

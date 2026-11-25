@@ -103,11 +103,11 @@ const PaymentFormSignal = ({ method, onBack, onDepositResult }) => {
   return (
     <div className="w-full mt-2 grid grid-cols-1 xl:grid-cols-[889px_370px] gap-4 px-0">
       {/* Unified Left Section: Bank Info + Upload + Submit */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:bg-[#1D1D1F] lg:rounded-3xl p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:bg-[var(--card)] lg:rounded-3xl p-6">
 
         {/* Left: Bank Info + Signal Package Info */}
         <div className="space-y-6">
-          <h2 className="text-base text-[#C7C7C7] mb-6">Select Payment Method</h2>
+          <h2 className="text-base text-[var(--fg-2)] mb-6">Select Payment Method</h2>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <button onClick={onBack} className="text-white">
@@ -142,7 +142,7 @@ const PaymentFormSignal = ({ method, onBack, onDepositResult }) => {
                     <span className="text-white">••••••••</span>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <div className="text-[10px] h-[36px] flex justify-between items-center rounded-md bg-[#1D1D1F] text-zinc-100 px-3 py-1.5 w-[243px] text-right truncate">
+                      <div className="text-[10px] h-[36px] flex justify-between items-center rounded-md bg-[var(--card)] text-zinc-100 px-3 py-1.5 w-[243px] text-right truncate">
                         {truncate(detail.value)}
                         <button
                           onClick={() => copyToClipboard(detail.value, index)}
@@ -166,7 +166,7 @@ const PaymentFormSignal = ({ method, onBack, onDepositResult }) => {
           {/* Signal Package Info (Read-only) */}
           <div className="space-y-2">
             <label className="text-gray-400 text-[10px]">Signal Package</label>
-            <div className="w-full h-[52px] bg-[#1D1D1F] text-[10px] text-white p-4 rounded-lg flex items-center">
+            <div className="w-full h-[52px] bg-[var(--card)] text-[10px] text-white p-4 rounded-lg flex items-center">
               Signal Upgrade Package
             </div>
           </div>
@@ -177,8 +177,8 @@ const PaymentFormSignal = ({ method, onBack, onDepositResult }) => {
           {/* Upload Proof */}
           <div className="space-y-2">
             <label className="text-gray-400 text-[10px]">Upload payment proof</label>
-            <div className="bg-[#1D1D1F] p-5 rounded-[10px]">
-              <div className="bg-[#242426] rounded-[10px] p-4 text-center">
+            <div className="bg-[var(--card)] p-5 rounded-[10px]">
+              <div className="bg-[var(--card-2)] rounded-[10px] p-4 text-center">
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -239,7 +239,7 @@ const PaymentFormSignal = ({ method, onBack, onDepositResult }) => {
 
       {/* Instructions */}
       <div className="flex justify-center items-start">
-        <article className="overflow-hidden w-full lg:max-w-[290px] px-3 py-4 rounded-xl bg-[#1D1D1F]">
+        <article className="overflow-hidden w-full lg:max-w-[290px] px-3 py-4 rounded-xl bg-[var(--card)]">
           <header className="font-medium">
             <div className="flex gap-2.5 items-center text-[14px] text-zinc-100">
               <h2 className="flex-1">Let's Proceed with Signal Upgrade</h2>

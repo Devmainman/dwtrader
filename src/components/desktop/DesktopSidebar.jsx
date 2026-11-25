@@ -60,7 +60,7 @@ export default function DesktopSidebar() {
   const name = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "";
 
   return (
-    <aside className="hidden lg:flex fixed inset-y-0 left-0 z-[900] w-[248px] flex-col bg-[#141414] border-r border-white/5 text-zinc-100">
+    <aside className="hidden lg:flex fixed inset-y-0 left-0 z-[900] w-[248px] flex-col bg-[var(--page)] border-r border-white/5 text-zinc-100">
       <Link to="/dashboard" className="flex items-center gap-2.5 px-5 h-[68px] shrink-0">
         <img src={logo} alt="" className="w-8 h-8 brand-logo" />
         <span className="text-[15px] font-semibold tracking-tight truncate">{brand || "Dashboard"}</span>

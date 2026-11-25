@@ -96,7 +96,7 @@ export function Page({ title, subtitle, icon: Icon, actions, children }) {
 
 export function Panel({ title, action, className = '', children }) {
   return (
-    <section className={`rounded-xl bg-[#1D1D1F] border border-neutral-800 p-4 ${className}`}>
+    <section className={`rounded-xl bg-[var(--card)] border border-neutral-800 p-4 ${className}`}>
       {(title || action) && (
         <div className="flex items-center justify-between mb-3 gap-2">
           {title && <h2 className="text-sm font-semibold tracking-tight">{title}</h2>}
@@ -111,7 +111,7 @@ export function Panel({ title, action, className = '', children }) {
 export function Stat({ label, value, hint, tone }) {
   const color = tone === 'up' ? 'text-emerald-400' : tone === 'down' ? 'text-red-400' : 'text-zinc-100';
   return (
-    <div className="rounded-xl bg-[#1D1D1F] border border-neutral-800 px-4 py-3">
+    <div className="rounded-xl bg-[var(--card)] border border-neutral-800 px-4 py-3">
       <p className="text-xs text-neutral-400">{label}</p>
       <p className={`text-base font-semibold tracking-tight mt-1 tabular-nums ${color}`}>{value}</p>
       {hint && <p className="text-[10px] text-neutral-500 mt-0.5">{hint}</p>}
@@ -171,7 +171,7 @@ export function Modal({ open, title, onClose, children, footer }) {
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full sm:max-w-md max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-[#1D1D1F] border border-neutral-800 text-zinc-100 animate-[sheet-in_320ms_cubic-bezier(0.32,0.72,0,1)]"
+        className="w-full sm:max-w-md max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-[var(--card)] border border-neutral-800 text-zinc-100 animate-[sheet-in_320ms_cubic-bezier(0.32,0.72,0,1)]"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="sm:hidden flex justify-center pt-2"><span className="w-9 h-1 rounded-full bg-neutral-700" /></div>
@@ -246,7 +246,7 @@ export function Loading({ rows = 3 }) {
   return (
     <div className="space-y-2.5 py-3" aria-busy="true" aria-label="Loading">
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex items-center gap-3 rounded-xl bg-[#1D1D1F] p-3" style={{ opacity: 1 - i * 0.22 }}>
+        <div key={i} className="flex items-center gap-3 rounded-xl bg-[var(--card)] p-3" style={{ opacity: 1 - i * 0.22 }}>
           <div className="w-9 h-9 rounded-full skeleton" />
           <div className="flex-1 space-y-1.5">
             <div className="h-2.5 w-1/2 rounded skeleton" />

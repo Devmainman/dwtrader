@@ -2,7 +2,7 @@ import React from "react";
 
 function AccountTier({ icon, title, features, price }) {
   return (
-    <article className="flex overflow-hidden flex-col grow shrink justify-center items-center px-4 py-8 rounded-3xl border border-solid bg-[#1D1D1F] border-neutral-600 min-w-60 w-[214px]">
+    <article className="flex overflow-hidden flex-col grow shrink justify-center items-center px-4 py-8 rounded-3xl border border-solid bg-[var(--card)] border-neutral-600 min-w-60 w-[214px]">
       <div className="flex flex-col items-center text-[28px] font-medium tracking-normal leading-tight">
         <img
           src={icon}
