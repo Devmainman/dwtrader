@@ -39,24 +39,20 @@ export default function IDVerificationStep3({ onBack, onContinue }) {
  return (
   <div className="md:flex md:items-start md:justify-center md:gap-4">
     {/* LEFT PANEL */}
-    <div className="md:w-[866px] lg:h-[603px] rounded-[10px] md:p-6 lg:bg-[var(--card)] md:flex md:flex-col md:gap-6">
+    <div className="md:w-[866px] lg:h-[603px] rounded-[24px] md:p-6 lg:bg-[var(--card)] lg:border lg:border-white/[.07] md:flex md:flex-col md:gap-6">
       
       {/* Header (on top of column 1 + 2) */}
       <div className="hidden md:block w-full mb-1">
-        <h1 className="text-[35px] text-[var(--fg)] font-medium mb-2">Welcome</h1>
         <p className="text-[var(--fg)] font-regular mb-6">
           You're a few steps to completing your profile
         </p>
-        <div className="bg-[var(--card-2)] flex justify-center items-center h-[37px] w-[204px] rounded-[8px] p-2 mb-1">
-          <h2 className="text-[14px]">Account Authentication</h2>
-        </div>
       </div>
 
       {/* Columns 1 and 2 side-by-side */}
       <div className="md:flex md:justify-between md:gap-6">
         {/* Column 1 */}
         <div className="md:w-[350px] flex flex-col">
-          <h1 className="text-[18px] text-[var(--fg)] font-medium">Additional Verification</h1>
+          <h1 className="text-[17px] font-semibold tracking-[-0.02em] text-zinc-100">Additional Verification</h1>
           <p className="text-[var(--fg-4)] text-[12px] mb-4 md:text-[14px]">
             Upload an additional identity document
           </p>
@@ -64,19 +60,19 @@ export default function IDVerificationStep3({ onBack, onContinue }) {
           <select
             value={documentType}
             onChange={(e) => setDocumentType(e.target.value)}
-            className="w-full bg-transparent border text-[12px] border-gray-700 rounded-md p-4 text-white mb-4"
+            className="kyc-field mb-4"
           >
             <option value="passport">Passport</option>
             <option value="national_id">National ID</option>
             <option value="driver_license">Driver's License</option>
           </select>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-400 text-[12px] mt-1.5">{error}</p>}
 
           <button
             onClick={handleSubmit}
             disabled={!document || loading}
-            className="w-full bg-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-regular"
+            className="kyc-btn w-full"
           >
             {loading ? 'Uploading...' : 'Continue'}
           </button>

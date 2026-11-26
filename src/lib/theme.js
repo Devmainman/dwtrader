@@ -68,7 +68,7 @@ if (typeof window !== 'undefined') {
 
 export function initTheme() {
   const p = window.location.pathname;
-  const publicPage = p === '/' || p === '/landing' || p.startsWith('/blog') || p.startsWith('/help') || ['/auth', '/signup', '/welcome'].includes(p);
+  const publicPage = p === '/' || p === '/landing' || p.startsWith('/blog') || p.startsWith('/help') || ['/auth', '/signup', '/welcome', '/forgot-password'].includes(p);
   document.documentElement.dataset.mode = publicPage ? 'dark' : getMode();
   let cached = 'amber';
   try { cached = localStorage.getItem(KEY) || 'amber'; } catch { /* private mode */ }

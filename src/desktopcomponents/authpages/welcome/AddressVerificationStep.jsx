@@ -65,7 +65,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
       ].map((text, index) => (
         <div className="flex mb-2 items-center" key={index}>
           <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0" />
-          <p className="text-[var(--fg-3)] text-[10px]">{text}</p>
+          <p className="text-neutral-400 text-[11px]">{text}</p>
         </div>
       ))}
     </>
@@ -74,24 +74,20 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
  return (
   <div className="md:flex md:items-start md:justify-center md:gap-6">
     {/* LEFT PANEL */}
-    <div className="w-full md:w-[820px] md:h-[574px] rounded-[10px] md:p-6 md:bg-[var(--card)] md:flex md:flex-col md:gap-4">
+    <div className="w-full md:w-[820px] md:h-[574px] rounded-[24px] md:p-6 md:bg-[var(--card)] md:border md:border-white/[.07] md:flex md:flex-col md:gap-4">
       
       {/* Desktop Header */}
       <div className="hidden md:block mb-1">
-        <h1 className="text-[35px] text-[var(--fg)] font-medium mb-2">Welcome</h1>
         <p className="text-[var(--fg)] font-regular mb-4">
           You're a few steps to completing your profile
         </p>
-        <div className="bg-[var(--card-2)] flex justify-center items-center h-[37px] w-[204px] rounded-[8px] p-2 mb-1">
-          <h2 className="text-[14px] text-white">Account Authentication</h2>
-        </div>
       </div>
 
       {/* Form Section */}
       <div className="flex-1 space-y-4">
         {/* Mobile Header */}
         <div className="md:hidden">
-          <h1 className="text-[18px] text-[var(--fg)] font-medium">Address Verification</h1>
+          <h1 className="text-[17px] font-semibold tracking-[-0.02em] text-zinc-100">Address Verification</h1>
           <p className="text-[var(--fg)] text-[12px] mb-4">
             We will need to authenticate your account credibility details with Your Address
           </p>
@@ -99,7 +95,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
 
         {/* Desktop Subheading */}
         <div className="hidden md:block">
-          <h2 className="text-[18px] text-[var(--fg)] font-medium">Address Verification</h2>
+          <h2 className="text-[17px] font-semibold tracking-[-0.02em] text-zinc-100">Address Verification</h2>
           <p className="text-[var(--fg)] text-[12px] mb-4">
             We will need to authenticate your account credibility details with Your Address
           </p>
@@ -119,9 +115,9 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
                 value={formData[name]}
                 onChange={handleChange}
                 placeholder={placeholder}
-                className={`w-full bg-transparent border ${errors[name] ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[12px] text-[var(--fg-3)]`}
+                className={`kyc-field ${errors[name] ? 'is-error' : ''}`}
               />
-              {errors[name] && <p className="text-red-500 text-sm">{errors[name]}</p>}
+              {errors[name] && <p className="text-red-400 text-[12px] mt-1.5">{errors[name]}</p>}
             </div>
           ))}
 
@@ -131,19 +127,19 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
               name="country"
               value={formData.country}
               onChange={handleChange}
-              className={`w-full bg-transparent border ${errors.country ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[12px] text-[var(--fg-3)]`}
+              className={`kyc-field ${errors.country ? 'is-error' : ''}`}
             >
               <option value="">Select Country</option>
               <option value="US">United States</option>
               <option value="UK">United Kingdom</option>
               <option value="NG">Nigeria</option>
             </select>
-            {errors.country && <p className="text-red-500 text-sm">{errors.country}</p>}
+            {errors.country && <p className="text-red-400 text-[12px] mt-1.5">{errors.country}</p>}
           </div>
         </div>
 
         {errors.general && (
-          <p className="text-red-500 text-sm">{errors.general}</p>
+          <p className="text-red-400 text-[12px] mt-1.5">{errors.general}</p>
         )}
 
         {/* Mobile Button */}
@@ -152,7 +148,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="w-full bg-[var(--color-blue-600)] text-[12px] text-white rounded-full py-4 font-medium"
+              className="kyc-btn w-full"
             >
               {loading ? 'Verifying...' : 'Next'}
             </button>
@@ -163,7 +159,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
 
     {/* RIGHT COLUMN (Instructions - Desktop Only) */}
         <div className="hidden md:block md:w-[403px] md:h-full">
-          <div className="bg-[var(--card)] rounded-[10px] p-4 overflow-y-auto h-full">
+          <div className="dash-panel p-4 overflow-y-auto h-full">
             {renderInstructions()}
           </div>
            <div className="flex gap-4 mt-6">
@@ -171,7 +167,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="w-full bg-[var(--color-blue-600)] text-[12px] text-white rounded-full py-4 font-medium"
+              className="kyc-btn w-full"
             >
               {loading ? 'Verifying...' : 'Next'}
             </button>
@@ -181,7 +177,7 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
         </div>
 
     {/* Mobile Instructions */}
-    <div className="md:hidden mt-6 bg-[var(--card)] rounded-[10px] p-4">
+    <div className="md:hidden mt-6 dash-panel p-4">
       {renderInstructions()}
     </div>
   </div>

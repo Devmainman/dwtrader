@@ -36,7 +36,7 @@ export function CardArt({ product, holder, last4, expiry, dim, number, face }) {
   if (p.design && face) {
     // Full card face over the admin's uploaded design (used in the card pop-up).
     return (
-      <div className={`relative w-full aspect-[1.586] rounded-2xl overflow-hidden shadow-2xl ${dim ? 'opacity-70 grayscale-[40%]' : ''}`}>
+      <div className={`card-shine relative w-full aspect-[1.586] rounded-2xl overflow-hidden shadow-2xl ${dim ? 'opacity-70 grayscale-[40%]' : ''}`}>
         <img src={fileUrl(p.design)} alt={p.name || 'Card'} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
         <div className="relative h-full flex flex-col justify-end p-5 text-white drop-shadow">
@@ -52,14 +52,14 @@ export function CardArt({ product, holder, last4, expiry, dim, number, face }) {
   }
   if (p.design) {
     return (
-      <div className={`relative w-full aspect-[1.586] max-w-sm rounded-xl overflow-hidden shadow-xl ${dim ? 'opacity-70' : ''}`}>
+      <div className={`card-shine relative w-full aspect-[1.586] max-w-sm rounded-xl overflow-hidden shadow-xl ${dim ? 'opacity-70' : ''}`}>
         <img src={fileUrl(p.design)} alt={p.name || 'Card'} className="w-full h-full object-cover" />
         {last4 && <p className="absolute left-4 bottom-4 font-mono text-sm tracking-widest text-white drop-shadow">•••• {last4}</p>}
       </div>
     );
   }
   return (
-    <div className={`relative w-full aspect-[1.586] ${face ? 'rounded-2xl shadow-2xl' : 'max-w-sm rounded-xl shadow-xl'} p-5 overflow-hidden ${PRESET[p.designPreset] || PRESET.midnight} ${dim ? 'opacity-70' : ''}`}>
+    <div className={`card-shine relative w-full aspect-[1.586] ${face ? 'rounded-2xl shadow-2xl' : 'max-w-sm rounded-xl shadow-xl'} p-5 overflow-hidden ${PRESET[p.designPreset] || PRESET.midnight} ${dim ? 'opacity-70' : ''}`}>
       <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-white/10" />
       <div className="relative flex items-center justify-between">
         <span className="text-sm font-medium opacity-90 truncate">{p.name}</span>

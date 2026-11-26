@@ -105,10 +105,10 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
 
   const renderInstructions = () => (
   <>
-    <p className="text-[10px] font-regular text-[var(--fg-3)] mb-2">
+    <p className="text-[11px] text-neutral-400 mb-2">
       Welcome to our secure and advanced facial verification system! To ensure the highest level of security and identity verification, we kindly request you to undergo facial recognition.
     </p>
-    <p className="text-[var(--fg-3)] text-[10px] mb-3">To get started, please follow these steps:</p>
+    <p className="text-neutral-400 text-[11px] mb-3">To get started, please follow these steps:</p>
 
     {[
       'Find a well-lit area with minimal shadows for the best results.',
@@ -118,14 +118,14 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
     ].map((item, idx) => (
       <div className="flex mb-2 items-center" key={idx}>
         <CheckCircle className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0" />
-        <p className="text-[var(--fg-3)] text-[10px]">{item}</p>
+        <p className="text-neutral-400 text-[11px]">{item}</p>
       </div>
     ))}
 
-    <p className="text-[var(--fg-3)] text-[10px] mb-3">
+    <p className="text-neutral-400 text-[11px] mb-3">
       Your facial data will be handled confidentially and securely stored in compliance with privacy policies.
     </p>
-    <p className="text-[var(--fg-3)] text-[10px] mb-3">
+    <p className="text-neutral-400 text-[11px] mb-3">
       For any issues, our support team is available to assist you.
     </p>
   </>
@@ -134,7 +134,7 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
   return (
   <div className="md:flex md:items-start md:justify-center md:gap-6">
     {/* LEFT PANEL (Camera + Actions) */}
-    <div className="w-full md:w-[866px] lg:h-[603px] rounded-[10px] md:p-6 lg:bg-[var(--card)] flex flex-col md:flex-row md:gap-6">
+    <div className="w-full md:w-[866px] lg:h-[603px] rounded-[24px] md:p-6 lg:bg-[var(--card)] lg:border lg:border-white/[.07] flex flex-col md:flex-row md:gap-6">
       
       {/* Camera Section (Top on mobile, Right on desktop) */}
       <div className="w-[242px] aspect-square bg-black relative overflow-hidden self-center md:self-start mb-6 md:mb-0">
@@ -172,12 +172,12 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
 
       {/* Buttons and Text Content */}
       <div className="flex-1 flex flex-col justify-start space-y-4">
-        <h1 className="text-[18px] font-medium text-[var(--fg)]">Webcam Capture</h1>
+        <h1 className="text-[17px] font-semibold tracking-[-0.02em] text-zinc-100">Webcam Capture</h1>
         <p className="text-[var(--fg-4)] text-[12px]">
           We will need to authenticate your account credibility details with a Face Capture
         </p>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-red-400 text-[12px] mt-1.5">{error}</p>}
 
         <input ref={fileRef} type="file" accept="image/*" capture="user" className="hidden" onChange={onPickSelfie} />
 
@@ -186,7 +186,7 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
             {camError ? (
               <button
                 onClick={() => fileRef.current?.click()}
-                className="w-full bg-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center gap-2"
+                className="kyc-btn w-full flex items-center justify-center gap-2"
               >
                 Take a selfie
               </button>
@@ -194,7 +194,7 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
               <button
                 onClick={capture}
                 disabled={!camReady}
-                className="w-full bg-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center gap-2 disabled:opacity-60"
+                className="kyc-btn w-full flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 {camReady ? 'Capture Photo' : 'Starting camera...'}
               </button>
@@ -213,7 +213,7 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
           <button
             onClick={handleUpload}
             disabled={loading}
-            className="w-full bg-green-500 text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center gap-2"
+            className="kyc-btn kyc-btn-ok w-full flex items-center justify-center gap-2"
           >
             {loading ? 'Uploading...' : 'Upload and Verify'}
           </button>
@@ -224,13 +224,13 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
             <>
               <button
                 onClick={switchCamera}
-                className="w-1/2 border border-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+                className="kyc-btn kyc-btn-ghost w-1/2 flex items-center justify-center"
               >
                 Switch Camera
               </button>
               <button
                 onClick={onBack}
-                className="w-1/2 bg-red-500 text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+                className="kyc-btn kyc-btn-danger w-1/2 flex items-center justify-center"
               >
                 Cancel
               </button>
@@ -239,13 +239,13 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
             <>
               <button
                 onClick={retake}
-                className="w-1/2 border border-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+                className="kyc-btn kyc-btn-ghost w-1/2 flex items-center justify-center"
               >
                 Retake
               </button>
               <button
                 onClick={onBack}
-                className="w-1/2 bg-red-500 text-white text-[12px] rounded-full py-3 font-medium flex items-center justify-center"
+                className="kyc-btn kyc-btn-danger w-1/2 flex items-center justify-center"
               >
                 Cancel
               </button>
@@ -257,13 +257,13 @@ export default function WebcamCaptureStep({ onBack, onContinue }) {
 
     {/* Desktop Instruction Panel */}
     <div className="hidden md:block md:w-[403px] md:h-[603px]">
-      <div className="bg-[var(--card)] rounded-[10px] p-4 sticky top-4 overflow-y-auto h-full">
+      <div className="dash-panel p-4 sticky top-4 overflow-y-auto h-full">
         {renderInstructions()}
       </div>
     </div>
 
     {/* Mobile Instruction Panel */}
-    <div className="md:hidden mt-6 bg-[var(--card)] rounded-[10px] p-4">
+    <div className="md:hidden mt-6 dash-panel p-4">
       {renderInstructions()}
     </div>
   </div>

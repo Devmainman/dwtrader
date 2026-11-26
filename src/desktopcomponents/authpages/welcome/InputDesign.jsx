@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import WelcomeStep from './WelcomeStep';
-import Logo from "../../../assets/image-2.svg";
+import logo from "../../../assets/Group.svg";
+import LanguageDropdown from "../../../components/navigation/LanguageDropdown";
+import useBrand from "../../../lib/useBrand";
 import PhoneVerificationStep from './PhoneVerificationStep';
 import AddressVerificationStep from './AddressVerificationStep';
 import IDVerificationStep1 from './IDVerificationStep1';
@@ -9,9 +11,9 @@ import IDVerificationStep2 from './IDVerificationStep2';
 import IDVerificationStep3 from './IDVerificationStep3';
 import WebcamCaptureStep from './WebcamCaptureStep';
 import VerificationCompleteStep from './VerificationCompleteStep';
-import LanguageSelector from './LanguageSelector';
 
 export default function InputDesign() {
+  const brand = useBrand();
   const [step, setStep] = useState(1);
   const [verificationData, setVerificationData] = useState({
     profile: {
@@ -35,19 +37,6 @@ export default function InputDesign() {
       [stepName]: data
     }));
   };
-
-  const renderStepIndicator = (currentStep, totalSteps) => (
-    <div className="md:hidden w-full flex justify-between items-center mb-8">
-      {Array.from({ length: totalSteps }).map((_, index) => (
-        <div 
-          key={index} 
-          className={`h-1 flex-1 rounded-full ${index < currentStep ? "bg-white" : "bg-gray-600"}`}
-        />
-      ))}
-    </div>
-  );
-
-
 
   const renderStep = () => {
     switch (step) {
@@ -127,40 +116,45 @@ export default function InputDesign() {
   }, [step]);
   
 
-  return (
-    <>
-     <div className="flex flex-col min-h-screen bg-neutral-900">   
-      <header className="hidden md:flex justify-between items-center ">
-        <div className="flex items-center">
-          <img src={Logo} alt="Logo" />
-          <span className="text-2xl font-bold tracking-wide hidden md:inline">SKOTE</span>
-        </div>
-        <div className="flex">
-          <LanguageSelector />
-        </div>
-      </header>
-    <div className="text-white lg:rounded-[20px]  min-h-[calc(100vh-120px)] md:min-h-[500px] w-full mx-auto px-4 md:px-8 py-6 max-w-none">
-      <header className="md:hidden justify-between items-center">
-        <div className="flex items-center">
-          <img src={Logo} alt="Logo" />
-          <span className="text-2xl font-bold tracking-wide hidden md:inline">SKOTE</span>
-        </div>
-        <div className="flex">
-          <LanguageSelector />
-        </div>
-      </header>
-      <div className="md:hidden flex justify-between items-center mb-2">
-        {step > 1 && (
-          <ChevronLeft className="text-white cursor-pointer" onClick={() => setStep(prev => prev - 1)} />
-        )}
-        {step === 1 && <div />}
-        <div className="text-gray-400 text-sm ml-auto">Step {Math.min(step, 8)}/8</div>
-      </div>
+  // Visible steps (step 2, phone OTP, is skipped).
+  const STEPS = [[1, 'Profile'], [3, 'ID card'], [4, 'Extra document'], [5, 'Selfie'], [6, 'Address'], [7, 'Proof of address'], [8, 'Done']];
+  const idx = Math.max(0, STEPS.findIndex(([n]) => n === step));
+  const back = () => setStep((p) => (p === 3 ? 1 : p - 1));
 
-      {renderStepIndicator(step, 8)}
-      {renderStep()}
+  return (
+    <div className="kyc min-h-[100dvh] bg-[var(--page)] text-zinc-100">
+      <header className="flex items-center justify-between px-5 sm:px-8 h-[68px]">
+        <div className="flex items-center gap-2">
+          <img src={logo} alt="" className="w-8 h-8 brand-logo" />
+          {brand && <span className="text-[15px] font-semibold tracking-[-0.02em]">{brand}</span>}
+        </div>
+        <LanguageDropdown variant="icon" />
+      </header>
+
+      <div className="max-w-[920px] mx-auto px-5 sm:px-8 pb-12">
+        <div className="flex items-end justify-between gap-4">
+          <div className="min-w-0">
+            {step > 1 && step < 8 && (
+              <button type="button" data-no-busy onClick={back} className="mb-3 inline-flex items-center gap-1 text-[12px] font-medium text-neutral-400 hover:text-zinc-100"><ChevronLeft className="w-4 h-4" />Back</button>
+            )}
+            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-blue-400">Step {idx + 1} of {STEPS.length} · {STEPS[idx][1]}</p>
+            <h1 className="mt-1.5 text-[26px] font-semibold tracking-[-0.03em] leading-tight">{step === 8 ? 'You’re all set' : 'Verify your account'}</h1>
+            <p className="text-[13px] text-neutral-400 mt-1">{step === 8 ? 'We’ll review your documents and let you know.' : 'A few quick steps keep your account and your money safe.'}</p>
+          </div>
+          {step < 8 && <a href="/dashboard" className="shrink-0 text-[12px] font-medium text-neutral-400 hover:text-zinc-100">Do it later</a>}
+        </div>
+
+        <ol className="mt-6 mb-8 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${STEPS.length}, minmax(0, 1fr))` }} aria-label="Progress">
+          {STEPS.map(([n, label], i) => (
+            <li key={n} className="min-w-0">
+              <span className="block h-1.5 rounded-full bg-white/[.08] overflow-hidden"><span className="block h-full rounded-full bg-blue-500 transition-[width] duration-500 ease-out" style={{ width: i <= idx ? '100%' : '0%' }} /></span>
+              <span className={`hidden sm:block mt-1.5 text-[10px] truncate ${i === idx ? 'text-zinc-100 font-semibold' : 'text-neutral-500'}`}>{label}</span>
+            </li>
+          ))}
+        </ol>
+
+        <div key={step} className="auth-rise">{renderStep()}</div>
+      </div>
     </div>
-     </div>
-    </>
   );
 }

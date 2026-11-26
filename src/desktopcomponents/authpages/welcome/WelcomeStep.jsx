@@ -151,12 +151,6 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
 
   return (
   <div className="space-y-4 ">
-    <h1 className="text-[35px] text-[var(--fg)] font-medium mb-2">Welcome</h1>
-    <p className="text-[var(--fg)] font-regular mb-6">You're a few steps to completing your profile</p>
-
-    <div className="bg-[var(--card)] flex justify-center items-center h-[37px] w-[204px] rounded-[8px] p-2 mb-6">
-      <h2 className="text-[14px] ">Account Authentication</h2>
-    </div>
 
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -169,9 +163,9 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
             value={formData.firstName}
             onChange={handleChange}
             placeholder="Enter your First Name"
-            className={`w-full h-[50px] bg-transparent border ${errors.firstName ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[var(--fg-4)] text-[12px] focus:outline-none focus:border-white`}
+            className={`kyc-field ${errors.firstName ? 'is-error' : ''}`}
           />
-          {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+          {errors.firstName && <p className="text-red-400 text-[12px] mt-1.5">{errors.firstName}</p>}
 
           {/* Email */}
           <input
@@ -180,16 +174,16 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
             value={formData.email}
             onChange={handleChange}
             disabled
-            className={`w-full bg-transparent border ${errors.email ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[var(--fg-4)] text-[12px] focus:outline-none focus:border-white`}
+            className={`kyc-field ${errors.email ? 'is-error' : ''} opacity-70`}
           />
-          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          {errors.email && <p className="text-red-400 text-[12px] mt-1.5">{errors.email}</p>}
 
           {/* Phone Number */}
-          <div className="w-full bg-transparent border border-[var(--line-strong)] rounded-md p-4 text-gray-400 flex items-center">
+          <div className="kyc-field">
             <select
               value={selectedDialCode}
               onChange={(e) => setSelectedDialCode(e.target.value)}
-              className="bg-transparent text-[12px] mr-2"
+              className="kyc-inner mr-2"
             >
               {countries.map((c) => (
                 <option key={c.code} value={c.dialCode}>
@@ -206,18 +200,18 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
                 setFormData(prev => ({ ...prev, phoneNumber: fullNumber }));
               }}
               placeholder="1234567890"
-              className="bg-transparent flex-1 text-[12px] focus:outline-none"
+              className="kyc-inner flex-1"
             />
           </div>
-          {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>}
+          {errors.mobile && <p className="text-red-400 text-[12px] mt-1.5">{errors.mobile}</p>}
 
           {/* Currency */}
-          <div className="w-full bg-transparent border border-[var(--line-strong)] rounded-md p-4 text-gray-400 flex justify-between">
+          <div className="kyc-field justify-between">
             <select
               name="currency"
               value={formData.currency}
               onChange={handleChange}
-              className="bg-transparent text-[12px] text-[var(--fg-4)] w-full"
+              className="kyc-inner w-full"
             >
               <option value="">Select Currency</option>
               {currencies.map((cur) => (
@@ -227,7 +221,7 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
               ))}
             </select>
           </div>
-          {errors.currency && <p className="text-red-500 text-sm mt-1">{errors.currency}</p>}
+          {errors.currency && <p className="text-red-400 text-[12px] mt-1.5">{errors.currency}</p>}
         </div>
 
         {/* RIGHT COLUMN */}
@@ -239,9 +233,9 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
             value={formData.lastName}
             onChange={handleChange}
             placeholder="Enter your Last Name"
-            className={`w-full h-[50px] bg-transparent border ${errors.lastName ? 'border-red-500' : 'border-[var(--line-strong)]'} rounded-[8px] p-4 text-[var(--fg-4)] text-[12px] focus:outline-none focus:border-white`}
+            className={`kyc-field ${errors.lastName ? 'is-error' : ''}`}
           />
-          {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+          {errors.lastName && <p className="text-red-400 text-[12px] mt-1.5">{errors.lastName}</p>}
 
           {/* Country */}
           <select
@@ -252,7 +246,7 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
               setSelectedDialCode(selected?.dialCode || '+1');
               handleChange(e);
             }}
-            className="w-full bg-transparent border border-[var(--line-strong)] rounded-md p-4 text-[var(--fg-4)] text-[12px]"
+            className="kyc-field"
           >
             <option value="">Select Country</option>
             {countries.map((c) => (
@@ -261,15 +255,15 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
               </option>
             ))}
           </select>
-          {errors.country && <p className="text-red-500 text-sm mt-1">{errors.country}</p>}
+          {errors.country && <p className="text-red-400 text-[12px] mt-1.5">{errors.country}</p>}
 
           {/* Gender */}
-          <div className="w-full bg-transparent border border-[var(--line-strong)] rounded-md p-4 text-gray-400 flex justify-between">
+          <div className="kyc-field justify-between">
             <select
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="bg-transparent text-[12px] text-[var(--fg-4)] w-full"
+              className="kyc-inner w-full"
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
@@ -277,7 +271,7 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
               <option value="other">Other</option>
             </select>
           </div>
-          {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+          {errors.gender && <p className="text-red-400 text-[12px] mt-1.5">{errors.gender}</p>}
         </div>
       </div>
 
@@ -286,7 +280,7 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
         <button
           type="submit"
           disabled={loading || !isFormValid}
-          className={`w-full md:w-[60%] text-[12px] text-white rounded-full py-4 font-medium ${
+          className={`kyc-btn w-full md:w-[60%] ${
             loading || !isFormValid ? 'bg-blue-500 opacity-50 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 transition-colors'
           }`}
         >
@@ -302,7 +296,7 @@ export default function WelcomeStep({ onContinue, initialData = {} }) {
     </form>
 
     {/* Step Indicator moved to bottom */}
-    <div className="hidden md:flex mt-10 flex justify-center">
+    <div className="hidden">
       <div className="w-full flex justify-between items-center">
         {Array.from({ length: 3 }).map((_, index) => (
           <div 

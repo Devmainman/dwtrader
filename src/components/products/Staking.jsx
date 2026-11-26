@@ -13,7 +13,9 @@ const units = (n) => formatNumber(n, 8);
 
 /** Circle with the asset ticker, or the pool icon if one is set. */
 function AssetIcon({ pool, size = 48 }) {
-  if (pool.icon) return <img src={pool.icon} alt="" style={{ width: size, height: size }} className="rounded-full bg-white object-contain" />;
+  const [bad, setBad] = useState(false);
+  const src = pool.icon || `https://assets.coincap.io/assets/icons/${String(pool.asset).toLowerCase()}@2x.png`;
+  if (!bad) return <img src={src} alt="" onError={() => setBad(true)} style={{ width: size, height: size }} className="rounded-full bg-white/[.06] object-contain" />;
   return (
     <div style={{ width: size, height: size }} className="rounded-full flex items-center justify-center text-xs font-semibold text-white bg-[linear-gradient(135deg,var(--color-blue-700)_0%,var(--color-blue-500)_100%)]">
       {pool.asset.slice(0, 4)}
@@ -79,25 +81,28 @@ function StakeModal({ pool, currency, balance, onClose, onDone }) {
 function PoolCard({ pool, currency, onStake }) {
   const full = pool.remainingCapacity !== null && pool.remainingCapacity <= 0;
   return (
-    <Panel className="flex flex-col">
+    <Panel className="flex flex-col transition hover:-translate-y-0.5">
       <div className="flex items-center gap-3">
-        <AssetIcon pool={pool} />
+        <AssetIcon pool={pool} size={44} />
         <div className="min-w-0 flex-1">
-          <p className="text-base font-semibold leading-tight">{pool.asset}</p>
-          <p className="text-sm text-neutral-400 truncate">{pool.name}</p>
+          <p className="text-[15px] font-semibold leading-tight">{pool.asset}</p>
+          <p className="text-[11px] text-neutral-500 truncate">{pool.name}</p>
         </div>
-        <Badge tone="success">{pool.apy}% APY</Badge>
+        <div className="text-right">
+          <p className="text-[24px] font-light tracking-[-0.03em] tabular-nums leading-none text-emerald-400">{pool.apy}%</p>
+          <p className="text-[10px] text-neutral-500 mt-1">APY</p>
+        </div>
       </div>
-      <dl className="grid grid-cols-3 gap-2 mt-5 text-sm">
-        <div><dt className="text-xs text-neutral-500">Minimum</dt><dd className="font-semibold mt-0.5">{formatNumber(pool.minAmount, 8)} {pool.asset}</dd></div>
-        <div><dt className="text-xs text-neutral-500">Maximum</dt><dd className="font-semibold mt-0.5">{formatNumber(pool.maxAmount, 8)} {pool.asset}</dd></div>
-        <div><dt className="text-xs text-neutral-500">Cycle</dt><dd className="font-semibold mt-0.5">{CYCLE_LABEL[pool.cycle]}</dd></div>
+      <dl className="grid grid-cols-3 gap-2 mt-4">
+        {[['Minimum', `${formatNumber(pool.minAmount, 8)} ${pool.asset}`], ['Maximum', `${formatNumber(pool.maxAmount, 8)} ${pool.asset}`], ['Rewards', CYCLE_LABEL[pool.cycle]]].map(([k, v]) => (
+          <div key={k} className="rounded-xl bg-white/[.03] border border-white/[.06] px-2.5 py-2 min-w-0"><dt className="text-[10px] text-neutral-500">{k}</dt><dd className="text-[12px] font-semibold mt-0.5 truncate">{v}</dd></div>
+        ))}
       </dl>
-      <div className="flex items-center justify-between text-xs text-neutral-500 mt-3">
+      <div className="flex items-center justify-between text-[11px] text-neutral-500 mt-3">
         <span>{pool.localPrice ? `1 ${pool.asset} ≈ ${formatMoney(pool.localPrice, currency)}` : 'Price unavailable'}</span>
-        {pool.lockDays > 0 ? <span className="flex items-center gap-1"><Lock className="w-3 h-3" />{pool.lockDays}-day lock</span> : <span>Flexible</span>}
+        {pool.lockDays > 0 ? <span className="flex items-center gap-1"><Lock className="w-3 h-3" />{pool.lockDays}-day lock</span> : <span className="text-emerald-400">Flexible</span>}
       </div>
-      <Button className="w-full mt-4" disabled={full || !pool.localPrice} onClick={() => onStake(pool)}>{full ? 'Pool full' : 'Stake'}</Button>
+      <Button className="w-full h-11 mt-4 !text-[13px]" disabled={full || !pool.localPrice} onClick={() => onStake(pool)}>{full ? 'Pool full' : `Stake ${pool.asset}`}</Button>
     </Panel>
   );
 }
@@ -174,6 +179,13 @@ export default function Staking() {
     <Page title="Stake" subtitle="Stake crypto and earn rewards every cycle." icon={Layers}>
       <Tabs value={tab} onChange={setTab} how={[['Pick a pool', 'Each coin shows its rate and lock term.'], ['Stake an amount', 'The coins stay locked for the term.'], ['Earn every day', 'Rewards build up daily while staked.'], ['Get it back', 'At the end of the term your stake and rewards return to your balance.']]} tabs={[{ value: 'pools', label: 'Pools' }, { value: 'history', label: activeCount ? `Your history (${activeCount} active)` : 'Your history' }]} />
 
+      {tab === 'pools' && history.data?.positions?.length > 0 && (
+        <button type="button" data-no-busy onClick={() => setTab('history')} className="dash-panel w-full p-4 mb-4 grid grid-cols-3 gap-2 text-left hover:-translate-y-0.5 transition">
+          <div><p className="text-[10px] text-neutral-500">Staked</p><p className="text-[15px] font-medium tabular-nums">{formatMoney(history.data.totals.stakedValue, currency)}</p></div>
+          <div><p className="text-[10px] text-neutral-500">Rewards ready</p><p className="text-[15px] font-medium tabular-nums text-emerald-400">{formatMoney(history.data.totals.unclaimedValue, currency)}</p></div>
+          <div><p className="text-[10px] text-neutral-500">Paid out</p><p className="text-[15px] font-medium tabular-nums">{formatMoney(history.data.totals.rewardsPaid, currency)}</p></div>
+        </button>
+      )}
       {tab === 'pools' && (pools.loading && !pools.data ? <Loading /> : pools.error ? <ErrorState message={pools.error} onRetry={pools.reload} /> : (
         pools.data.pools.length === 0 ? <Panel><Empty icon={Layers} title="No pools available" text="Check back soon." /></Panel> : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -189,12 +201,12 @@ export default function Staking() {
               <Empty icon={Layers} title="You haven't staked yet" action={<Button onClick={() => setTab('pools')}>View pools</Button>} />
             ) : (
               <>
-                <div className="grid grid-cols-3 gap-2 text-sm mb-2">
-                  <div><p className="text-xs text-neutral-500">Staked value</p><p className="font-semibold">{formatMoney(history.data.totals.stakedValue, currency)}</p></div>
-                  <div><p className="text-xs text-neutral-500">Rewards ready</p><p className="font-semibold text-emerald-400">{formatMoney(history.data.totals.unclaimedValue, currency)}</p></div>
-                  <div><p className="text-xs text-neutral-500">Rewards paid</p><p className="font-semibold">{formatMoney(history.data.totals.rewardsPaid, currency)}</p></div>
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  {[['Staked value', formatMoney(history.data.totals.stakedValue, currency), ''], ['Rewards ready', formatMoney(history.data.totals.unclaimedValue, currency), 'text-emerald-400'], ['Rewards paid', formatMoney(history.data.totals.rewardsPaid, currency), '']].map(([k, v, t]) => (
+                    <div key={k} className="rounded-2xl bg-white/[.03] border border-white/[.06] px-3 py-2"><p className="text-[10px] text-neutral-500">{k}</p><p className={`text-[13px] font-semibold tabular-nums ${t}`}>{v}</p></div>
+                  ))}
                 </div>
-                <ul className="divide-y divide-neutral-800">
+                <ul className="divide-y divide-white/[.06]">
                   {history.data.positions.map((p) => <HistoryItem key={p._id} p={p} currency={currency} onChanged={() => { history.reload(); pools.reload(); }} />)}
                 </ul>
               </>

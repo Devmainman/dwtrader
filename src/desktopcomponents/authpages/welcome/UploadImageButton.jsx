@@ -40,25 +40,25 @@ function UploadImageButton({ label, onChange, preview, onRemove }) {
 
   return (
     <div className="space-y-2">
-      <label className="block text-[12px] font-regular text-[var(--fg-4)]">{label}</label>
+      <label className="block text-[12px] font-medium text-neutral-400">{label}</label>
       
       {selectedFile ? (
         <div className="relative">
           <img 
             src={URL.createObjectURL(selectedFile)} 
             alt="Preview" 
-            className="h-40 object-contain border border-gray-600 rounded-md"
+            className="h-44 w-full object-contain rounded-2xl border border-white/10 bg-black/20"
           />
           <button
             onClick={handleRemove}
-            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+            className="absolute top-2 right-2 bg-black/60 backdrop-blur text-white rounded-full p-1.5 hover:bg-red-500 transition"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
       ) : (
-        <div className="bg-[var(--card)]  lg:bg-neutral-900  rounded-[10px] h-[172px] p-4 text-center">
-          <div className="bg-[var(--card-2)] rounded-[10px] h-[138px] p-4 text-center">
+        <div className="rounded-2xl border border-dashed border-white/15 hover:border-blue-500/50 bg-white/[.02] transition p-1.5 text-center">
+          <div className="rounded-xl py-6 px-4 text-center">
           <div className="rounded-full flex justify-center mb-2">
               <img
             src={cloud}
@@ -74,14 +74,14 @@ function UploadImageButton({ label, onChange, preview, onRemove }) {
             ref={fileInputRef}
           />
 
-      <p className="mt-2 text-[12px] text-gray-400">Upload Image</p>
+      <p className="mt-2 text-[13px] font-medium text-zinc-100">Add a photo</p>
 
-        <p className=" text-[8px] text-gray-400">{err ? <span className="text-red-400">{err}</span> : "Phone photos are fine, we resize them"}</p>
+        <p className="text-[11px] text-neutral-500 mt-0.5">{err ? <span className="text-red-400">{err}</span> : "Phone photos are fine, we resize them"}</p>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={busy}
-            className="bg-blue-600 mt-2 text-white px-2 py-1 rounded-full text-[10px]"
+            className="bg-blue-600 hover:bg-blue-500 mt-3 text-white h-9 px-4 rounded-full text-[12px] font-semibold transition"
           >
             {busy ? "Preparing..." : "Select Image"}
           </button>

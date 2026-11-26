@@ -46,47 +46,56 @@ function Rig({ stats, now, onStart, onStop, onClaim, busy }) {
   const base = s ? (s.earnedExact ?? s.earnedSoFar ?? 0) : 0;
   const live = s ? base + (Math.max(0, Math.min(now, endsAt) - asOf) / 1000) * perSecond : 0;
 
+  const left = mining ? hm((endsAt - now) / 1000) : null;
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-neutral-800 bg-[radial-gradient(120%_120%_at_0%_0%,#1e3a8a33_0%,#1D1D1F_45%,#1D1D1F_100%)] p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs text-neutral-400 flex items-center gap-1.5">
+    <section className={`rig-card ${mining ? 'is-on' : ''}`}>
+      <div className="relative z-[1] flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full bg-white/[.06] border border-white/[.08] text-[11px] font-medium text-neutral-300">
             <span className="relative flex w-2 h-2">
               {mining && <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-400 animate-[pulse-dot_1.6s_ease-out_infinite]" />}
-              <span className={`relative inline-flex w-2 h-2 rounded-full ${mining ? 'bg-emerald-400' : 'bg-neutral-600'}`} />
+              <span className={`relative inline-flex w-2 h-2 rounded-full ${mining ? 'bg-emerald-400' : 'bg-neutral-500'}`} />
             </span>
-            {mining ? `Mining on ${s.pool}` : 'Rig idle'}
+            {mining ? `Mining · ${s.pool}` : 'Rig idle'}
           </p>
-          <p className="text-[28px] leading-tight font-semibold mt-2 tabular-nums">
+          <p className="mt-3 text-[34px] leading-none font-light tracking-[-0.03em] tabular-nums">
             {mining ? <AnimatedNumber value={live} format={(v) => liveMoney(v, stats.currency)} /> : formatMoney(stats.pendingRewards, stats.currency)}
           </p>
-          <p className="text-[11px] text-neutral-500">
-            {mining ? `earned this session · +${formatMoney(perSecond * 3600, stats.currency)}/hour` : stats.pendingRewards > 0 ? 'ready to claim' : 'start a session to earn'}
+          <p className="mt-2 text-[11px] text-neutral-400">
+            {mining ? <>earned this session · <span className="text-emerald-400">+{formatMoney(perSecond * 3600, stats.currency)}/hour</span></> : stats.pendingRewards > 0 ? 'ready to claim' : 'start a session to earn'}
           </p>
         </div>
-        <ProgressRing value={progress} size={72} stroke={5} color={mining ? '#10b981' : '#404040'}>
-          <Fan className={`w-7 h-7 ${mining ? 'text-emerald-400 animate-spin [animation-duration:1.4s]' : 'text-neutral-600'}`} strokeWidth={1.6} />
+        <ProgressRing value={progress} size={78} stroke={5} color={mining ? '#10b981' : 'rgba(255,255,255,.12)'}>
+          <Fan className={`w-8 h-8 ${mining ? 'text-emerald-400 animate-spin [animation-duration:1.2s]' : 'text-neutral-600'}`} strokeWidth={1.5} />
         </ProgressRing>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 mt-5 text-center">
-        <div className="rounded-xl bg-black/30 py-2"><p className="text-[10px] text-neutral-500">Hash rate</p><p className="text-sm font-semibold tabular-nums">{stats.hashRate} <span className="text-[10px] text-neutral-500">MH/s</span></p></div>
-        <div className="rounded-xl bg-black/30 py-2"><p className="text-[10px] text-neutral-500">Per day</p><p className="text-sm font-semibold tabular-nums">{formatMoney(stats.dailyEarnings, stats.currency)}</p></div>
-        <div className="rounded-xl bg-black/30 py-2"><p className="text-[10px] text-neutral-500">{mining ? 'Time left' : 'Machines'}</p><p className="text-sm font-semibold tabular-nums">{mining ? hm((endsAt - now) / 1000) : `${stats.activeMachines}/${stats.machines}`}</p></div>
+      {/* Live hash visual: bars pulse while the rig runs */}
+      <div className="rig-bars relative z-[1] mt-5" aria-hidden>
+        {Array.from({ length: 28 }).map((_, i) => <span key={i} style={{ animationDelay: `${(i * 97) % 900}ms`, height: `${30 + ((i * 37) % 60)}%` }} />)}
       </div>
 
-      <div className="flex gap-2 mt-4">
+      <div className="relative z-[1] grid grid-cols-3 gap-2 mt-4">
+        {[['Hash rate', <>{stats.hashRate} <span className="text-[10px] text-neutral-500">MH/s</span></>], ['Per day', formatMoney(stats.dailyEarnings, stats.currency)], [mining ? 'Time left' : 'Machines', mining ? left : `${stats.activeMachines}/${stats.machines}`]].map(([k, v]) => (
+          <div key={k} className="rounded-2xl bg-white/[.04] border border-white/[.06] px-3 py-2.5">
+            <p className="text-[10px] text-neutral-500">{k}</p>
+            <p className="text-[13px] font-semibold tabular-nums mt-0.5">{v}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="relative z-[1] flex gap-2 mt-4">
         {mining
-          ? <Button variant="secondary" className="flex-1 h-10" busy={busy === 'stop'} disabled={!!busy} onClick={onStop}><Square className="w-3.5 h-3.5" />Stop & collect</Button>
-          : <Button className="flex-1 h-10" busy={busy === 'start'} disabled={!!busy || !stats.activeMachines} onClick={onStart}><Play className="w-3.5 h-3.5" />Start mining</Button>}
+          ? <Button variant="secondary" className="flex-1 h-12 !text-[13px]" busy={busy === 'stop'} disabled={!!busy} onClick={onStop}><Square className="w-3.5 h-3.5" />Stop & collect</Button>
+          : <Button className="flex-1 h-12 !text-[13px]" busy={busy === 'start'} disabled={!!busy || !stats.activeMachines} onClick={onStart}><Play className="w-4 h-4" />Start mining</Button>}
         {stats.pendingRewards > 0 && (
-          <Button className="flex-1 h-10 !bg-emerald-500 hover:!bg-emerald-400 animate-[claim-pop_600ms_ease-out]" busy={busy === 'claim'} disabled={!!busy} onClick={onClaim}>
-            <Gift className="w-3.5 h-3.5" />Claim {formatMoney(stats.pendingRewards, stats.currency)}
+          <Button className="flex-1 h-12 !text-[13px] !bg-emerald-500 hover:!bg-emerald-400 animate-[claim-pop_600ms_ease-out]" busy={busy === 'claim'} disabled={!!busy} onClick={onClaim}>
+            <Gift className="w-4 h-4" />Claim {formatMoney(stats.pendingRewards, stats.currency)}
           </Button>
         )}
       </div>
-      {!stats.activeMachines && !mining && <p className="text-[11px] text-neutral-500 mt-2">Add a machine from the shop below to start mining.</p>}
-    </div>
+      {!stats.activeMachines && !mining && <p className="relative z-[1] text-[11px] text-neutral-500 mt-2">Add a machine from the shop below to start mining.</p>}
+    </section>
   );
 }
 

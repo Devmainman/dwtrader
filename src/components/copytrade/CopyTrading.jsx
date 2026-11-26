@@ -1,7 +1,7 @@
 // Copy Trading: two tabs — Top Experts (browse, follow, copy) and Copying (your copies).
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Search, Clock } from 'lucide-react';
+import { Users, Search, Clock, TrendingUp, Wallet, Sparkles, ChevronRight } from 'lucide-react';
 import { copyTradingApi } from '../../api/products';
 import {
   Page, Panel, Button, Badge, Tabs, inputClass, Loading, ErrorState, Empty,
@@ -23,36 +23,36 @@ const SORTS = [
 
 function TraderCard({ t, currency, onOpen, onCopy, onManage, onFollowChange }) {
   return (
-    <Panel className="flex flex-col">
-      <button type="button" onClick={() => onOpen(t.traderId)} className="text-left" title="View full stats and trades">
+    <Panel className={`flex flex-col transition hover:-translate-y-0.5 ${t.myCopy ? '!border-emerald-500/30' : ''}`}>
+      <button type="button" data-no-busy onClick={() => onOpen(t.traderId)} className="text-left" title="View full stats and trades">
         <div className="flex items-center gap-3">
           <Avatar src={t.avatar} name={t.username} size={52} badge={t.badge} />
           <div className="min-w-0 flex-1">
             <TraderName trader={t} />
-            <p className="text-xs text-neutral-400 truncate flex items-center gap-2"><StatusDot trader={t} withLabel={false} />{compact(t.followers)} followers · {t.copiers} copiers</p>
+            <p className="text-[11px] text-neutral-500 truncate flex items-center gap-2 mt-0.5"><StatusDot trader={t} withLabel={false} />{compact(t.followers)} followers · {t.copiers} copiers</p>
           </div>
           <RiskBadge level={t.riskLevel} />
         </div>
-        <div className="flex items-end justify-between mt-4">
+        <div className="flex items-end justify-between mt-4 gap-3">
           <div>
-            <p className="text-xs text-neutral-500">Total return</p>
-            <p className={`text-xl font-semibold ${toneOf(t.performance.roi)}`}>{pct(t.performance.roi)}</p>
+            <p className="text-[11px] text-neutral-500">Total return</p>
+            <p className={`text-[28px] font-light tracking-[-0.03em] tabular-nums leading-tight ${toneOf(t.performance.roi)}`}>{pct(t.performance.roi)}</p>
           </div>
-          <div className="w-28"><Sparkline values={t.performance.sparkline} height={36} /></div>
+          <div className="w-32"><Sparkline values={t.performance.sparkline} height={44} /></div>
         </div>
-        <div className="grid grid-cols-3 gap-2 mt-3 text-xs">
-          <div><p className="text-neutral-500">Win rate</p><p className="font-medium">{t.performance.winRate}%</p></div>
-          <div><p className="text-neutral-500">Drawdown</p><p className="font-medium">{t.performance.maxDrawdown}%</p></div>
-          <div><p className="text-neutral-500">Trades</p><p className="font-medium">{t.performance.totalTrades}</p></div>
+        <div className="grid grid-cols-3 gap-2 mt-3">
+          {[['Win rate', `${t.performance.winRate}%`], ['Drawdown', `${t.performance.maxDrawdown}%`], ['Trades', t.performance.totalTrades]].map(([k, v]) => (
+            <div key={k} className="rounded-xl bg-white/[.03] border border-white/[.06] px-2.5 py-2"><p className="text-[10px] text-neutral-500">{k}</p><p className="text-[13px] font-semibold tabular-nums">{v}</p></div>
+          ))}
         </div>
       </button>
-      <div className="mt-4 pt-3 border-t border-neutral-800 flex items-center justify-between gap-2">
+      <div className="mt-4 pt-3 border-t border-white/[.06] flex items-center justify-between gap-2">
         <FollowButton key={`${t.traderId}-${t.isFollowing}`} trader={t} onChange={onFollowChange} />
         <div className="flex items-center gap-2">
-          <span className="text-xs text-neutral-400 text-right leading-tight">Min to copy<br /><span className="font-semibold text-white">{formatMoney(t.minCopyAmount, currency)}</span></span>
+          <span className="text-[10px] text-neutral-500 text-right leading-tight">Min to copy<br /><span className="text-[12px] font-semibold text-zinc-100">{formatMoney(t.minCopyAmount, currency)}</span></span>
           {t.myCopy
             ? <button type="button" onClick={onManage}><Badge tone="success">{t.myCopy.status === 'paused' ? 'Paused' : 'Copying'}</Badge></button>
-            : <Button className="px-4" disabled={!t.acceptingCopiers} onClick={() => onCopy(t)}>Copy</Button>}
+            : <Button className="px-5" disabled={!t.acceptingCopiers} onClick={() => onCopy(t)}>Copy</Button>}
         </div>
       </div>
     </Panel>
@@ -85,6 +85,10 @@ export default function CopyTrading({ initialTab = 'experts' }) {
   const currency = data?.currency || 'USD';
   const copyingCount = (copies.data?.copies || []).length;
   const manage = () => setTab('copying');
+  const mine = useMemo(() => {
+    const open = (copies.data?.copies || []).filter((c) => c.status !== 'stopped');
+    return { count: open.length, value: open.reduce((a, c) => a + (c.equity || 0), 0), pnl: open.reduce((a, c) => a + (c.totalPnl || 0), 0) };
+  }, [copies.data]);
   const openTrader = (id) => navigate(`/copytrade/trader/${encodeURIComponent(id)}`);
 
   return (
@@ -98,21 +102,29 @@ export default function CopyTrading({ initialTab = 'experts' }) {
 
       {tab === 'experts' && (
         <>
-          <div className="flex flex-col sm:flex-row gap-2 mb-5">
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-neutral-500" />
-              <input className={`${inputClass} pl-9`} placeholder="Search experts" value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
-            <select className={`${inputClass} sm:w-48`} value={sort} onChange={(e) => setSort(e.target.value)}>
-              {SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-            </select>
-            <select className={`${inputClass} sm:w-44`} value={risk} onChange={(e) => setRisk(e.target.value)}>
-              <option value="">Any risk level</option>
-              <option value="low">Low risk</option>
-              <option value="medium">Medium risk</option>
-              <option value="high">High risk</option>
-              <option value="very_high">Very high risk</option>
-            </select>
+          {mine.count > 0 && (
+            <button type="button" data-no-busy onClick={manage} className="dash-panel w-full p-4 mb-4 flex items-center gap-4 text-left hover:-translate-y-0.5 transition">
+              <span className="w-11 h-11 rounded-2xl bg-emerald-500/12 text-emerald-400 flex items-center justify-center shrink-0"><Sparkles className="w-5 h-5" /></span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] text-neutral-500">You’re copying {mine.count} trader{mine.count === 1 ? '' : 's'}</p>
+                <p className="text-[18px] font-light tracking-[-0.02em] tabular-nums">{formatMoney(mine.value, currency)} <span className={`text-[12px] font-semibold ${toneOf(mine.pnl)}`}>{mine.pnl >= 0 ? '+' : ''}{formatMoney(mine.pnl, currency)}</span></p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-neutral-500" />
+            </button>
+          )}
+          <div className="relative mb-3">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500" />
+            <input className="w-full h-11 rounded-full bg-white/[.04] border border-white/10 pl-10 pr-4 text-[13px] text-zinc-100 placeholder:text-neutral-500 outline-none focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition" placeholder="Search experts" value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <div className="-mx-4 px-4 flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-no-busy>
+            {SORTS.map((o) => (
+              <button key={o.value} type="button" onClick={() => setSort(o.value)} className={`shrink-0 h-8 px-3.5 rounded-full text-[12px] font-semibold transition ${sort === o.value ? 'bg-zinc-100 text-neutral-900' : 'bg-white/[.04] border border-white/[.08] text-neutral-400 hover:text-zinc-100'}`}>{o.label}</button>
+            ))}
+          </div>
+          <div className="flex gap-1.5 mt-2 mb-5 flex-wrap" data-no-busy>
+            {[['', 'Any risk'], ['low', 'Low'], ['medium', 'Medium'], ['high', 'High'], ['very_high', 'Very high']].map(([v, l]) => (
+              <button key={v} type="button" onClick={() => setRisk(v)} className={`h-7 px-3 rounded-full text-[11px] font-semibold border transition ${risk === v ? 'border-blue-500/60 bg-blue-600/10 text-blue-400' : 'border-white/[.08] text-neutral-500 hover:text-zinc-100'}`}>{l}</button>
+            ))}
           </div>
 
           {loading && !data ? <Loading /> : error ? <ErrorState message={error} onRetry={reload} /> : traders.length === 0 ? (
@@ -129,7 +141,7 @@ export default function CopyTrading({ initialTab = 'experts' }) {
 
       {tab === 'copying' && <CopyingPanel onBrowse={() => setTab('experts')} />}
 
-      <p className="text-xs text-neutral-500 mt-6 flex items-center gap-1"><Clock className="w-3 h-3" />Copy trading carries risk. Past performance does not guarantee future results.</p>
+      <p className="text-[11px] text-neutral-500 mt-6 flex items-center gap-1"><Clock className="w-3 h-3" />Copy trading carries risk. Past performance does not guarantee future results.</p>
 
       {copyTarget && (
         <CopyModal

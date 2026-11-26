@@ -44,10 +44,10 @@ export default function IDVerificationStep1({ onBack, onContinue }) {
   return (
     <div className="md:flex md:items-center md:justify-center md:gap-6">
       {/* LEFT SIDE (Form + Upload) */}
-      <div className="w-full md:w-[570px] md:h-[574px] rounded-[10px] md:p-6 md:bg-[var(--card)] md:flex md:flex-col space-y-4">
+      <div className="w-full md:w-[570px] md:h-[574px] rounded-[24px] md:p-6 md:bg-[var(--card)] md:border md:border-white/[.07] md:flex md:flex-col space-y-4">
         {/* Header */}
         <div>
-          <h1 className="text-[18px] text-[var(--fg)] font-medium">Proof of Address</h1>
+          <h1 className="text-[17px] font-semibold tracking-[-0.02em] text-zinc-100">Proof of Address</h1>
           <p className="text-[var(--fg-4)] text-[12px] mb-2">Upload a document that verifies your address</p>
         </div>
 
@@ -57,7 +57,7 @@ export default function IDVerificationStep1({ onBack, onContinue }) {
             <select
               value={documentType}
               onChange={(e) => setDocumentType(e.target.value)}
-              className="w-full bg-transparent border text-[12px] border-gray-700 rounded-md p-4 text-white"
+              className="kyc-field"
             >
               <option value="utility_bill">Utility Bill</option>
               <option value="bank_statement">Bank Statement</option>
@@ -71,20 +71,20 @@ export default function IDVerificationStep1({ onBack, onContinue }) {
               onRemove={() => setDocument(null)}
             />
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error && <p className="text-red-400 text-[12px] mt-1.5">{error}</p>}
 
             {/* Buttons */}
             <div className="flex gap-4 mt-6">
               <button
                 onClick={onBack}
-                className="w-1/2 border border-gray-700 text-white text-[12px] rounded-full py-3 font-regular"
+                className="kyc-btn kyc-btn-ghost w-1/2"
               >
                 Back
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={!document || loading}
-                className="w-1/2 bg-[var(--color-blue-600)] text-white text-[12px] rounded-full py-3 font-regular"
+                className="kyc-btn w-1/2"
               >
                 {loading ? 'Uploading...' : 'Submit'}
               </button>
@@ -95,7 +95,7 @@ export default function IDVerificationStep1({ onBack, onContinue }) {
 
       {/* Instructions (optional for later re-enable)
       <div className="hidden md:block md:w-[403px] md:h-full">
-        <div className="bg-[var(--card)] rounded-[10px] p-4 overflow-y-auto h-full">
+        <div className="dash-panel p-4 overflow-y-auto h-full">
           {renderInstructions()}
         </div>
       </div> */}

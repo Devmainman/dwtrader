@@ -82,6 +82,7 @@ import PaymentSystemSignal from "./components/subscribe/PaymentSystemSignal";
 
 // Auth Pages
 import LoginPage from "./desktopcomponents/authpages/loginpage/LoginScreen";
+import ForgotPasswordPage from "./desktopcomponents/authpages/loginpage/ForgotPassword";
 import Landing from "./landing/Landing";
 import { BlogIndex, BlogPostPage } from "./landing/Blog";
 import { HelpIndex, HelpCategoryPage } from "./landing/Help";
@@ -191,7 +192,7 @@ useEffect(() => {
 
 
 
-  const isAuthRoute = ['/auth', '/signup', '/welcome'].includes(location.pathname);
+  const isAuthRoute = ['/auth', '/signup', '/welcome', '/forgot-password'].includes(location.pathname);
   const isSignupRoute = location.pathname === '/signup';
   const isWelcomeRoute = location.pathname === '/welcome';
   // Light mode is for the signed-in app; public pages (landing, blog, help, sign-in) stay dark.
@@ -251,6 +252,7 @@ useEffect(() => {
     return (
       <Routes>
         <Route path="/auth" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/welcome" element={<WelcomePage />} />
       </Routes>

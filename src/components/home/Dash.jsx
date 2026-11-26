@@ -127,7 +127,7 @@ function Flash({ value, children, className = '' }) {
 }
 
 /** Tabs with a pill (or underline) that slides to the active one. */
-function SlideTabs({ items, value, onChange, variant = 'pill' }) {
+export function SlideTabs({ items, value, onChange, variant = 'pill' }) {
   const refs = useRef({});
   const [box, setBox] = useState(null);
   useLayoutEffect(() => {
@@ -189,7 +189,7 @@ const fmtTime = (t, range) => new Date(t).toLocaleString('en-US', range === '1d'
   : range === '1y' ? { month: 'short', day: 'numeric', year: 'numeric' } : { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric' });
 
 /** Area chart you can scrub with a finger or the mouse. Dotted line = where the range started. */
-function ScrubChart({ points, height = 150, onScrub, masked, dim }) {
+export function ScrubChart({ points, height = 150, onScrub, masked, dim }) {
   const wrap = useRef(null);
   const [w, setW] = useState(0);
   const [idx, setIdx] = useState(null);

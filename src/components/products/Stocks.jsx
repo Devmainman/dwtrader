@@ -105,11 +105,17 @@ export function StocksPanel({ onChange }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-        <Stat label="Stocks value" value={formatMoney(p?.totals?.marketValue, currency)} />
-        <Stat label="Total return" value={formatMoney(p?.totals?.pnl, currency)} tone={(p?.totals?.pnl || 0) >= 0 ? 'up' : 'down'} />
-        <Stat label="Cash available" value={formatMoney(p?.availableBalance, currency)} />
-      </div>
+      <section className="dash-panel p-5 mb-4">
+        <p className="text-[11px] text-neutral-500">Stocks value</p>
+        <div className="flex items-end justify-between gap-3 mt-1">
+          <p className="text-[32px] font-light tracking-[-0.03em] tabular-nums leading-none">{p ? formatMoney(p.totals?.marketValue, currency) : '—'}</p>
+          {p && <span className={`text-[12px] font-semibold tabular-nums ${(p.totals?.pnl || 0) >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{(p.totals?.pnl || 0) >= 0 ? '+' : ''}{formatMoney(p.totals?.pnl, currency)} total return</span>}
+        </div>
+        <div className="mt-4 pt-3 border-t border-white/[.06] flex justify-between text-[12px]">
+          <span className="text-neutral-500">Cash available to invest</span>
+          <span className="font-medium tabular-nums">{formatMoney(p?.availableBalance, currency)}</span>
+        </div>
+      </section>
 
       <Tabs value={tab} onChange={setTab} how={[['Find a stock', 'Browse the Market tab.'], ['Buy', 'Pay from your balance. Shares appear in My holdings.'], ['Sell when ready', 'Sell from My holdings and the proceeds return to your balance.']]} tabs={[{ value: 'market', label: 'Market' }, { value: 'holdings', label: 'My holdings' }, { value: 'orders', label: 'Orders' }]} />
 
@@ -121,34 +127,33 @@ export function StocksPanel({ onChange }) {
               Live market prices · updated {lastUpdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </p>
           )}
-          <div className="flex flex-col sm:flex-row gap-2 mb-4">
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-neutral-500" />
-              <input className={`${inputClass} pl-9`} placeholder="Search by name or symbol" value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
-            <select className={`${inputClass} sm:w-48`} value={sector} onChange={(e) => setSector(e.target.value)}>
-              <option value="">All sectors</option>
-              {(market.data?.sectors || []).map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
+          <div className="relative mb-3">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-500" />
+            <input className="w-full h-11 rounded-full bg-white/[.04] border border-white/10 pl-10 pr-4 text-[13px] text-zinc-100 placeholder:text-neutral-500 outline-none focus:border-blue-500/60 focus:ring-4 focus:ring-blue-500/10 transition" placeholder="Search by name or symbol" value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <div className="-mx-4 px-4 flex gap-1.5 overflow-x-auto pb-2 mb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-no-busy>
+            {['', ...(market.data?.sectors || [])].map((s) => (
+              <button key={s || 'all'} type="button" onClick={() => setSector(s)} className={`shrink-0 h-8 px-3.5 rounded-full text-[12px] font-semibold transition ${sector === s ? 'bg-zinc-100 text-neutral-900' : 'bg-white/[.04] border border-white/[.08] text-neutral-400 hover:text-zinc-100'}`}>{s || 'All sectors'}</button>
+            ))}
           </div>
           {market.loading && !market.data ? <Loading /> : market.error ? <ErrorState message={market.error} onRetry={market.reload} /> : stocks.length === 0 ? (
             <Empty icon={LineChart} title="No stocks found" text="Try a different search or check back later." />
           ) : (
-            <ul className="divide-y divide-neutral-800">
+            <ul className="divide-y divide-white/[.06]">
               {stocks.map((s) => (
                 <li key={s.symbol} className="py-3 flex items-center gap-3">
                   <Logo stock={s} />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium">{s.symbol} <span className="text-neutral-400 font-normal text-sm">· {s.name}</span></p>
-                    <p className="text-xs text-neutral-500">{s.sector}{s.dividendYield ? ` · ${s.dividendYield}% dividend` : ''}</p>
+                    <p className="text-[13px] font-semibold">{s.symbol}</p>
+                    <p className="text-[11px] text-neutral-500 truncate">{s.name}{s.dividendYield ? ` · ${s.dividendYield}% div` : ''}</p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">{formatMoney(s.localPrice, currency)}</p>
+                  <div className="text-right shrink-0">
+                    <p className="text-[13px] font-medium tabular-nums">{formatMoney(s.localPrice, currency)}</p>
                     <Change value={s.changePercent} />
                   </div>
-                  <div className="flex gap-1.5">
-                    <Button className="px-3" onClick={() => setTrade({ stock: s, side: 'buy' })}>Buy</Button>
-                    {holdingsBySymbol[s.symbol] > 0 && <Button variant="secondary" className="px-3" onClick={() => setTrade({ stock: s, side: 'sell' })}>Sell</Button>}
+                  <div className="flex gap-1.5 shrink-0">
+                    <Button className="h-8 px-3.5 !text-[11px]" onClick={() => setTrade({ stock: s, side: 'buy' })}>Buy</Button>
+                    {holdingsBySymbol[s.symbol] > 0 && <Button variant="secondary" className="h-8 px-3 !text-[11px]" onClick={() => setTrade({ stock: s, side: 'sell' })}>Sell</Button>}
                   </div>
                 </li>
               ))}
