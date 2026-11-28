@@ -11,7 +11,7 @@ import useBrand from "../../lib/useBrand";
 import logo from "../../assets/Group.svg";
 
 const TITLES = {
-  "/dashboard": "Home", "/trademain": "Trade", "/trade": "Trading packages", "/copytrade": "Copy trading", "/copy-positions": "Copy trading",
+  "/dashboard": "Home", "/trademain": "Trade", "/trade": "Investment plans", "/copytrade": "Copy trading", "/copy-positions": "Copy trading",
   "/mining": "Mining", "/ai-trader": "AI Smart Trader", "/assets": "Portfolio", "/invest": "Investing", "/real-estate": "Real estate",
   "/staking": "Staking", "/deposite": "Deposit", "/deposit/crypto": "Deposit crypto", "/withdraw": "Withdraw", "/convert": "Convert",
   "/wallet": "Assets", "/transactionhistory": "History", "/cold-storage": "Cold storage", "/cards": "Cards", "/rewards": "Rewards",

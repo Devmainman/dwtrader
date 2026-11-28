@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CheckCircle } from 'lucide-react';
 import { saveAddress } from '../../../api/verification';
+import { COUNTRIES } from '../../../lib/countries';
 
 export default function AddressVerificationStep({ onBack, onContinue }) {
   const [formData, setFormData] = useState({
@@ -129,10 +130,8 @@ export default function AddressVerificationStep({ onBack, onContinue }) {
               onChange={handleChange}
               className={`kyc-field ${errors.country ? 'is-error' : ''}`}
             >
-              <option value="">Select Country</option>
-              <option value="US">United States</option>
-              <option value="UK">United Kingdom</option>
-              <option value="NG">Nigeria</option>
+              <option value="">Select country</option>
+              {COUNTRIES.map((c) => <option key={c.code} value={c.name}>{c.name}</option>)}
             </select>
             {errors.country && <p className="text-red-400 text-[12px] mt-1.5">{errors.country}</p>}
           </div>

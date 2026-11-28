@@ -1,4 +1,4 @@
-// Trading packages: pick a package, stake an amount, watch it earn, get paid at the end.
+// Investment plans: pick a plan, stake an amount, watch it earn, get paid at the end.
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Bot, Clock, ArrowRight, CandlestickChart } from 'lucide-react';
@@ -130,7 +130,7 @@ export default function TradingHub() {
 
   const list = tab === 'active' ? running : trades.filter((t) => t.status !== 'in-progress');
   return (
-    <Page title="Trading" subtitle="Automated trading packages that pay out at the end of their term." icon={Bot}
+    <Page title="Investment plans" subtitle="Plans that pay out your stake and profit at the end of their term." icon={Bot}
       actions={<Link to="/trademain"><Button variant="secondary"><CandlestickChart className="w-3.5 h-3.5" />Live markets<ArrowRight className="w-3.5 h-3.5" /></Button></Link>}>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
         <Stat label="Working now" value={formatMoney(activity.data?.totals?.amount, currency)} />
@@ -138,9 +138,9 @@ export default function TradingHub() {
         <Stat label="Available" value={formatMoney(user?.balance, currency)} />
       </div>
 
-      <h2 className="text-sm font-semibold mb-2">Packages</h2>
+      <h2 className="text-sm font-semibold mb-2">Plans</h2>
       {packages.loading && !packages.data ? <Loading /> : packages.error ? <ErrorState message={packages.error} onRetry={packages.reload} /> : !packages.data.packages.length ? (
-        <Panel className="mb-5"><Empty icon={Bot} title="No packages available" text="Check back soon." /></Panel>
+        <Panel className="mb-5"><Empty icon={Bot} title="No plans available" text="Check back soon." /></Panel>
       ) : (
         <div className="flex gap-3 overflow-x-auto pb-1 mb-5 -mx-3 px-3 snap-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {packages.data.packages.map((p, i) => (
@@ -156,9 +156,9 @@ export default function TradingHub() {
       )}
 
       <Panel>
-        <Tabs value={tab} onChange={setTab} how={[['Choose a package', 'Each package shows its term and expected return.'], ['Fund it', 'Set the amount to put to work from your balance.'], ['It trades for you', 'Follow progress under Running.'], ['Paid at the end', 'Your stake and profit return to your balance when the term ends.']]} tabs={[{ value: 'active', label: running.length ? `Running (${running.length})` : 'Running' }, { value: 'history', label: 'History' }]} />
+        <Tabs value={tab} onChange={setTab} how={[['Choose a plan', 'Each plan shows its term and expected return.'], ['Fund it', 'Set the amount to put to work from your balance.'], ['It trades for you', 'Follow progress under Running.'], ['Paid at the end', 'Your stake and profit return to your balance when the term ends.']]} tabs={[{ value: 'active', label: running.length ? `Running (${running.length})` : 'Running' }, { value: 'history', label: 'History' }]} />
         {activity.loading && !activity.data ? <Loading /> : !list.length ? (
-          <Empty icon={Bot} title={tab === 'active' ? 'No running trades' : 'No finished trades yet'} text={tab === 'active' ? 'Start a package above to begin.' : undefined} />
+          <Empty icon={Bot} title={tab === 'active' ? 'No running plans' : 'No finished plans yet'} text={tab === 'active' ? 'Start a plan above to begin.' : undefined} />
         ) : (
           <ul className="divide-y divide-neutral-800">{list.map((t, i) => <TradeCard key={t.id} t={t} now={now} i={i} onCancel={cancel} />)}</ul>
         )}

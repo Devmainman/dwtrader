@@ -68,8 +68,11 @@ function ProjectCard({ p, currency, onInvest }) {
         <div className="aspect-[16/9] bg-neutral-800 relative w-full">
           {p.images?.[0] ? <img src={p.images[0]} alt="" className="w-full h-full object-cover" loading="lazy" /> : <Building2 className="w-10 h-10 text-neutral-500 absolute inset-0 m-auto" />}
           <div className="absolute top-3 left-3 flex gap-2">
-            {open ? <Badge tone="success">Open</Badge> : <Badge>Closed</Badge>}
-            {p.featured && open && <Badge tone="info">Featured</Badge>}
+            {/* Solid chips: tinted badges are unreadable over a photo. */}
+            <span className={`keep-dark inline-flex items-center gap-1.5 rounded-full bg-black/65 backdrop-blur px-2.5 py-1 text-[10px] font-semibold ${open ? 'text-emerald-300' : 'text-neutral-200'}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${open ? 'bg-emerald-400' : 'bg-neutral-400'}`} />{open ? 'Open' : 'Closed'}
+            </span>
+            {p.featured && open && <span className="keep-dark inline-flex items-center rounded-full bg-black/65 backdrop-blur px-2.5 py-1 text-[10px] font-semibold text-white">Featured</span>}
           </div>
         </div>
         <div className="p-4 flex-1 flex flex-col">

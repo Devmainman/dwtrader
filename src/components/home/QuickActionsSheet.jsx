@@ -16,7 +16,7 @@ const GROUPS = [
   ] },
   { title: 'Grow', items: [
     { to: '/copytrade', icon: Copy, label: 'Copy trading' },
-    { to: '/trade', icon: Bot, label: 'Bots' },
+    { to: '/trade', icon: Bot, label: 'Plans' },
     { to: '/invest', icon: LineChart, label: 'Stocks' },
     { to: '/staking', icon: Layers, label: 'Staking' },
     { to: '/real-estate', icon: Building2, label: 'Real estate' },

@@ -30,7 +30,7 @@ function SignalPackage1() {
   const buy = (pkg) => navigate(`/signal-payment?packageId=${pkg._id}&amount=${encodeURIComponent(pkg.amount)}`);
 
   return (
-    <Page title="Signal packages" subtitle="Raise your signal strength to unlock higher plans" icon={Signal}>
+    <Page title="Signal packages" icon={Signal}>
       {error ? <ErrorState message={error} onRetry={load} />
         : !packages ? <Loading rows={3} />
           : !packages.length ? (

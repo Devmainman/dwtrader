@@ -1,7 +1,9 @@
 // /transactionhistory — every ledger entry, in the dashboard's style: search, filter chips,
 // grouped by day, tap a row for its full details. Pages in 20 at a time.
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Search, ArrowDownLeft, ArrowUpRight, History, Copy, Check, X } from 'lucide-react';
+import { Search, ArrowDownLeft, ArrowUpRight, History, Copy, Check, X, Download, Printer, Loader2 } from 'lucide-react';
+import { downloadReceipt, printReceipt } from '../../lib/receipt';
+import useBrand from '../../lib/useBrand';
 import { Page } from '../products/ui';
 import { cryptoApi } from '../../api/products';
 import { money, Sheet } from '../wallet/shared';
@@ -26,9 +28,13 @@ const dayLabel = (d) => {
   if (diff === 1) return 'Yesterday';
   return day.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: day.getFullYear() === now.getFullYear() ? undefined : 'numeric' });
 };
-const typeName = (t) => String(t || '').replace(/_/g, ' ');
+// 'admin_credit' reads as 'credit' to the user.
+const typeName = (t) => String(t || '').replace(/^admin_/, '').replace(/_/g, ' ');
 
 function Detail({ t, onClose }) {
+  const brand = useBrand();
+  const [saving, setSaving] = useState(false);
+  const download = async () => { setSaving(true); try { await downloadReceipt(t, brand); toast.success("Receipt downloaded"); } catch { toast.error("Could not create the receipt"); } finally { setSaving(false); } };
   const [copied, setCopied] = useState(false);
   const inflow = t.direction === 'in';
   const m = t.metadata || {};
@@ -65,6 +71,15 @@ function Detail({ t, onClose }) {
           <dd><button type="button" data-no-busy onClick={copy} className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-100 hover:text-blue-400">{t.reference}{copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-neutral-500" />}</button></dd>
         </div>
       </dl>
+      <div className="grid grid-cols-2 gap-2 mt-4" data-no-busy>
+        <button type="button" onClick={download} disabled={saving} className="h-11 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-[13px] font-semibold flex items-center justify-center gap-2 transition disabled:opacity-60">
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}Download
+        </button>
+        <button type="button" onClick={() => printReceipt(t, brand)} className="h-11 rounded-full bg-white/[.06] border border-white/10 hover:bg-white/10 text-zinc-100 text-[13px] font-semibold flex items-center justify-center gap-2 transition">
+          <Printer className="w-4 h-4" />Print
+        </button>
+      </div>
+      <p className="text-[10px] text-neutral-500 text-center mt-2">Download saves an image; Print can also save as PDF.</p>
     </Sheet>
   );
 }

@@ -7,12 +7,12 @@ import {
   Page, Panel, Button, Badge, Tabs, inputClass, Loading, ErrorState, Empty,
   useLoader, formatMoney
 } from '../products/ui';
-import { Avatar, TraderName, RiskBadge, Sparkline, FollowButton, StatusDot, pct, toneOf, compact } from './shared';
+import { Avatar, TraderName, Sparkline, FollowButton, StatusDot, toneOf, compact } from './shared';
 import CopyingPanel from './CopyingPanel';
 import CopyModal from './CopyModal';
 
 const SORTS = [
-  { value: 'roi', label: 'Highest return' },
+  { value: 'roi', label: 'Top performers' },
   { value: 'monthly', label: 'Best last 30 days' },
   { value: 'winRate', label: 'Win rate' },
   { value: 'drawdown', label: 'Lowest drawdown' },
@@ -29,14 +29,19 @@ function TraderCard({ t, currency, onOpen, onCopy, onManage, onFollowChange }) {
           <Avatar src={t.avatar} name={t.username} size={52} badge={t.badge} />
           <div className="min-w-0 flex-1">
             <TraderName trader={t} />
-            <p className="text-[11px] text-neutral-500 truncate flex items-center gap-2 mt-0.5"><StatusDot trader={t} withLabel={false} />{compact(t.followers)} followers · {t.copiers} copiers</p>
+            <p className="text-[11px] text-neutral-500 truncate flex items-center gap-2 mt-0.5"><StatusDot trader={t} withLabel={false} />{compact(t.followers)} followers · {t.copiers} {t.copiers === 1 ? "copier" : "copiers"}</p>
           </div>
-          <RiskBadge level={t.riskLevel} />
         </div>
         <div className="flex items-end justify-between mt-4 gap-3">
-          <div>
-            <p className="text-[11px] text-neutral-500">Total return</p>
-            <p className={`text-[28px] font-light tracking-[-0.03em] tabular-nums leading-tight ${toneOf(t.performance.roi)}`}>{pct(t.performance.roi)}</p>
+          <div className="flex gap-5">
+            <div>
+              <p className="text-[11px] text-neutral-500">Trades won</p>
+              <p className="text-[28px] font-light tracking-[-0.03em] tabular-nums leading-tight text-emerald-400">{t.performance.wins ?? 0}</p>
+            </div>
+            <div>
+              <p className="text-[11px] text-neutral-500">Trades lost</p>
+              <p className="text-[28px] font-light tracking-[-0.03em] tabular-nums leading-tight text-red-400">{t.performance.losses ?? 0}</p>
+            </div>
           </div>
           <div className="w-32"><Sparkline values={t.performance.sparkline} height={44} /></div>
         </div>
@@ -70,8 +75,7 @@ export default function CopyTrading({ initialTab = 'experts' }) {
 
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('roi');
-  const [risk, setRisk] = useState('');
-  const { data, loading, error, reload } = useLoader(() => copyTradingApi.traders({ sort, risk: risk || undefined }), [sort, risk]);
+  const { data, loading, error, reload } = useLoader(() => copyTradingApi.traders({ sort }), [sort]);
   // Traders on autopilot trade on their own: keep figures current.
   useEffect(() => { const t = setInterval(() => document.visibilityState === 'visible' && reload(), 30000); return () => clearInterval(t); }, [reload]);
   const copies = useLoader(() => copyTradingApi.copies(), [tab]);
@@ -96,7 +100,7 @@ export default function CopyTrading({ initialTab = 'experts' }) {
       <Tabs
         value={tab}
         onChange={setTab}
-        how={[['Pick a trader', 'Compare return, risk and history in Top Experts.'], ['Set an amount', 'Choose how much of your balance follows them.'], ['Trades are mirrored', 'Each position they open is copied into your account.'], ['Stop any time', 'End copying from the Copying tab whenever you like.']]}
+        how={[['Pick a trader', 'Compare wins, losses and history in Top Experts.'], ['Set an amount', 'Choose how much of your balance follows them.'], ['Trades are mirrored', 'Each position they open is copied into your account.'], ['Stop any time', 'End copying from the Copying tab whenever you like.']]}
         tabs={[{ value: 'experts', label: 'Top Experts' }, { value: 'copying', label: copyingCount ? `Copying (${copyingCount})` : 'Copying' }]}
       />
 
@@ -121,11 +125,7 @@ export default function CopyTrading({ initialTab = 'experts' }) {
               <button key={o.value} type="button" onClick={() => setSort(o.value)} className={`shrink-0 h-8 px-3.5 rounded-full text-[12px] font-semibold transition ${sort === o.value ? 'bg-zinc-100 text-neutral-900' : 'bg-white/[.04] border border-white/[.08] text-neutral-400 hover:text-zinc-100'}`}>{o.label}</button>
             ))}
           </div>
-          <div className="flex gap-1.5 mt-2 mb-5 flex-wrap" data-no-busy>
-            {[['', 'Any risk'], ['low', 'Low'], ['medium', 'Medium'], ['high', 'High'], ['very_high', 'Very high']].map(([v, l]) => (
-              <button key={v} type="button" onClick={() => setRisk(v)} className={`h-7 px-3 rounded-full text-[11px] font-semibold border transition ${risk === v ? 'border-blue-500/60 bg-blue-600/10 text-blue-400' : 'border-white/[.08] text-neutral-500 hover:text-zinc-100'}`}>{l}</button>
-            ))}
-          </div>
+          <div className="mb-5" />
 
           {loading && !data ? <Loading /> : error ? <ErrorState message={error} onRetry={reload} /> : traders.length === 0 ? (
             <Panel><Empty icon={Users} title="No experts found" text="Try another search or check back soon." /></Panel>

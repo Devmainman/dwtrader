@@ -71,7 +71,7 @@ function TradingPackage() {
 
   const handleTrade = async () => {
     if (!selectedPackage || !amount || parseFloat(amount) === 0) {
-      alert("Please select a package and enter amount");
+      alert("Please select a plan and enter an amount");
       return;
     }
 
@@ -95,11 +95,11 @@ function TradingPackage() {
       );
 
       if (response.data.success) {
-        alert("Trade created successfully!");
+        alert("Investment started");
         setAmount("");
       }
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to create trade.");
+      alert(error.response?.data?.message || "Could not start this plan.");
     } finally {
       setLoading(false);
     }
@@ -118,7 +118,7 @@ function TradingPackage() {
     <section ref={containerRef} className="dash-panel !overflow-visible p-4 w-full relative lg:p-5">
       <div className="w-full whitespace-nowrap">
         <h2 className="text-[13px] font-semibold tracking-[-0.01em] text-zinc-100 mb-2.5">
-          Package
+          Investment plans
         </h2>
 
         {/* First Row: Package Selection & Trade Type */}
@@ -131,7 +131,7 @@ function TradingPackage() {
               onClick={() => setOpenDropdown(openDropdown === 'package' ? null : 'package')}
             >
               <div className="text-white truncate">
-                {selectedPackage ? selectedPackage.name : "Select Package"}
+                {selectedPackage ? selectedPackage.name : "Select plan"}
               </div>
               <img src={ICON_DROPDOWN} className={`mode-icon w-4 transition-transform ${openDropdown === 'package' ? 'rotate-180' : ''}`} alt="arrow" />
             </div>
@@ -153,7 +153,7 @@ Min: {pkg.minAmount} {user?.currency} | Max: {pkg.maxAmount} {user?.currency}
                   ))
                 ) : (
                   <div className="px-3 py-3 text-neutral-400 text-center">
-                    No packages available
+                    No plans available
                   </div>
                 )}
               </div>

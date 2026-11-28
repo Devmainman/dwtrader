@@ -180,7 +180,7 @@ function DesktopActivityInner() {
 /* ---------- 4. allocation ---------- */
 
 const PARTS = [
-  ["cash", "Cash", "#71717a"], ["trading", "Trading", "var(--color-blue-500)"], ["copyTrading", "Copy trading", "#a78bfa"],
+  ["cash", "Cash", "#71717a"], ["crypto", "Crypto", "#f97316"], ["trading", "Trading", "var(--color-blue-500)"], ["copyTrading", "Copy trading", "#a78bfa"],
   ["staking", "Staking", "#f59e0b"], ["realEstate", "Real estate", "#14b8a6"], ["stocks", "Stocks", "#38bdf8"],
   ["coldStorage", "Cold storage", "#22d3ee"], ["mining", "Mining", "#84cc16"], ["cards", "Cards", "#f472b6"],
 ];

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import WelcomeStep from './WelcomeStep';
 import logo from "../../../assets/Group.svg";
@@ -7,14 +8,19 @@ import useBrand from "../../../lib/useBrand";
 import PhoneVerificationStep from './PhoneVerificationStep';
 import AddressVerificationStep from './AddressVerificationStep';
 import IDVerificationStep1 from './IDVerificationStep1';
-import IDVerificationStep2 from './IDVerificationStep2';
 import IDVerificationStep3 from './IDVerificationStep3';
 import WebcamCaptureStep from './WebcamCaptureStep';
 import VerificationCompleteStep from './VerificationCompleteStep';
 
 export default function InputDesign() {
   const brand = useBrand();
-  const [step, setStep] = useState(1);
+  // /welcome?step=4|5|6 opens one check directly (Settings → Redo / Start). In that case
+  // finishing it ends the flow instead of walking through every later step.
+  const location = useLocation();
+  const asked = Number(new URLSearchParams(location.search).get('step'));
+  const single = [4, 5, 6].includes(asked) ? asked : null;
+  const [step, setStep] = useState(single || 1);
+  const after = (n) => (single && n !== 6 ? 8 : n + 1);
   const [verificationData, setVerificationData] = useState({
     profile: {
       firstName: '',
@@ -58,23 +64,11 @@ export default function InputDesign() {
       //     phoneNumber={verificationData.profile.phoneNumber}
       //   />;
       // return null;
-      case 3: 
-        return <IDVerificationStep2 
-          onBack={() => setStep(2)}
-          onContinue={(documents) => {
-            updateVerificationData('idDocuments', documents);
-            setStep(4);
-          }}
-        />;
       case 4: 
-        return <IDVerificationStep3 
-          onBack={() => setStep(3)}
-          onContinue={(additionalDoc) => {
-            updateVerificationData('idDocuments', [
-              ...verificationData.idDocuments,
-              additionalDoc
-            ]);
-            setStep(5);
+        return <IDVerificationStep3
+          onContinue={(doc) => {
+            updateVerificationData('idDocuments', doc ? [doc] : []);
+            setStep(after(4));
           }}
         />;
       case 5: 
@@ -82,7 +76,7 @@ export default function InputDesign() {
           onBack={() => setStep(4)}
           onContinue={(faceImage) => {
             updateVerificationData('faceImage', faceImage);
-            setStep(6);
+            setStep(after(5));
           }}
         />;
       case 6: 
@@ -105,21 +99,24 @@ export default function InputDesign() {
           }}
         />;
       case 8: 
-        return <VerificationCompleteStep />;
+        return <VerificationCompleteStep to={single ? '/settings' : '/dashboard'} />;
       default: 
         return <WelcomeStep onContinue={() => setStep(2)} />;
     }
   };
 
   useEffect(() => {
-    if (step === 2) setStep(3);
+    if (step === 2 || step === 3) setStep(4);
   }, [step]);
   
 
   // Visible steps (step 2, phone OTP, is skipped).
-  const STEPS = [[1, 'Profile'], [3, 'ID card'], [4, 'Extra document'], [5, 'Selfie'], [6, 'Address'], [7, 'Proof of address'], [8, 'Done']];
+  const STEPS = single
+    ? (single === 6 ? [[6, 'Address'], [7, 'Proof of address'], [8, 'Done']] : [[single, single === 4 ? 'ID Verification' : 'Selfie'], [8, 'Done']])
+    : [[1, 'Profile'], [4, 'ID Verification'], [5, 'Selfie'], [6, 'Address'], [7, 'Proof of address'], [8, 'Done']];
   const idx = Math.max(0, STEPS.findIndex(([n]) => n === step));
-  const back = () => setStep((p) => (p === 3 ? 1 : p - 1));
+  const first = STEPS[0][0];
+  const back = () => setStep((p) => (p === 4 ? 1 : p - 1));
 
   return (
     <div className="kyc min-h-[100dvh] bg-[var(--page)] text-zinc-100">
@@ -134,14 +131,14 @@ export default function InputDesign() {
       <div className="max-w-[920px] mx-auto px-5 sm:px-8 pb-12">
         <div className="flex items-end justify-between gap-4">
           <div className="min-w-0">
-            {step > 1 && step < 8 && (
+            {step > first && step < 8 && (
               <button type="button" data-no-busy onClick={back} className="mb-3 inline-flex items-center gap-1 text-[12px] font-medium text-neutral-400 hover:text-zinc-100"><ChevronLeft className="w-4 h-4" />Back</button>
             )}
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-blue-400">Step {idx + 1} of {STEPS.length} · {STEPS[idx][1]}</p>
-            <h1 className="mt-1.5 text-[26px] font-semibold tracking-[-0.03em] leading-tight">{step === 8 ? 'You’re all set' : 'Verify your account'}</h1>
+            <h1 className="mt-1.5 text-[26px] font-semibold tracking-[-0.03em] leading-tight">{step === 8 ? 'You’re all set' : single ? 'Submit again' : 'Verify your account'}</h1>
             <p className="text-[13px] text-neutral-400 mt-1">{step === 8 ? 'We’ll review your documents and let you know.' : 'A few quick steps keep your account and your money safe.'}</p>
           </div>
-          {step < 8 && <a href="/dashboard" className="shrink-0 text-[12px] font-medium text-neutral-400 hover:text-zinc-100">Do it later</a>}
+          {step < 8 && <a href={single ? '/settings' : '/dashboard'} className="shrink-0 text-[12px] font-medium text-neutral-400 hover:text-zinc-100">Do it later</a>}
         </div>
 
         <ol className="mt-6 mb-8 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${STEPS.length}, minmax(0, 1fr))` }} aria-label="Progress">

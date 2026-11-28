@@ -5,7 +5,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Settings, Copy, Check, ChevronRight, BadgeCheck, Clock, CircleDashed, IdCard, ScanFace, Home, Sun, Moon } from "lucide-react";
+import { Settings, Copy, Check, ChevronRight, BadgeCheck, Clock, CircleDashed, IdCard, ScanFace, Home, Sun, Moon, XCircle, ShieldOff, RotateCcw } from "lucide-react";
 import { Page, Panel, Tabs, formatMoney } from "../products/ui";
 import { useUserAuth } from "../../context/UserAuthContext";
 import { API_BASE_URL, STATIC_BASE_URL } from "../../api/config";
@@ -80,27 +80,69 @@ function Header({ me, stats }) {
   );
 }
 
+// Each check's status from /verification/users. Rejected or revoked checks can be redone:
+// the button opens /welcome at that step.
+function kycStatus(v = {}) {
+  const docs = [...(v.identityDocuments || [])].sort((a, b) => new Date(b.uploadedAt || 0) - new Date(a.uploadedAt || 0));
+  const doc = docs[0];
+  const identity = v.identityVerified ? ['verified']
+    : !doc ? ['todo']
+      : doc.rejected ? ['rejected', doc.rejectionReason]
+        : doc.revoked ? ['revoked'] : ['pending'];
+  const face = v.faceVerified ? ['verified']
+    : v.faceRejected ? ['rejected', v.faceRejectionReason]
+      : v.faceRevoked ? ['revoked']
+        : v.faceImage ? ['pending'] : ['todo'];
+  const p = v.proofOfAddress;
+  const address = v.addressVerified ? ['verified']
+    : !p?.image ? ['todo']
+      : p.rejected ? ['rejected', p.rejectionReason]
+        : p.revoked ? ['revoked'] : ['pending'];
+  return { identity, face, address };
+}
+
 function Verification({ kyc }) {
-  const v = kyc?.verification || {};
-  const st = (done, sent) => (done ? "verified" : sent ? "pending" : "todo");
+  const st = kycStatus(kyc?.verification);
   const rows = [
-    ["Identity", IdCard, st(v.identityVerified, v.identityDocuments?.length > 0)],
-    ["Face", ScanFace, st(v.faceVerified, !!v.faceImage)],
-    ["Address", Home, st(v.addressVerified, !!v.proofOfAddress?.image)]
+    ["Identity", IdCard, st.identity, 4],
+    ["Face", ScanFace, st.face, 5],
+    ["Address", Home, st.address, 6]
   ];
-  const S = { verified: ["Verified", "text-emerald-400 bg-emerald-500/12", BadgeCheck], pending: ["In review", "text-amber-400 bg-amber-500/12", Clock], todo: ["Not submitted", "text-neutral-400 bg-white/[.06]", CircleDashed] };
-  const done = rows.filter((r) => r[2] === "verified").length;
+  const S = {
+    verified: ["Verified", "text-emerald-400 bg-emerald-500/12", BadgeCheck],
+    pending: ["In review", "text-amber-400 bg-amber-500/12", Clock],
+    rejected: ["Rejected", "text-red-400 bg-red-500/12", XCircle],
+    revoked: ["Revoked", "text-red-400 bg-red-500/12", ShieldOff],
+    todo: ["Not submitted", "text-neutral-400 bg-white/[.06]", CircleDashed]
+  };
+  const done = rows.filter((r) => r[2][0] === "verified").length;
+  const needs = rows.filter((r) => ["rejected", "revoked"].includes(r[2][0])).length;
   return (
     <Panel title="Verification" action={<span className="text-[11px] text-neutral-500">{kyc ? `${done} of 3 complete` : ""}</span>}>
       <div className="h-1 rounded-full bg-white/[.08] overflow-hidden -mt-1 mb-2"><span className="block h-full bg-emerald-400 transition-[width] duration-700" style={{ width: `${(done / 3) * 100}%` }} /></div>
+      {needs > 0 && (
+        <p className="mb-2 rounded-xl bg-red-500/10 border border-red-500/20 px-3 py-2 text-[11px] text-red-400">
+          {needs === 1 ? "One check needs" : `${needs} checks need`} your attention. Tap Redo to submit again.
+        </p>
+      )}
       <ul className="divide-y divide-white/[.06]">
-        {rows.map(([label, Icon, s]) => {
+        {rows.map(([label, Icon, [s, reason], step]) => {
           const [text, tone, SIcon] = S[s];
+          const action = s === "rejected" || s === "revoked" ? "Redo" : s === "todo" ? "Start" : null;
           return (
-            <li key={label} className="flex items-center gap-3 py-2.5">
-              <span className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-neutral-400"><Icon className="w-4 h-4" /></span>
-              <span className="flex-1 text-[13px]">{label}</span>
-              {kyc ? <span className={`inline-flex items-center gap-1 h-6 px-2 rounded-full text-[10px] font-semibold ${tone}`}><SIcon className="w-3 h-3" />{text}</span> : <span className="h-5 w-16 rounded-full skeleton" />}
+            <li key={label} className="py-2.5">
+              <div className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-neutral-400"><Icon className="w-4 h-4" /></span>
+                <span className="flex-1 text-[13px]">{label}</span>
+                {kyc ? <span className={`inline-flex items-center gap-1 h-6 px-2 rounded-full text-[10px] font-semibold ${tone}`}><SIcon className="w-3 h-3" />{text}</span> : <span className="h-5 w-16 rounded-full skeleton" />}
+                {kyc && action && (
+                  <Link to={`/welcome?step=${step}`} className={`inline-flex items-center gap-1 h-7 px-3 rounded-full text-[11px] font-semibold transition ${action === "Redo" ? "bg-blue-600 text-white hover:bg-blue-500" : "bg-white/[.06] border border-white/10 text-zinc-100 hover:bg-white/10"}`}>
+                    {action === "Redo" && <RotateCcw className="w-3 h-3" />}{action}
+                  </Link>
+                )}
+              </div>
+              {s === "rejected" && reason && <p className="mt-1.5 ml-11 text-[11px] text-red-400/90">Reason: {reason}</p>}
+              {s === "revoked" && <p className="mt-1.5 ml-11 text-[11px] text-neutral-500">This check was revoked. Submit it again to restore it.</p>}
             </li>
           );
         })}

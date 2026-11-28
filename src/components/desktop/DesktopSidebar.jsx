@@ -18,7 +18,7 @@ export const NAV_GROUPS = [
   ] },
   { title: "Trade", items: [
     { to: "/trademain", label: "Live trading", icon: TrendingUp },
-    { to: "/trade", label: "Trading packages", icon: Bot },
+    { to: "/trade", label: "Investment plans", icon: Bot },
     { to: "/copytrade", label: "Copy trading", icon: Users, also: ["/copy-positions"] },
     { to: "/ai-trader", label: "AI Smart Trader", icon: Sparkles },
     { to: "/mining", label: "Mining", icon: Cpu },

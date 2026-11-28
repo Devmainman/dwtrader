@@ -4,7 +4,6 @@ import React from "react";
 import { Portfolio, ActionBar, Assets, Markets, Activity } from "./Dash";
 import MarketOverview from "./MarketOverview";
 import TradingChart from "./TradingChart";
-import TradingPackage from "./TradingPackage";
 import { useDesktop, DesktopPositions } from "../desktop/DashboardExtras";
 
 const Label = ({ children }) => <p className="px-1 pt-2 text-[10px] font-medium uppercase tracking-[0.1em] text-neutral-500">{children}</p>;
@@ -31,7 +30,6 @@ function HomeDashboard() {
             <ActionBar />
             <Activity limit={7} />
             <MarketOverview />
-            <TradingPackage />
           </div>
         </div>
       </section>
@@ -49,7 +47,6 @@ function HomeDashboard() {
         <Label>Trade</Label>
         <MarketOverview />
         <TradingChart />
-        <TradingPackage />
       </div>
     </section>
   );

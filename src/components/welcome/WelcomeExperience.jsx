@@ -77,7 +77,7 @@ function Splash({ detail, onDone }) {
 
 // Each slide shows the real screen it talks about.
 const SLIDES = [
-  { title: 'Everything in one place', text: 'Cash, investments, stakes and vaults add up on the Assets page, in your own currency.', shot: '/landing/assets.webp', cta: { label: 'Open Assets', to: '/assets' } },
+  { title: 'Everything in one place', text: 'Crypto, cash, investments, stakes and vaults add up on the Assets page, in your own currency.', shot: '/landing/assets.webp', cta: { label: 'Open Assets', to: '/assets' } },
   { title: 'Grow your money', text: 'Stake crypto and earn every day, or own a share of real-estate projects.', shot: '/landing/staking.webp', cta: { label: 'Explore staking', to: '/staking' } },
   { title: 'Trade your way', text: 'Live crypto and forex markets, with take-profit and stop-loss set before you enter.', shot: '/landing/trade.webp', cta: { label: 'See markets', to: '/trademain' } },
   { title: 'Protected by design', text: 'Keep savings in cold storage behind a waiting period, and get notified of every move.', shot: '/landing/vault.webp', cta: { label: 'Get started', to: '/dashboard' } },

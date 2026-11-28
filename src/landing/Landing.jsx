@@ -33,7 +33,7 @@ const PRODUCTS = [
 ];
 
 const SCREENS = [
-  { img: 'assets', title: 'Everything you own', text: 'Cash, stakes, stocks, property and vaults, valued together in your own currency.' },
+  { img: 'assets', title: 'Everything you own', text: 'Crypto, cash, stakes, stocks, property and vaults, valued together in your own currency.' },
   { img: 'trade', title: 'Trade long or short', text: 'Pick a market, set your size, then let take-profit and stop-loss do the watching.' },
   { img: 'copy', title: 'Copy proven traders', text: 'Follow a trader’s record, set an amount, and mirror every position they open.' },
   { img: 'staking', title: 'Stake and earn', text: 'Lock coins for a fixed term and watch the rewards add up each day.' },

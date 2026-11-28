@@ -389,7 +389,7 @@ export default function LiveTrading() {
                     <li key={h._id} {...stagger(i)} className={`${stagger(i).className} py-2.5 flex justify-between gap-2`}>
                       <div className="min-w-0">
                         <p className="text-[13px] font-medium flex items-center gap-1.5"><Badge tone={h.side === 'long' ? 'success' : 'danger'}>{h.side.toUpperCase()}</Badge>{h.symbol}</p>
-                        <p className="text-[10px] text-neutral-500 tabular-nums truncate">{fmtPrice(h.entryPrice)} → {fmtPrice(h.exitPrice)} · {new Date(h.closedAt).toLocaleString()}{h.closeReason !== 'manual' ? ` · ${h.closeReason.replace('_', ' ')}` : ''}</p>
+                        <p className="text-[10px] text-neutral-500 tabular-nums truncate">{fmtPrice(h.entryPrice)} → {fmtPrice(h.exitPrice)} · {new Date(h.closedAt).toLocaleString()}{h.closeReason && h.closeReason !== 'manual' ? ` · ${h.closeReason === 'admin' ? 'closed by support' : h.closeReason.replace('_', ' ')}` : ''}</p>
                       </div>
                       <p className={`text-[13px] tabular-nums font-semibold ${toneOf(h.pnl)}`}>{signed(h.pnl)}</p>
                     </li>

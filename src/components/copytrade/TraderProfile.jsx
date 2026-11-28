@@ -6,7 +6,7 @@ import { copyTradingApi } from '../../api/products';
 import {
   Page, Panel, Button, Badge, Tabs, inputClass, Loading, ErrorState, Empty, useLoader, formatMoney, formatDate, formatNumber
 } from '../products/ui';
-import { Avatar, TraderName, RiskBadge, Sparkline, FollowButton, StatusDot, pct, toneOf, compact } from './shared';
+import { Avatar, TraderName, Sparkline, FollowButton, StatusDot, pct, toneOf, compact } from './shared';
 import CopyModal from './CopyModal';
 
 const fmtHours = (h) => {
@@ -53,14 +53,14 @@ function StatsTab({ data }) {
   const maxMonth = Math.max(1, ...s.monthlyReturns.map((m) => Math.abs(m.returnPercent)));
   return (
     <div className="space-y-4">
-      <Panel title="Growth" action={<span className={`text-sm font-semibold ${toneOf(s.roi)}`}>{pct(s.roi)} all time</span>}>
+      <Panel title="Growth" action={<span className="text-sm font-semibold"><span className="text-emerald-400">{s.wins} won</span> · <span className="text-red-400">{s.losses} lost</span></span>}>
         <Sparkline values={(t.equityCurve || []).map((p) => p.value)} height={140} />
         <p className="text-xs text-neutral-500 mt-2">Value of the strategy if it started at 100, after every closed trade.</p>
       </Panel>
 
       <Panel title="Performance">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <StatTile label="Total return" value={pct(s.roi)} tone={toneOf(s.roi)} />
+          <StatTile label="Trades lost" value={s.losses} tone="text-red-300" hint={`Longest losing run: ${s.longestLossStreak || 0}`} />
           <StatTile label="Last 30 days" value={pct(s.monthlyReturn)} tone={toneOf(s.monthlyReturn)} />
           <StatTile label="Last 7 days" value={pct(s.weeklyReturn)} tone={toneOf(s.weeklyReturn)} />
           <StatTile label="Last 24 hours" value={pct(s.dailyReturn)} tone={toneOf(s.dailyReturn)} />
@@ -200,14 +200,14 @@ export default function TraderProfile() {
           <div className="flex-1 min-w-0">
             <div className="text-xl"><TraderName trader={t} /></div>
             <p className="text-sm text-neutral-400">{[t.fullName, t.country].filter(Boolean).join(' · ')}</p>
-            <p className="text-sm text-neutral-300 mt-1"><span className="font-semibold text-white">{compact(t.followers)}</span> followers · <span className="font-semibold text-white">{t.copiers}</span> copiers</p>
+            <p className="text-sm text-neutral-300 mt-1"><span className="font-semibold text-white">{compact(t.followers)}</span> followers · <span className="font-semibold text-white">{t.copiers}</span> {t.copiers === 1 ? "copier" : "copiers"}</p>
             <p className="mt-1"><StatusDot trader={t} /></p>
-            <div className="flex gap-1.5 mt-2 flex-wrap"><RiskBadge level={t.riskLevel} />{t.markets?.map((m) => <Badge key={m}>{m}</Badge>)}</div>
+            <div className="flex gap-1.5 mt-2 flex-wrap">{t.markets?.map((m) => <Badge key={m}>{m}</Badge>)}</div>
           </div>
           <div className="flex flex-col gap-2 sm:items-end">
             <div className="text-left sm:text-right">
-              <p className="text-xs text-neutral-500">Total return</p>
-              <p className={`text-2xl font-semibold ${toneOf(t.performance.roi)}`}>{pct(t.performance.roi)}</p>
+              <p className="text-xs text-neutral-500">Won · Lost</p>
+              <p className="text-2xl font-semibold tabular-nums"><span className="text-emerald-400">{t.performance.wins ?? 0}</span><span className="text-neutral-600"> · </span><span className="text-red-400">{t.performance.losses ?? 0}</span></p>
             </div>
           </div>
         </div>

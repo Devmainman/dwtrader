@@ -5,9 +5,10 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Wallet, Coins, LineChart, Building2, Bot, Copy, Lock, CreditCard, Cpu, PieChart } from 'lucide-react';
 import { portfolioApi } from '../../api/products';
+import { CoinIcon } from '../wallet/shared';
 import { Page, Loading, ErrorState, Empty, AnimatedNumber, useLoader, formatMoney } from './ui';
 
-const ICONS = { cash: Wallet, crypto: Coins, stocks: LineChart, realEstate: Building2, trading: Bot, copyTrading: Copy, coldStorage: Lock, cards: CreditCard, mining: Cpu };
+const ICONS = { cash: Wallet, coins: Coins, crypto: Coins, stocks: LineChart, realEstate: Building2, trading: Bot, copyTrading: Copy, coldStorage: Lock, cards: CreditCard, mining: Cpu };
 
 /** Capsule split into segments, like iPhone Storage. Each segment grows in from the left. */
 function SegmentBar({ groups }) {
@@ -58,7 +59,8 @@ function Row({ to, left, title, subtitle, value, sub, subTone }) {
   );
 }
 
-const iconTile = (group, color, src) => {
+const iconTile = (group, color, src, symbol) => {
+  if (group === 'coins') return <CoinIcon symbol={symbol} icon={src} size={32} />;
   const Icon = ICONS[group] || PieChart;
   return (
     <span className="w-8 h-8 rounded-[9px] flex items-center justify-center shrink-0 overflow-hidden" style={{ background: src ? '#2C2C2E' : color }}>
@@ -131,7 +133,7 @@ export default function Assets() {
             </div>
 
             {!items.length ? (
-              <div className="rounded-2xl bg-[var(--card)]"><Empty icon={PieChart} title="Nothing here yet" text="Invest, stake or trade and it will show up here." /></div>
+              <div className="rounded-2xl bg-[var(--card)]"><Empty icon={PieChart} title="Nothing here yet" text="Deposit crypto, invest, stake or trade and it will show up here." /></div>
             ) : (
               <Group title={filter === 'all' ? `${items.length} holding${items.length === 1 ? '' : 's'}` : data.groups.find((g) => g.key === filter)?.label}
                 action={<button type="button" onClick={reload} className="text-[13px] text-[#0A84FF] hover:opacity-80">Refresh</button>}>
@@ -144,7 +146,7 @@ export default function Assets() {
                       <Row
                         key={`${it.group}-${it.id}`}
                         to={it.link}
-                        left={iconTile(it.group, colorOf[it.group], it.icon)}
+                        left={iconTile(it.group, colorOf[it.group], it.icon, it.symbol)}
                         title={it.name}
                         subtitle={[qty, it.detail].filter(Boolean).join(' · ') || it.symbol}
                         value={formatMoney(it.value, cur)}

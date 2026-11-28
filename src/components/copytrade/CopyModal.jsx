@@ -38,7 +38,7 @@ export default function CopyModal({ trader, currency, balance, onClose, onCopied
     >
       <div className="flex items-center gap-3 mb-4">
         <Avatar src={trader.avatar} name={trader.username} badge={trader.badge} />
-        <div className="min-w-0"><TraderName trader={trader} /><p className="text-xs text-neutral-400">{compact(trader.followers)} followers · {trader.copiers} copiers</p></div>
+        <div className="min-w-0"><TraderName trader={trader} /><p className="text-xs text-neutral-400">{compact(trader.followers)} followers · {trader.copiers} {trader.copiers === 1 ? "copier" : "copiers"}</p></div>
       </div>
 
       <div className="rounded-xl border border-[var(--color-blue-700)]/30 bg-[var(--color-blue-700)]/10 px-3 py-2 mb-4 text-sm flex justify-between">
